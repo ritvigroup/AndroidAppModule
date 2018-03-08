@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Kaajneeti</string>
+    <string name="facebook_app_id">1042450195892927</string>
+    <string name="fb_login_protocol_scheme">fb1042450195892927</string>
 </resources>
