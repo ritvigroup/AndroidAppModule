@@ -3,6 +3,7 @@ package com.ritvi.kaajneeti;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.support.multidex.MultiDex;
 
 import com.akexorcist.localizationactivity.core.LocalizationApplicationDelegate;
 import com.github.tamir7.contacts.Contacts;
