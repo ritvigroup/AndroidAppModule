@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:checked="true"
+            android:title="@string/hs_menu_home"
+            android:visible="false"/>
+
+        <item
+            android:id="@+id/nav_news"
+            android:checked="true"
+            android:title="@string/hs_menu_news"
+            android:icon="@drawable/ic_news"/>
+
+        <item
+            android:id="@+id/nav_dashboard"
+            android:checked="true"
+            android:title="@string/hs_menu_dashboard"
+            android:icon="@drawable/ic_dashboard"/>
+
+        <item
+            android:id="@+id/nav_connection"
+            android:checked="true"
+            android:title="@string/hs_menu_myconnection"
+            android:icon="@drawable/ic_connection"/>
+
+        <item
+            android:id="@+id/nav_community"
+            android:checked="true"
+            android:title="@string/hs_menu_mycommunication"
+            android:icon="@drawable/ic_communication"/>
+        <item
+            android:id="@+id/nav_calendar"
+            android:checked="true"
+            android:icon="@drawable/ic_calendar_nav"
+            android:title="@string/hs_menu_calendar" />
+
+        <item
+            android:id="@+id/nav_reward"
+            android:checked="true"
+            android:title="@string/hs_menu_reward"
+            android:icon="@drawable/ic_reward"/>
+
+        <item
+            android:id="@+id/nav_info_directory"
+            android:checked="true"
+            android:title="@string/hs_menu_info"
+            android:icon="@drawable/ic_info"/>
+
+        <item
+            android:id="@+id/nav_social_buzz"
+            android:checked="true"
+            android:title="@string/hs_menu_social"
+            android:icon="@drawable/ic_social"/>
+
+    </group>
+
+    <group
+        android:id="@+id/group2">
+
+        <item
+            android:id="@+id/nav_report"
+            android:checked="true"
+            android:title="@string/hs_menu_report"
+            android:icon="@drawable/ic_report"/>
+        <item
+            android:id="@+id/nav_setting"
+            android:checked="true"
+            android:title="@string/hs_menu_settings"
+            android:icon="@drawable/ic_setting"/>
+        <item
+            android:id="@+id/nav_refer"
+            android:checked="true"
+            android:title="Refer"
+            android:icon="@drawable/ic_reward"/>
+        <item
+            android:id="@+id/nav_help"
+            android:checked="true"
+            android:title="@string/hs_menu_help"
+            android:icon="@drawable/ic_help"/>
+        <item
+            android:id="@+id/nav_logout"
+            android:checked="true"
+            android:title="@string/hs_menu_logout"
+            android:icon="@drawable/ic_logout"/>
+    </group>
+</menu>

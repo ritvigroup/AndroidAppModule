@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_explore"
+            android:icon="@drawable/ic_explore"
+            android:checked="true"
+            android:title="Explore" />
+
+        <item
+            android:id="@+id/nav_connect"
+            android:checked="true"
+            android:icon="@drawable/ic_connection"
+            android:title="Connect" />
+
+        <item
+            android:id="@+id/nav_act"
+            android:checked="true"
+            android:icon="@drawable/ic_communication"
+            android:title="Express" />
+
+        <item
+            android:id="@+id/nav_analyze"
+            android:checked="true"
+            android:icon="@drawable/ic_report"
+            android:title="Analyze" />
+
+        <item
+            android:id="@+id/nav_elect"
+            android:checked="true"
+            android:icon="@drawable/ic_elect"
+            android:title="Elect" />
+        <item
+            android:id="@+id/nav_contribute"
+            android:checked="true"
+            android:icon="@drawable/ic_contribute"
+            android:title="Contribute" />
+        <item
+            android:id="@+id/nav_earn"
+            android:checked="true"
+            android:icon="@drawable/ic_dashboard"
+            android:title="Click &amp; Earn" />
+    </group>
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_rti"
+            android:checked="true"
+            android:icon="@drawable/ic_rti"
+            android:title="Right To Information" />
+
+        <item
+            android:id="@+id/nav_setting"
+            android:checked="true"
+            android:icon="@drawable/ic_setting"
+            android:title="Settings" />
+
+        <item
+            android:id="@+id/nav_help"
+            android:checked="true"
+            android:icon="@drawable/ic_help"
+            android:title="Help &amp; Support" />
+
+        <item
+            android:id="@+id/nav_logout"
+            android:checked="true"
+            android:icon="@drawable/ic_logout"
+            android:title="Logout" />
+    </group>
+</menu>

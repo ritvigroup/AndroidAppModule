@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_dashboard"
+            android:checked="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/hs_menu_dashboard" />
+
+        <item
+            android:id="@+id/nav_team"
+            android:checked="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="Team" />
+
+        <item
+            android:id="@+id/nav_citizen"
+            android:checked="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="Citizen" />
+
+        <item
+            android:id="@+id/nav_broadcast"
+            android:checked="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="Broadcast" />
+        <item
+            android:id="@+id/nav_campaign"
+            android:checked="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="Campaign" />
+        <item
+            android:id="@+id/nav_report"
+            android:checked="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="Reports &amp; MIS" />
+
+        <item
+            android:id="@+id/nav_knowledge"
+            android:checked="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="knowledge Centre" />
+
+        <item
+            android:id="@+id/nav_social_buzz"
+            android:checked="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/hs_menu_social" />
+
+        <item
+            android:id="@+id/nav_notes"
+            android:checked="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="Notes" />
+
+    </group>
+
+    <group
+        android:id="@+id/group2">
+
+        <item
+            android:id="@+id/nav_settings"
+            android:checked="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="Settings" />
+        <item
+            android:id="@+id/nav_qr_code"
+            android:checked="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="QR Code" />
+        <item
+            android:id="@+id/nav_help"
+            android:checked="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/hs_menu_help" />
+        <item
+            android:id="@+id/nav_logout"
+            android:checked="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/hs_menu_logout" />
+    </group>
+</menu>

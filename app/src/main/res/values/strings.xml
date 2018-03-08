@@ -1,5 +1,122 @@
 <resources>
     <string name="app_name">Kaajneeti</string>
+
     <string name="facebook_app_id">1042450195892927</string>
     <string name="fb_login_protocol_scheme">fb1042450195892927</string>
+
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">odTUxR2y7jhDIb1ImhiGE4VDY</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">FFKtAo7BeyDoEoUeRXZUq1FwHAjCHutOXZc4gcimEmG4cOMWKV</string>
+
+    <string-array name="langauage">
+        <item>English</item>
+        <item>Hindi</item>
+    </string-array>
+
+    <string-array name="profile_role">
+        <item>Citizen</item>
+        <item>Leader</item>
+        <!--<item>Sub Leader</item>-->
+    </string-array>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+
+    <string name="back">back</string>
+
+    <!--Screen languages-->
+    <!--terms and condition screen-->
+    <string name="tmc_terms">I accept the terms and condition</string>
+    <string name="tmc_accept">Next ></string>
+
+    <!--slider screen-->
+    <string name="slider_login">Login</string>
+    <string name="slider_register">Register</string>
+
+    <!--loginscreen-->
+    <string name="login_mobile_number">MOBILE</string>
+    <string name="login_aadhar">AADHAR</string>
+    <string name="login_or_login_with">OR LOGIN WITH</string>
+    <string name="login_donthave_account">Dont have account? Register here</string>
+    <string name="login_new_user">NEW USER</string>
+    <string name="login_guide">GUIDE</string>
+
+    <!--loginwithmobilenumber-->
+    <string name="lmn_mobile_number">Mobile Number</string>
+    <string name="lmn_mpin">MPIN</string>
+    <string name="lmn_login_with_otp">Login With OTP</string>
+    <string name="lmn_login_forgot_mpin">Forgot MPIN?</string>
+    <string name="lmn_login_button">Login</string>
+
+
+    <!--loginwithaadhar-->
+    <string name="lwa_aadhar_number">Aadhar Number</string>
+    <string name="lwa_or">OR</string>
+    <string name="lwa_scan">SCAN YOUR AADHAR</string>
+    <string name="lwa_continue">Continue</string>
+
+    <!--registrationscreen-->
+    <string name="reg_txt">Registration</string>
+    <string name="reg_otp_start">Lets start with the 10 digit mobile number verification</string>
+    <string name="reg_otp_send">We will send OTP to this number for verification</string>
+    <string name="reg_et_number">Number</string>
+    <string name="reg_note">However, this mobile number will be used by people for these reactions</string>
+    <string name="reg_next">Next</string>
+
+
+    <!--satyapanscreen-->
+    <string name="satya_title">Mobile number verification</string>
+    <string name="satya_subtitle1">Please enter the OTP sent to your alternate mobile number for verification</string>
+    <string name="satya_subtitle2">(If we fail to detect the MMS automatically, enter the given OTP)</string>
+    <string name="satya_et_otp">OTP</string>
+    <string name="satya_time">TIME</string>
+    <string name="satya_btn_next">NEXT</string>
+    <string name="satya_otp">Enter the 6 digit OTP</string>
+
+    <!--mpinsetscreen-->
+    <string name="mpin_set">Set MPIN</string>
+    <string name="mpin_account">Please set a 4 digit MPIN to keep your account safe from anonymity.</string>
+    <string name="mpin_set_kare">Enter MPIN</string>
+    <string name="mpin_purti_kare">Confirm MPIN</string>
+    <string name="mpin_profile_enrollment">MPIN will be used to make necessary changes in profiles and transactions</string>
+    <string name="mpin_accept">NEXT</string>
+
+    <!--profileinfoscreen-->
+    <string name="pis_full_name">Full Name</string>
+    <string name="pis_gender">Gender</string>
+    <string name="pis_gender_male">Male</string>
+    <string name="pis_gender_female">Female</string>
+    <string name="pis_gender_others">Other</string>
+    <string name="pis_date_of_birth">Date of Birth</string>
+    <string name="pis_state">State/UT</string>
+    <string name="pis_state_select">select</string>
+    <string name="pis_email">Email Address</string>
+    <string name="pis_alernate_mobile">Alternate Mobile Number</string>
+    <string name="pis_skip">Skip</string>
+    <string name="pis_proceed">SAVE &amp; PROCEED</string>
+
+
+    <!--homescreen-->
+    <string name="hs_tab_home">Home</string>
+    <string name="hs_tab_complain">Complain</string>
+    <string name="hs_tab_campaign">Campaign</string>
+    <string name="hs_tab_calendar">Calendar</string>
+
+
+    <!--homemenu-->
+    <string name="hs_menu_home">Home</string>
+    <string name="hs_menu_news">News &amp; Update</string>
+    <string name="hs_menu_dashboard">Dashboard</string>
+    <string name="hs_menu_myconnection">Connection</string>
+    <string name="hs_menu_mycommunication">Communication</string>
+    <string name="hs_menu_calendar">Calendar</string>
+    <string name="hs_menu_reward">Rewards &amp; Offers</string>
+    <string name="hs_menu_info">Info-Directory</string>
+    <string name="hs_menu_social">Social Buzz</string>
+    <string name="hs_menu_report">Report &amp; Status</string>
+    <string name="hs_menu_settings">Setting</string>
+    <string name="hs_menu_help">Help &amp; Support</string>
+    <string name="hs_menu_logout">Logout</string>
+
 </resources>
+
