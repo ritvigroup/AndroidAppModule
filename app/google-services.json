@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "826271831253",
+    "firebase_url": "https://kaajneeti-citizen.firebaseio.com",
+    "project_id": "kaajneeti-citizen",
+    "storage_bucket": "kaajneeti-citizen.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:826271831253:android:535176fb29867c29",
+        "android_client_info": {
+          "package_name": "com.ritvi.kaajneeti"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "826271831253-dsk88btc7b5juke7lmcgovrr997lbbmh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ritvi.kaajneeti",
+            "certificate_hash": "728aad18cc8dd9985b09a679fb5c0c0b81a1ccc6"
+          }
+        },
+        {
+          "client_id": "826271831253-km0s7fato5m14id3g96ij8hu5a2kiimt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgqr_hZd8RFjkMTG3_6sFUECRrGwSzxOc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "826271831253-km0s7fato5m14id3g96ij8hu5a2kiimt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -51,4 +51,11 @@ dependencies {
     compile 'com.github.tamir7.contacts:contacts:1.1.7'
     implementation 'com.google.code.gson:gson:2.8.0'
     compile 'com.sothree.slidinguppanel:library:3.4.0'
+
+    compile 'com.google.android.gms:play-services:11.8.0'
+    compile 'com.google.firebase:firebase-auth:11.8.0'
+    compile 'com.google.firebase:firebase-database:11.8.0'
+    compile 'com.google.firebase:firebase-messaging:11.8.0'
+    compile 'com.google.firebase:firebase-firestore:11.8.0'
 }
+apply plugin: 'com.google.gms.google-services'
