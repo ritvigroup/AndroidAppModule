@@ -7,8 +7,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,7 +40,6 @@ import com.facebook.share.widget.GameRequestDialog;
 import com.google.gson.Gson;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.TagUtils;
-import com.ritvi.kaajneeti.adapter.FacebookFriendsAdapter;
 import com.ritvi.kaajneeti.pojo.facebook.FacebookDataPOJO;
 
 import org.json.JSONArray;
@@ -285,7 +282,7 @@ public class FacebookAppInvitationActivity extends AppCompatActivity {
     private void getPosts() {
         Log.d(TagUtils.getTag(), "access token:-" + AccessToken.getCurrentAccessToken().getToken());
         Log.d(TagUtils.getTag(), "user id:-" + AccessToken.getCurrentAccessToken().getUserId());
-        attachAdapter();
+//        attachAdapter();
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(), "/" + AccessToken.getCurrentAccessToken().getUserId() + "/taggable_friends", null, HttpMethod.GET,
                 new GraphRequest.Callback() {
@@ -297,16 +294,16 @@ public class FacebookAppInvitationActivity extends AppCompatActivity {
         ).executeAsync();
     }
 
-    public void attachAdapter() {
-        facebookFriendsAdapter = new FacebookFriendsAdapter(this, null, facebookDataPOJOS);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        rv_friends.setHasFixedSize(true);
-        rv_friends.setAdapter(facebookFriendsAdapter);
-        rv_friends.setLayoutManager(linearLayoutManager);
-        rv_friends.setItemAnimator(new DefaultItemAnimator());
-    }
-
-    FacebookFriendsAdapter facebookFriendsAdapter;
+//    public void attachAdapter() {
+//        facebookFriendsAdapter = new FacebookFriendsAdapter(this, null, facebookDataPOJOS);
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+//        rv_friends.setHasFixedSize(true);
+//        rv_friends.setAdapter(facebookFriendsAdapter);
+//        rv_friends.setLayoutManager(linearLayoutManager);
+//        rv_friends.setItemAnimator(new DefaultItemAnimator());
+//    }
+//
+//    FacebookFriendsAdapter facebookFriendsAdapter;
     List<FacebookDataPOJO> facebookDataPOJOS = new ArrayList<>();
 
     public void parseData(String response) {

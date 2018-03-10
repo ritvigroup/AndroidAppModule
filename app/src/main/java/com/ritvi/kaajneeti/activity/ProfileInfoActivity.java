@@ -119,7 +119,7 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         userProfilePOJO = Pref.GetUserProfile(getApplicationContext());
-
+        Log.d(TagUtils.getTag(),"user profile:-"+userProfilePOJO.toString());
         autoFillForm();
 
         iv_calendar.setOnClickListener(new View.OnClickListener() {
@@ -240,9 +240,11 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
                     .dontAnimate()
                     .into(cv_profile_pic);
 
-            if(userProfilePOJO.getState()!=null||userProfilePOJO.getState().length()>0) {
-                tv_state_select.setText(userProfilePOJO.getState());
-            }
+//            if(userProfilePOJO.getState()!=null||userProfilePOJO.getState().length()>0) {
+//                tv_state_select.setText(userProfilePOJO.getState());
+//            }else{
+//                tv_state_select.setText("select");
+//            }
 
             et_birth_date.setText(userProfilePOJO.getDateOfBirth());
             et_email.setText(userProfilePOJO.getEmail());

@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.github.tamir7.contacts.Contacts;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
@@ -33,8 +34,10 @@ import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
-import com.ritvi.kaajneeti.fragment.MyConnectionFragment;
+import com.ritvi.kaajneeti.fragment.RewardsFragment;
+import com.ritvi.kaajneeti.fragment.homeactivity.MyConnectionFragment;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.testing.FacebookMainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +78,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home2);
-
+        Contacts.initialize(this);
         AppCenter.start(getApplication(), "43ff5ee0-d4c1-4ce4-bbd8-f5c988483281",
                 Analytics.class, Crashes.class);
 
@@ -91,6 +94,7 @@ public class HomeActivity extends AppCompatActivity {
 //                overridePendingTransition(R.anim.enter, R.anim.exit);
 //            }
 //        });
+
         inflateNewsFeeds();
 
 
@@ -134,6 +138,13 @@ public class HomeActivity extends AppCompatActivity {
                 .error(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
                 .into(cv_profile_pic);
+
+        cv_profile_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(HomeActivity.this, FacebookMainActivity.class));
+            }
+        });
 
         tv_profile_name.setText(userProfilePOJO.getFullname());
     }
@@ -241,10 +252,18 @@ public class HomeActivity extends AppCompatActivity {
                 showMyConnectionFragment();
                 break;
             case R.id.nav_act:
+                tv_whats_mind.callOnClick();
                 break;
             case R.id.nav_analyze:
                 break;
             case R.id.nav_elect:
+                startActivity(new Intent(HomeActivity.this,FavoriteLeaderActivity.class));
+                break;
+            case R.id.nav_setting:
+                startActivity(new Intent(HomeActivity.this,SettingActivity.class));
+                break;
+            case R.id.nav_earn:
+                showEarnFragment();
                 break;
             case R.id.nav_logout:
                 Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, false);
@@ -266,5 +285,15 @@ public class HomeActivity extends AppCompatActivity {
         transaction.addToBackStack(null);
         transaction.commit();
         fragmentList.add(myConnectionFragment);
+    }
+
+    public void showEarnFragment() {
+        RewardsFragment rewardsFragment = new RewardsFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_main, rewardsFragment, "rewardsFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(rewardsFragment);
     }
 }

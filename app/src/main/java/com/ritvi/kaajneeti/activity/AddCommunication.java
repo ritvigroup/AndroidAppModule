@@ -20,9 +20,9 @@ import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.adapter.CustomAutoCompleteAdapter;
 import com.ritvi.kaajneeti.adapter.ViewPagerAdapter;
-import com.ritvi.kaajneeti.fragment.ComplaintFragment;
-import com.ritvi.kaajneeti.fragment.InformationFragment;
-import com.ritvi.kaajneeti.fragment.SuggestionFragment;
+import com.ritvi.kaajneeti.fragment.adcommunication.ComplaintFragment;
+import com.ritvi.kaajneeti.fragment.adcommunication.InformationFragment;
+import com.ritvi.kaajneeti.fragment.adcommunication.SuggestionFragment;
 import com.ritvi.kaajneeti.pojo.leader.LeaderAPIResultPOJO;
 import com.ritvi.kaajneeti.pojo.leader.LeaderPOJO;
 import com.ritvi.kaajneeti.views.CustomViewPager;
@@ -145,9 +145,11 @@ public class AddCommunication extends LocalizationActivity implements WebService
         rb_complaint.setChecked(true);
         viewPager.setPagingEnabled(false );
     }
+
     ComplaintFragment complaintFragment;
     SuggestionFragment suggestionFragment;
     InformationFragment informationFragment;
+
     private void setupViewPager(ViewPager viewPager) {
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());

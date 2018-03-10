@@ -47,7 +47,7 @@ public class ApplicationSubmittedActivity extends LocalizationActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent=new Intent(ApplicationSubmittedActivity.this,CitizenHomeActivity.class);
+        Intent intent=new Intent(ApplicationSubmittedActivity.this,HomeActivity.class);
         startActivity(intent);
         finishAffinity();
     }

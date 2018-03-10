@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:gravity="center"
-    tools:context="com.ritvi.kaajneeti.activity.CitizenHomeActivity">
+    android:gravity="center">
 
     <include
         android:id="@+id/include_home"
