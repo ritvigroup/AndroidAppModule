@@ -136,8 +136,10 @@ public class RegistrationActivity extends LocalizationActivity implements View.O
             if (jsonObject.optString(Constants.API_STATUS).equals(Constants.API_SUCCESS)) {
                 startActivity(new Intent(RegistrationActivity.this, OtpVerificationActivity.class).putExtra("mobile_number", "+91" + et_phone_number.getText().toString()));
             } else {
-                ToastClass.showShortToast(getApplicationContext(), ToastClass.SOMETHING_WENT_WRONG);
+//                ToastClass.showShortToast(getApplicationContext(), ToastClass.SOMETHING_WENT_WRONG);
+                ToastClass.showShortToast(getApplicationContext(),jsonObject.optString("message"));
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             ToastClass.showShortToast(getApplicationContext(), ToastClass.NO_INTERNET_CONNECTION);

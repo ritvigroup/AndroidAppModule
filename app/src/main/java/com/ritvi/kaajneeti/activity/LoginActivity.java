@@ -422,7 +422,7 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
             //Calling a new function to handle signin
             handleSignInResult(result);
         }
-        tw_login_button.onActivityResult(requestCode, resultCode, data);
+//        tw_login_button.onActivityResult(requestCode, resultCode, data);
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
