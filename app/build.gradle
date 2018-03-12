@@ -40,6 +40,10 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
+
+    dexOptions{
+        javaMaxHeapSize "4g"
+    }
 }
 
 dependencies {
