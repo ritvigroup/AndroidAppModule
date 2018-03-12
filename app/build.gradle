@@ -18,9 +18,12 @@ repositories {
 
 android {
     compileSdkVersion 26
+
   dexOptions {
         javaMaxHeapSize "4G"
     }
+    
+     
     defaultConfig {
         applicationId "com.ritvi.kaajneeti"
         minSdkVersion 17
