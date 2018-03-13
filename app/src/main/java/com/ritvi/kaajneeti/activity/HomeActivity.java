@@ -204,7 +204,7 @@ public class HomeActivity extends AppCompatActivity {
         cv_profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this, ProfilePageActivity.class).putExtra("user_type", "citizen"));
+                startActivity(new Intent(HomeActivity.this, ProfilePageActivity.class));
             }
         });
 

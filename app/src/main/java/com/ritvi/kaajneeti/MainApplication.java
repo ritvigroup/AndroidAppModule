@@ -6,6 +6,10 @@ import android.content.res.Configuration;
 
 import com.akexorcist.localizationactivity.core.LocalizationApplicationDelegate;
 import com.github.tamir7.contacts.Contacts;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by sunil on 08-03-2018.
@@ -18,9 +22,9 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Contacts.initialize(this);
-//        final TwitterAuthConfig authConfig = new TwitterAuthConfig("odTUxR2y7jhDIb1ImhiGE4VDY", "FFKtAo7BeyDoEoUeRXZUq1FwHAjCHutOXZc4gcimEmG4cOMWKV");
-//
-//        Fabric.with(this, new Twitter(authConfig));
+        final TwitterAuthConfig authConfig = new TwitterAuthConfig("odTUxR2y7jhDIb1ImhiGE4VDY", "FFKtAo7BeyDoEoUeRXZUq1FwHAjCHutOXZc4gcimEmG4cOMWKV");
+
+        Fabric.with(this, new Twitter(authConfig));
     }
 
     @Override

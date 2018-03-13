@@ -206,7 +206,9 @@ public class SplashActivity extends LocalizationActivity {
 //        Log.d(TagUtils.getTag(),"DEVICE:-"+ android.os.Build.DEVICE);
 //        Log.d(TagUtils.getTag(),"MODEL:-"+ android.os.Build.MODEL);
 //        Log.d(TagUtils.getTag(),"PRODUCT:-"+ android.os.Build.PRODUCT);
-        Log.d(TagUtils.getTag(),"language:-"+ Locale.getDefault().getDisplayLanguage());
+
+        String def_english = Locale.getDefault().getLanguage();
+        Log.d(TagUtils.getTag(),"language:-"+ def_english);
         new CountDownTimer(3000,1000){
 
             @Override
@@ -236,7 +238,7 @@ public class SplashActivity extends LocalizationActivity {
             if (Pref.getPermanentBoolean(getApplicationContext(), StringUtils.INTO_COMPLETED, false)) {
                 startActivity(new Intent(SplashActivity.this, LoginActivity.class));
             } else {
-                startActivity(new Intent(SplashActivity.this, ChooseLanguageActivity.class));
+                startActivity(new Intent(SplashActivity.this, SliderActivity.class));
             }
         }
 
