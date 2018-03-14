@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -26,6 +27,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class SplashActivity extends LocalizationActivity {
@@ -204,6 +206,24 @@ public class SplashActivity extends LocalizationActivity {
 //        Log.d(TagUtils.getTag(),"DEVICE:-"+ android.os.Build.DEVICE);
 //        Log.d(TagUtils.getTag(),"MODEL:-"+ android.os.Build.MODEL);
 //        Log.d(TagUtils.getTag(),"PRODUCT:-"+ android.os.Build.PRODUCT);
+
+        String def_english = Locale.getDefault().getLanguage();
+        Log.d(TagUtils.getTag(),"language:-"+ def_english);
+        new CountDownTimer(3000,1000){
+
+            @Override
+            public void onTick(long l) {
+
+            }
+            @Override
+            public void onFinish() {
+                proceed();
+            }
+        }.start();
+
+    }
+
+    public void proceed(){
         getLocation();
 
         if (Pref.GetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, false)) {
@@ -218,7 +238,7 @@ public class SplashActivity extends LocalizationActivity {
             if (Pref.getPermanentBoolean(getApplicationContext(), StringUtils.INTO_COMPLETED, false)) {
                 startActivity(new Intent(SplashActivity.this, LoginActivity.class));
             } else {
-                startActivity(new Intent(SplashActivity.this, ChooseLanguageActivity.class));
+                startActivity(new Intent(SplashActivity.this, SliderActivity.class));
             }
         }
 

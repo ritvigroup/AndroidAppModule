@@ -32,17 +32,18 @@
             android:id="@+id/nav_elect"
             android:checked="true"
             android:icon="@drawable/ic_elect"
-            android:title="Elect" />
+            android:title="Elect &amp; Contribute" />
         <item
             android:id="@+id/nav_contribute"
             android:checked="true"
             android:icon="@drawable/ic_contribute"
-            android:title="Contribute" />
+            android:title="Contribute"
+            android:visible="false"/>
         <item
             android:id="@+id/nav_earn"
             android:checked="true"
             android:icon="@drawable/ic_dashboard"
-            android:title="Click &amp; Earn" />
+            android:title="Rewards &amp; Offers" />
     </group>
     <group
         android:id="@+id/group2"

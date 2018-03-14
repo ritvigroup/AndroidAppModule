@@ -96,9 +96,9 @@ public class LoginWithOTPActivity extends AppCompatActivity implements WebServic
     @Override
     public void onGetMsg(String apicall, String response) {
         Log.d(TagUtils.getTag(),apicall+":-"+response);
-        if(apicall.equals(Constants.CALL_LOGIN_API)){
+//        if(apicall.equals(Constants.CALL_LOGIN_API)){
             parseLoginResponse(response);
-        }
+//        }
     }
 
     public void parseLoginResponse(String response){

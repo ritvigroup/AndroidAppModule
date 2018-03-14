@@ -20,13 +20,14 @@
 
 
     <application
-        android:name="android.support.multidex.MultiDexApplication"
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:largeHeap="true">
 
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
@@ -82,7 +83,8 @@
         <activity android:name=".activity.FavoriteLeaderActivity"/>
         <activity android:name=".activity.ForgotMpinActivity"/>
         <activity android:name=".activity.ForgotMpinConfirmActivity"/>
-        <activity android:name=".activity.HomeActivity"/>
+        <activity android:name=".activity.HomeActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".activity.InformationSubmittedActivity"/>
         <activity android:name=".activity.LoginActivity"/>
         <activity android:name=".activity.LoginOtpConfirmActivity"/>
