@@ -53,7 +53,7 @@ public class KaajFragment extends Fragment implements WebServicesCallBack {
 
     private static final String CALL_NEWS_FEED = "call_news_feed";
     @BindView(R.id.ll_scroll)
-    LinearLayout ll_scroll;
+    LinearLayout ll_scroll ;
     @BindView(R.id.tv_whats_mind)
     TextView tv_whats_mind;
     @BindView(R.id.cv_profile_pic)
