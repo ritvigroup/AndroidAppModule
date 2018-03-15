@@ -45,6 +45,6 @@ public class ChooseLanguageActivity extends LocalizationActivity{
     public void changeLocale(final String lang) {
         Pref.SetStringPref(getApplicationContext(), StringUtils.SELECTED_LANGUAGE,lang);
         setLanguage(lang);
-        startActivity(new Intent(ChooseLanguageActivity.this,TermsConditionActivity.class));
+        startActivity(new Intent(ChooseLanguageActivity.this,SliderActivity.class));
     }
 }

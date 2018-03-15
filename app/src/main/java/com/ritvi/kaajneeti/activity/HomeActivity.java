@@ -1,6 +1,5 @@
 package com.ritvi.kaajneeti.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -8,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -34,17 +33,21 @@ import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
+import com.ritvi.kaajneeti.adapter.ViewPagerAdapter;
 import com.ritvi.kaajneeti.fragment.RewardsFragment;
+import com.ritvi.kaajneeti.fragment.homeactivity.InvestigateFragment;
+import com.ritvi.kaajneeti.fragment.homeactivity.KaajFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.MyConnectionFragment;
+import com.ritvi.kaajneeti.fragment.homeactivity.UniounFragment;
+import com.ritvi.kaajneeti.fragment.homeactivity.WithdrawalFragment;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
-import com.ritvi.kaajneeti.testing.FacebookMainActivity;
+import com.ritvi.kaajneeti.views.CustomViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -56,23 +59,28 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     @BindView(R.id.ic_ham)
     ImageView ic_ham;
-    UserProfilePOJO userProfilePOJO;
+    public UserProfilePOJO userProfilePOJO;
 //    @BindView(R.id.iv_search)
 //    ImageView iv_search;
-    @BindView(R.id.ll_scroll)
-    LinearLayout ll_scroll;
-    @BindView(R.id.tv_whats_mind)
-    TextView tv_whats_mind;
-    @BindView(R.id.cv_profile_pic)
-    CircleImageView cv_profile_pic;
-    @BindView(R.id.tv_profile_name)
-    TextView tv_profile_name;
     @BindView(R.id.et_search)
     EditText et_search;
     @BindView(R.id.iv_search_close)
     ImageView iv_search_close;
     @BindView(R.id.frame_main)
     FrameLayout frame_main;
+    @BindView(R.id.viewPager)
+    CustomViewPager viewPager;
+
+    @BindView(R.id.ll_kaaj)
+    LinearLayout ll_kaaj;
+    @BindView(R.id.ll_unioun)
+    LinearLayout ll_unioun;
+    @BindView(R.id.ll_investigate)
+    LinearLayout ll_investigate;
+    @BindView(R.id.ll_withdrawal)
+    LinearLayout ll_withdrawal;
+    @BindView(R.id.iv_speaker)
+    ImageView iv_speaker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +93,8 @@ public class HomeActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         userProfilePOJO = Pref.GetUserProfile(getApplicationContext());
         settingNavDrawer();
-
-
+        setupViewPager(viewPager);
+        viewPager.setPagingEnabled(false);
 //        iv_search.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -94,9 +102,6 @@ public class HomeActivity extends AppCompatActivity {
 //                overridePendingTransition(R.anim.enter, R.anim.exit);
 //            }
 //        });
-
-        inflateNewsFeeds();
-
 
         iv_search_close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,51 +130,53 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        tv_whats_mind.setOnClickListener(new View.OnClickListener() {
+        ll_kaaj.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewPager.setCurrentItem(0);
+            }
+        });
+
+        ll_unioun.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewPager.setCurrentItem(1);
+            }
+        });
+
+        ll_investigate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewPager.setCurrentItem(2);
+            }
+        });
+        ll_withdrawal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewPager.setCurrentItem(3);
+            }
+        });
+        iv_speaker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(HomeActivity.this,AddPostActivity.class));
             }
         });
+
         Log.d(TagUtils.getTag(),"user profile:-"+userProfilePOJO.toString());
-        Glide.with(getApplicationContext())
-                .load(userProfilePOJO.getProfileImage())
-                .placeholder(R.drawable.ic_default_profile_pic)
-                .error(R.drawable.ic_default_profile_pic)
-                .dontAnimate()
-                .into(cv_profile_pic);
-
-        cv_profile_pic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this, FacebookMainActivity.class));
-            }
-        });
-
-        tv_profile_name.setText(userProfilePOJO.getFullname());
     }
 
-    public void inflateNewsFeeds(){
-        for(int i=0;i<10;i++){
-            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.inflate_news_feeds, null);
-
-            CircleImageView cv_profile_pic=view.findViewById(R.id.cv_profile_pic);
-            TextView tv_profile_name=view.findViewById(R.id.tv_profile_name);
-
-            tv_profile_name.setText(userProfilePOJO.getFullname());
-            Glide.with(getApplicationContext())
-                    .load(userProfilePOJO.getProfileImage())
-                    .placeholder(R.drawable.ic_default_profile_pic)
-                    .error(R.drawable.ic_default_profile_pic)
-                    .dontAnimate()
-                    .into(cv_profile_pic);
-
-
-            ll_scroll.addView(view);
-
-        }
-
+    private void setupViewPager(ViewPager viewPager) {
+        KaajFragment kaajFragment=new KaajFragment();
+        UniounFragment uniounFragment=new UniounFragment();
+        InvestigateFragment investigateFragment=new InvestigateFragment();
+        WithdrawalFragment withdrawalFragment=new WithdrawalFragment();
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFrag(kaajFragment, "Rural");
+        adapter.addFrag(uniounFragment, "Urban");
+        adapter.addFrag(investigateFragment, "Urban");
+        adapter.addFrag(withdrawalFragment, "Urban");
+        viewPager.setAdapter(adapter);
     }
 
     private void settingNavDrawer() {
@@ -197,7 +204,7 @@ public class HomeActivity extends AppCompatActivity {
         cv_profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this, ProfilePageActivity.class).putExtra("user_type", "citizen"));
+                startActivity(new Intent(HomeActivity.this, ProfilePageActivity.class));
             }
         });
 
@@ -252,7 +259,7 @@ public class HomeActivity extends AppCompatActivity {
                 showMyConnectionFragment();
                 break;
             case R.id.nav_act:
-                tv_whats_mind.callOnClick();
+                startActivity(new Intent(HomeActivity.this,AddPostActivity.class));
                 break;
             case R.id.nav_analyze:
                 break;

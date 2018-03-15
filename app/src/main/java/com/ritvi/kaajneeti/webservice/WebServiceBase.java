@@ -9,6 +9,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
 
@@ -106,7 +107,8 @@ public class WebServiceBase extends AsyncTask<String, Void, String> {
             httppost = new HttpPost(url);
 
             httppost.setEntity(new UrlEncodedFormEntity(postParameters, "UTF-8"));
-
+            Log.d(TagUtils.getTag(),"httppost url:-"+httppost.getURI());
+            Log.d(TagUtils.getTag(),"httppost:-"+httppost.toString());
             // Execute HTTP Post Request
             response = httpClient.execute(httppost);
 
