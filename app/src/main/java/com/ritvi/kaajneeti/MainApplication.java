@@ -24,7 +24,7 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Contacts.initialize(this);
+        Contacts.initialize(this) ;
         final TwitterAuthConfig authConfig = new TwitterAuthConfig("odTUxR2y7jhDIb1ImhiGE4VDY", "FFKtAo7BeyDoEoUeRXZUq1FwHAjCHutOXZc4gcimEmG4cOMWKV");
 
         Fabric.with(this, new Twitter(authConfig));
