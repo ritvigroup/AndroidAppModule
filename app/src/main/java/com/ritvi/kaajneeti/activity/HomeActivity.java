@@ -25,9 +25,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.github.tamir7.contacts.Contacts;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
+import com.ritvi.kaajneeti.MainApplication;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.Pref;
@@ -164,6 +167,18 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         Log.d(TagUtils.getTag(),"user profile:-"+userProfilePOJO.toString());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(getApplication() instanceof MainApplication) {
+            MainApplication application = (MainApplication) getApplication();
+            Tracker mTracker = application.getDefaultTracker();
+            Log.d(TagUtils.getTag(),"local class name:-"+this.getLocalClassName());
+            mTracker.setScreenName(this.getLocalClassName());
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
     private void setupViewPager(ViewPager viewPager) {

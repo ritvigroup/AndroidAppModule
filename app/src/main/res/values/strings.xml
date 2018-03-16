@@ -4,6 +4,8 @@
     <string name="facebook_app_id">1042450195892927</string>
     <string name="fb_login_protocol_scheme">fb1042450195892927</string>
 
+    <string name="google_places_api_key">AIzaSyD_0g_gaQzNYafcBCKn1ErgLePEp2d-OGU</string>
+
     <string name="com.twitter.sdk.android.CONSUMER_KEY">odTUxR2y7jhDIb1ImhiGE4VDY</string>
     <string name="com.twitter.sdk.android.CONSUMER_SECRET">FFKtAo7BeyDoEoUeRXZUq1FwHAjCHutOXZc4gcimEmG4cOMWKV</string>
 
@@ -17,6 +19,27 @@
         <item>Leader</item>
         <!--<item>Sub Leader</item>-->
     </string-array>
+
+    <string-array name="activity">
+        <item>Feeling</item>
+        <item>Celebrating</item>
+        <item>Watching</item>
+        <item>Travelling to</item>
+        <item>Eating</item>
+        <item>Attending</item>
+        <item>Looking for</item>
+        <item>Listening to</item>
+        <item>Drinking</item>
+        <item>Thinking About</item>
+        <item>Supporting</item>
+        <item>Remembering</item>
+        <item>Reading</item>
+        <item>Playing</item>
+        <item>Making</item>
+        <item>Meeting</item>
+        <item>Agrees with</item>
+    </string-array>
+
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>

@@ -70,8 +70,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileInfoActivity extends LocalizationActivity implements DatePickerDialog.OnDateSetListener, WebServicesCallBack {
 
-    private int PICK_IMAGE_REQUEST = 101;
     private final int STATE_SELECT_INTENT = 102;
+    private int PICK_IMAGE_REQUEST = 101;
     private static final int CAMERA_REQUEST = 103;
     private static final String CALL_PROFILE_SAVE_API = "call_profile_save_api";
     private static final String CALL_PROFILE_GET_API = "call_profile_get_api";
