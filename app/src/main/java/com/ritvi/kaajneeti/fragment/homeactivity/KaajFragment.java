@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -54,7 +53,7 @@ public class KaajFragment extends Fragment implements WebServicesCallBack {
 
     private static final String CALL_NEWS_FEED = "call_news_feed";
     @BindView(R.id.ll_scroll)
-    LinearLayout ll_scroll;
+    LinearLayout ll_scroll ;
     @BindView(R.id.tv_whats_mind)
     TextView tv_whats_mind;
     @BindView(R.id.cv_profile_pic)
@@ -104,14 +103,14 @@ public class KaajFragment extends Fragment implements WebServicesCallBack {
                     .error(R.drawable.ic_default_profile_pic)
                     .dontAnimate()
                     .into(cv_profile_pic);
-
+            
             StringRequest req = new StringRequest("https://demo8911870.mockable.io/getnewsfeeds",
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             Log.d(TagUtils.getTag(), response.toString());
 //                        parseHomeNewsResponse(response);
-                            onGetMsg("", response.toString());
+                            onGetMsg("",response.toString());
                         }
                     }, new Response.ErrorListener() {
                 @Override
@@ -123,9 +122,9 @@ public class KaajFragment extends Fragment implements WebServicesCallBack {
             queue.add(req);
         }
     }
-
-    public void getNewsFeed() {
-        new GetWebServices(getActivity(), this, CALL_NEWS_FEED, true).execute("https://demo8911870.mockable.io/getnewsfeeds");
+    
+    public void getNewsFeed(){
+        new GetWebServices(getActivity(),this,CALL_NEWS_FEED,true).execute("https://demo8911870.mockable.io/getnewsfeeds");
     }
 
     public void inflateNewsFeeds() {
@@ -214,7 +213,7 @@ public class KaajFragment extends Fragment implements WebServicesCallBack {
             if (jsonObject.optString("status").equals("success")) {
                 JSONArray jsonArray = jsonObject.optJSONArray("feeds");
                 if (jsonArray.length() > 0) {
-                    for (int i = 0; i < jsonArray.length(); i++) {
+                    for(int i=0;i<jsonArray.length();i++){
                         inflateNewsFeed(jsonArray.optJSONObject(i).toString());
                     }
                 }
@@ -226,194 +225,108 @@ public class KaajFragment extends Fragment implements WebServicesCallBack {
 
     public void inflateNewsFeed(String news) {
 
-        try {
+        try{
 
-            JSONObject jsonObject = new JSONObject(news);
+            JSONObject jsonObject=new JSONObject(news);
 
             LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view = null;
-            if (jsonObject.optString("feedtype").equals("post")) {
+            if(jsonObject.optString("feedtype").equals("post")){
                 view = inflater.inflate(R.layout.inflate_news_feeds, null);
 
-                Gson gson = new Gson();
-                PostFeed postFeed = gson.fromJson(jsonObject.optJSONObject("data").toString(), PostFeed.class);
-                inflatePostFeed(view, postFeed);
-
-            } else if (jsonObject.optString("feedtype").equals("poll")) {
-                view = inflater.inflate(R.layout.inflate_poll_feed, null);
-
-                Gson gson = new Gson();
-                PollFeed pollFeed = gson.fromJson(jsonObject.optJSONObject("data").toString(), PollFeed.class);
-                inflatePollFeed(view, pollFeed);
-            } else if (jsonObject.optString("feedtype").equals("event")) {
-                view = inflater.inflate(R.layout.inflate_event_feed, null);
-
-                Gson gson = new Gson();
-                EventFeed eventFeed = gson.fromJson(jsonObject.optJSONObject("data").toString(), EventFeed.class);
-                inflateEventFeed(view, eventFeed);
+                Gson gson=new Gson();
+                PostFeed postFeed=gson.fromJson(jsonObject.optJSONObject("data").toString(),PostFeed.class);
+                inflatePostFeed(view,postFeed);
+                ll_scroll.addView(view);
             }
+//            else if(jsonObject.optString("feedtype").equals("poll")){
+//                Gson gson=new Gson();
+//                PollFeed pollFeed=gson.fromJson(jsonObject.optJSONObject("data").toString(),PollFeed.class);
+//                inflatePollFeed(view,pollFeed);
+//            }else if(jsonObject.optString("feedtype").equals("event")) {
+//                Gson gson = new Gson();
+//                EventFeed eventFeed = gson.fromJson(jsonObject.optJSONObject("data").toString(), EventFeed.class);
+//                inflateEventFeed(view, eventFeed);
+//            }
 
 
-        } catch (JSONException e) {
+
+        }catch (JSONException e){
             e.printStackTrace();
         }
     }
 
-    public void inflatePostFeed(View view, PostFeed postFeed) {
+    public void inflatePostFeed(View view,PostFeed postFeed){
         CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
         TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
-        ImageView iv_feed_image = view.findViewById(R.id.iv_feed_image);
-        TextView tv_description = view.findViewById(R.id.tv_description);
-//        ViewPager viewPager = view.findViewById(R.id.viewPager);
+        ImageView iv_feed_image= view.findViewById(R.id.iv_feed_image);
+        TextView tv_description= view.findViewById(R.id.tv_description);
 
-        tv_profile_name.setText(postFeed.getFirst_name() + " " + postFeed.getLast_name());
+        tv_profile_name.setText(postFeed.getFirst_name()+" "+postFeed.getLast_name());
         Glide.with(getActivity().getApplicationContext())
                 .load(postFeed.getProfile_pic())
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .error(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
                 .into(cv_profile_pic);
-
-
-        String profile_name = postFeed.getFirst_name() + " " + postFeed.getLast_name();
-        String profile_desc = "<b>" + profile_name + "</b>";
-
-        if (!postFeed.getFeeling().equals("")) {
-            profile_desc += " is feeling <b>" + postFeed.getFeeling() + "</b> ";
-        } else {
-            if (postFeed.getPostAttachments().size() > 0) {
-                if (postFeed.getPostAttachments().size() > 1) {
-                    profile_desc += " - added " + postFeed.getPostAttachments().size() + " Photos";
-                } else {
-                    profile_desc += " - added Photo";
-                }
-                Glide.with(getActivity())
-                        .load(postFeed.getPostAttachments().get(0).getAttachmentFile())
-                        .into(iv_feed_image);
-            } else {
-                iv_feed_image.setVisibility(View.GONE);
-//            viewPager.setVisibility(View.GONE);
+        String profile_name=postFeed.getFirst_name()+" "+postFeed.getLast_name();
+        String profile_desc="<b>"+profile_name+"</b>";
+        if(postFeed.getPostAttachments().size()>0){
+            if(postFeed.getPostAttachments().size()>1){
+                profile_desc+=" - added "+postFeed.getPostAttachments().size()+" Photos";
+            }else{
+                profile_desc+=" - added Photo";
             }
-        }
 
-        if (postFeed.getPostAttachments().size() > 0) {
             Glide.with(getActivity())
                     .load(postFeed.getPostAttachments().get(0).getAttachmentFile())
                     .into(iv_feed_image);
-        } else {
+        }else{
             iv_feed_image.setVisibility(View.GONE);
-//            viewPager.setVisibility(View.GONE);
         }
 
-
-        if (postFeed.getPostDescription().equals("")) {
+        if(postFeed.getPostDescription().equals("")){
             tv_description.setVisibility(View.GONE);
-        } else {
+        }else{
             tv_description.setText(postFeed.getPostDescription());
         }
-        if (postFeed.getTaggedusersList().size() > 0) {
-            if (postFeed.getTaggedusersList().size() == 1) {
-                profile_desc += " with <b>" + postFeed.getTaggedusersList().get(0).getFirst_name() + " " + postFeed.getTaggedusersList().get(0).getLast_name() + "</b>";
-            } else if (postFeed.getTaggedusersList().size() == 2) {
-                profile_desc += " with <b>" + postFeed.getTaggedusersList().get(0).getFirst_name() + " " + postFeed.getTaggedusersList().get(0).getLast_name() + "</b> and <b>" + postFeed.getTaggedusersList().get(1).getFirst_name() + " " + postFeed.getTaggedusersList().get(1).getLast_name() + "</b>";
-            } else if (postFeed.getTaggedusersList().size() > 2) {
-                profile_desc += " with <b>" + postFeed.getTaggedusersList().get(0).getFirst_name() + " " + postFeed.getTaggedusersList().get(0).getLast_name() + "</b> , <b>" + postFeed.getTaggedusersList().get(1).getFirst_name() + " " + postFeed.getTaggedusersList().get(1).getLast_name() + "</b> and <b>" + (postFeed.getTaggedusersList().size() - 2) + " others.</b>";
+        if(postFeed.getTaggedusersList().size()>0){
+            if(postFeed.getTaggedusersList().size()==1){
+                profile_desc+=" with <b>"+postFeed.getTaggedusersList().get(0).getFirst_name()+" "+postFeed.getTaggedusersList().get(0).getLast_name()+"</b>";
+            }else if(postFeed.getTaggedusersList().size()==2){
+                profile_desc+=" with <b>"+postFeed.getTaggedusersList().get(0).getFirst_name()+" "+postFeed.getTaggedusersList().get(0).getLast_name()+"</b> and <b>"+postFeed.getTaggedusersList().get(1).getFirst_name()+" "+postFeed.getTaggedusersList().get(1).getLast_name()+"</b>";
+            }else if(postFeed.getTaggedusersList().size()>2){
+                profile_desc+=" with <b>"+postFeed.getTaggedusersList().get(0).getFirst_name()+" "+postFeed.getTaggedusersList().get(0).getLast_name()+"</b> , <b>"+postFeed.getTaggedusersList().get(1).getFirst_name()+" "+postFeed.getTaggedusersList().get(1).getLast_name()+"</b> and <b>"+(postFeed.getTaggedusersList().size()-2)+" others.</b>";
             }
         }
 
 
-        tv_profile_name.setText(Html.fromHtml(profile_desc));
-        ll_scroll.addView(view);
-    }
 
-    public void inflatePollFeed(View view, PollFeed pollFeed) {
+        tv_profile_name.setText(Html.fromHtml(profile_desc));
+
+    }
+    public void inflatePollFeed(View view,PollFeed pollFeed){
         CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
         TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
-        final LinearLayout ll_votes = view.findViewById(R.id.ll_votes);
-        final LinearLayout ll_review = view.findViewById(R.id.ll_review);
 
-        tv_profile_name.setText(pollFeed.getFirstName() + " " + pollFeed.getLastName());
+        tv_profile_name.setText(pollFeed.getFirstName()+" "+pollFeed.getLastName());
         Glide.with(getActivity().getApplicationContext())
                 .load(pollFeed.getProfilePic())
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .error(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
                 .into(cv_profile_pic);
-
-        final Button btn_ans1 = view.findViewById(R.id.btn_ans1);
-        Button btn_ans2 = view.findViewById(R.id.btn_ans2);
-        Button btn_ans3 = view.findViewById(R.id.btn_ans3);
-        final Button btn_ans4 = view.findViewById(R.id.btn_ans4);
-
-        btn_ans1.setText(pollFeed.getPollAnsList().get(0).getPollAnswer());
-        btn_ans2.setText(pollFeed.getPollAnsList().get(1).getPollAnswer());
-        btn_ans3.setText(pollFeed.getPollAnsList().get(2).getPollAnswer());
-        btn_ans4.setText(pollFeed.getPollAnsList().get(3).getPollAnswer());
-
-        btn_ans1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ll_votes.setVisibility(View.GONE);
-                ll_review.setVisibility(View.VISIBLE);
-            }
-        });
-        btn_ans2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btn_ans1.callOnClick();
-            }
-        });
-
-        btn_ans3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btn_ans1.callOnClick();
-            }
-        });
-        btn_ans4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btn_ans1.callOnClick();
-            }
-        });
-//        for (PollAns pollAns : pollFeed.getPollAnsList()) {
-//            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            View pollAnsView = inflater.inflate(R.layout.inflate_poll_ans, ll_votes,true);
-//
-//            Button btn_ans = pollAnsView.findViewById(R.id.btn_ans);
-//            btn_ans.setText(pollAns.getPollAnswer());
-//            ll_votes.addView(btn_ans);
-//        }
-
-        ll_scroll.addView(view);
     }
-
-    public void inflateEventFeed(View view, EventFeed eventFeed) {
+    public void inflateEventFeed(View view,EventFeed eventFeed){
         CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
         TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
 
-        tv_profile_name.setText(eventFeed.getFirstName() + " " + eventFeed.getLastName());
+        tv_profile_name.setText(eventFeed.getFirstName()+" "+eventFeed.getLastName());
         Glide.with(getActivity().getApplicationContext())
                 .load(eventFeed.getProfilePic())
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .error(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
                 .into(cv_profile_pic);
-
-        ImageView iv_event_image=view.findViewById(R.id.iv_event_image);
-        TextView tv_name=view.findViewById(R.id.tv_name);
-        TextView tv_date=view.findViewById(R.id.tv_date);
-        TextView tv_place=view.findViewById(R.id.tv_place);
-
-        Glide.with(getActivity().getApplicationContext())
-                .load(eventFeed.getAttachments().get(0).getAttachmentFile())
-                .into(iv_event_image);
-
-        tv_name.setText(eventFeed.getEventName());
-        tv_place.setText(eventFeed.getEventLocation());
-        tv_date.setText(eventFeed.getStartDate()+" - "+eventFeed.getEndDate());
-
-
-        ll_scroll.addView(view);
     }
 }

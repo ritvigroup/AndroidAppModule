@@ -25,8 +25,6 @@ public class PostFeed {
     String PostLocation;
     @SerializedName("PostDescription")
     String PostDescription;
-    @SerializedName("feeling")
-    String feeling;
     @SerializedName("first_name")
     String first_name;
     @SerializedName("last_name")
@@ -150,13 +148,5 @@ public class PostFeed {
 
     public void setPostAttachments(List<PostAttachments> postAttachments) {
         this.postAttachments = postAttachments;
-    }
-
-    public String getFeeling() {
-        return feeling;
-    }
-
-    public void setFeeling(String feeling) {
-        this.feeling = feeling;
     }
 }

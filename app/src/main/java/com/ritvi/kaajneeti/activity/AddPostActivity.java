@@ -39,15 +39,7 @@ public class AddPostActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Toast.makeText(AddPostActivity.this, "onItemClick", Toast.LENGTH_SHORT).show();
-                if(position==2) {
-                    startActivity(new Intent(AddPostActivity.this, AddCommunication.class));
-                }else if(position==0){
-                    startActivity(new Intent(AddPostActivity.this,CreatePostActivity.class));
-                }else if(position==5){
-                    startActivity(new Intent(AddPostActivity.this,CreatePollActivity.class));
-                }else if(position==4){
-                    startActivity(new Intent(AddPostActivity.this,CreateEventActivity.class));
-                }
+                startActivity(new Intent(AddPostActivity.this,AddCommunication.class));
             }
         });
 
