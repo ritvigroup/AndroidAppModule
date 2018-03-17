@@ -58,7 +58,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(title)
                     .setContentText(messageBody)
-                    .setAutoCancel(true)
+                    .setAutoCancel(true )
                     .setSound(defaultSoundUri)
                     .setContentIntent(pendingIntent);
 
