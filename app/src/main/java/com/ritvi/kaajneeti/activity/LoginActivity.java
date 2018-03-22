@@ -268,7 +268,7 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
             nameValuePairs.add(new BasicNameValuePair("request_action", "LOGIN_WITH_MPIN"));
             nameValuePairs.add(new BasicNameValuePair("mobile", "+91" + et_mobile_number.getText().toString()));
             nameValuePairs.add(new BasicNameValuePair("mpin", et_mpin.getText().toString()));
-            new WebServiceBase(nameValuePairs, this, this, Constants.CALL_LOGIN_API, true).execute(WebServicesUrls.LOGIN_URL);
+            new WebServiceBase(nameValuePairs, this, this, Constants.CALL_LOGIN_API, true).execute(WebServicesUrls.LOGIN_MPIN);
         } else {
             ToastClass.showShortToast(getApplicationContext(), "Please Enter required fields properly");
         }
@@ -468,14 +468,17 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
         try {
             JSONObject jsonObject = new JSONObject(response);
             if (jsonObject.optString(Constants.API_STATUS).equals(Constants.API_SUCCESS)) {
-                String user_profile = jsonObject.optJSONObject("user_detail").optJSONObject("user_profile").toString();
+                String user_profile = jsonObject.optJSONObject("user_info").toString();
                 Gson gson = new Gson();
                 UserProfilePOJO userProfilePOJO = gson.fromJson(user_profile, UserProfilePOJO.class);
-                Pref.SaveUserProfile(LoginActivity.this, userProfilePOJO);
+//                Pref.SaveUserProfile(LoginActivity.this, user_profile);
+                Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
                 Pref.SetBooleanPref(LoginActivity.this, StringUtils.IS_LOGIN, true);
-                if (userProfilePOJO.getFullname().equals("") ||
-                        userProfilePOJO.getGender().equals("0") || userProfilePOJO.getDateOfBirth().equals("0000-00-00") ||
-                        userProfilePOJO.getState().equals("")) {
+                Constants.userProfilePojo=userProfilePOJO;
+                if(userProfilePOJO.getUserName().equals("")||userProfilePOJO.getUserEmail().equals("")||
+                        userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("")){
+                    Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,false);
+
                     Pref.SetBooleanPref(LoginActivity.this, StringUtils.IS_PROFILE_COMPLETED, false);
                     startActivity(new Intent(LoginActivity.this, ProfileInfoActivity.class));
                     finishAffinity();
@@ -560,7 +563,7 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
             reqEntity.addPart("name", new StringBody(name, Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("email", new StringBody(email, Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("mobile", new StringBody(mobile, Charset.forName(HTTP.UTF_8)));
-            new WebUploadService(reqEntity, this, this, Constants.CALL_UPLOAD_SOCIAL_DATA, false).execute(WebServicesUrls.LOGIN_URL);
+            new WebUploadService(reqEntity, this, this, Constants.CALL_UPLOAD_SOCIAL_DATA, false).execute(WebServicesUrls.LOGIN_WITH_SOCIAL);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

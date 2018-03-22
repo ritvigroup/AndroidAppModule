@@ -16,7 +16,7 @@ import android.widget.RadioGroup;
 import com.akexorcist.localizationactivity.ui.LocalizationActivity;
 import com.google.gson.Gson;
 import com.ritvi.kaajneeti.R;
-import com.ritvi.kaajneeti.Util.Pref;
+import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.adapter.CustomAutoCompleteAdapter;
 import com.ritvi.kaajneeti.adapter.ViewPagerAdapter;
@@ -220,7 +220,7 @@ public class AddCommunication extends LocalizationActivity implements WebService
     public void callLeaderAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("request_action", "MY_FAVOURITE_LEADER"));
-        nameValuePairs.add(new BasicNameValuePair("citizen_id", Pref.GetUserProfile(getApplicationContext()).getCitizenId()));
+        nameValuePairs.add(new BasicNameValuePair("citizen_id", Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
         new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, false).execute(WebServicesUrls.CITIZEN_PROCESS);
     }
 

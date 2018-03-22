@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
-import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.activity.AllLeaderActivity;
@@ -94,7 +93,7 @@ public class LeaderAdapter extends RecyclerView.Adapter<LeaderAdapter.ViewHolder
     public void callFavoriteAPI(LeaderPOJO leaderPOJO, final ImageView favorite_image) {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("request_action","SET_AS_FAVOURITE"));
-        nameValuePairs.add(new BasicNameValuePair("citizen_id", Pref.GetUserProfile(activity.getApplicationContext()).getCitizenId()));
+//        nameValuePairs.add(new BasicNameValuePair("citizen_id", Pref.GetUserProfile(activity.getApplicationContext()).getCitizenId()));
         nameValuePairs.add(new BasicNameValuePair("leader_profile_id",leaderPOJO.getUpLeaderId()));
 
         new AdapterWebService(activity, nameValuePairs, false, new MsgPassInterface() {

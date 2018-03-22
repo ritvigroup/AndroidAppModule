@@ -99,11 +99,10 @@ public class MpinActivity extends LocalizationActivity implements WebServicesCal
 
     public void callSetMpin() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("request_action", "SET_MPIN"));
         nameValuePairs.add(new BasicNameValuePair("mobile", mobile_number));
         nameValuePairs.add(new BasicNameValuePair("mpin", et_confirm_mpin.getText().toString()));
         nameValuePairs.add(new BasicNameValuePair("mpin_confirm", et_confirm_mpin.getText().toString()));
-        new WebServiceBase(nameValuePairs, this, this, Constants.CALL_MPIN_SET, true).execute(WebServicesUrls.REGISTER_URL);
+        new WebServiceBase(nameValuePairs, this, this, Constants.CALL_MPIN_SET, true).execute(WebServicesUrls.REGISTER_SET_MPIN);
     }
 
     @Override
@@ -118,15 +117,14 @@ public class MpinActivity extends LocalizationActivity implements WebServicesCal
         try{
             JSONObject jsonObject=new JSONObject(response);
             if(jsonObject.optString(Constants.API_STATUS).equals(Constants.API_SUCCESS)){
-                String user_profile=jsonObject.optJSONObject("user_detail").optJSONObject("user_profile").toString();
+                String user_profile=jsonObject.optJSONObject("user_info").toString();
                 Gson gson=new Gson();
                 UserProfilePOJO userProfilePOJO=gson.fromJson(user_profile,UserProfilePOJO.class);
-                Pref.SaveUserProfile(getApplicationContext(),userProfilePOJO);
+                Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
                 Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN,true);
-                if(userProfilePOJO.getFirstname().equals("")||userProfilePOJO.getMiddlename().equals("")||
-                        userProfilePOJO.getLastname().equals("")||userProfilePOJO.getFullname().equals("")||
-                        userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("0000-00-00")||
-                        userProfilePOJO.getState().equals("")){
+                Constants.userProfilePojo=userProfilePOJO;
+                if(userProfilePOJO.getUserName().equals("")||userProfilePOJO.getUserEmail().equals("")||
+                        userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("")){
                     Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,false);
                     startActivity(new Intent(getApplicationContext(), ProfileInfoActivity.class));
                     finishAffinity();

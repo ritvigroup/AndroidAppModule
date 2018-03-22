@@ -96,10 +96,10 @@ public class KaajFragment extends Fragment implements WebServicesCallBack {
             userProfilePOJO = homeActivity.userProfilePOJO;
 
 //            inflateNewsFeeds();
-            tv_profile_name.setText(userProfilePOJO.getFullname());
+            tv_profile_name.setText(userProfilePOJO.getUserName());
 
             Glide.with(getActivity().getApplicationContext())
-                    .load(userProfilePOJO.getProfileImage())
+                    .load(userProfilePOJO.getProfilePhotoPath())
                     .placeholder(R.drawable.ic_default_profile_pic)
                     .error(R.drawable.ic_default_profile_pic)
                     .dontAnimate()
@@ -191,9 +191,9 @@ public class KaajFragment extends Fragment implements WebServicesCallBack {
             CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
             TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
 
-            tv_profile_name.setText(userProfilePOJO.getFullname());
+            tv_profile_name.setText(userProfilePOJO.getUserName());
             Glide.with(getActivity().getApplicationContext())
-                    .load(userProfilePOJO.getProfileImage())
+                    .load(userProfilePOJO.getProfilePhotoPath())
                     .placeholder(R.drawable.ic_default_profile_pic)
                     .error(R.drawable.ic_default_profile_pic)
                     .dontAnimate()

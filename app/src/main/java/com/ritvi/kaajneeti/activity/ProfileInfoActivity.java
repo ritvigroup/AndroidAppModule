@@ -37,20 +37,16 @@ import com.ritvi.kaajneeti.Util.FileUtils;
 import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
-import com.ritvi.kaajneeti.pojo.user.ProfileRolePOJO;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
-import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 import com.ritvi.kaajneeti.webservice.WebUploadService;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
-import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
 
@@ -60,7 +56,6 @@ import java.io.FileOutputStream;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -106,7 +101,7 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
     Button btn_accept;
 
 
-    UserProfilePOJO userProfilePOJO;
+    UserProfilePOJO userProfilePOJO=Constants.userProfilePojo;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -118,7 +113,6 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        userProfilePOJO = Pref.GetUserProfile(getApplicationContext());
         Log.d(TagUtils.getTag(),"user profile:-"+userProfilePOJO.toString());
         autoFillForm();
 
@@ -218,7 +212,7 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
 
     public void autoFillForm() {
         try {
-            et_name.setText(userProfilePOJO.getFullname());
+            et_name.setText(userProfilePOJO.getUserName());
             switch (userProfilePOJO.getGender()) {
                 case "1":
                     rb_male.setChecked(true);
@@ -234,7 +228,7 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
             }
 
             Glide.with(getApplicationContext())
-                    .load(userProfilePOJO.getProfileImage())
+                    .load(userProfilePOJO.getProfilePhotoPath())
                     .placeholder(R.drawable.ic_default_profile_pic)
                     .error(R.drawable.ic_default_profile_pic)
                     .dontAnimate()
@@ -247,18 +241,10 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
 //            }
 
             et_birth_date.setText(userProfilePOJO.getDateOfBirth());
-            et_email.setText(userProfilePOJO.getEmail());
+            et_email.setText(userProfilePOJO.getUserEmail());
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public void callProfileGetAPI() {
-        ProfileRolePOJO profileRolePOJO = Pref.getProfileRolePOJO(Pref.GetStringPref(getApplicationContext(), StringUtils.C_PROFILE_DETAIL, ""));
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("request_action", "GET_PROFILE_CITIZEN"));
-        nameValuePairs.add(new BasicNameValuePair("c_profile_id", profileRolePOJO.getUpUserProfileId()));
-        new WebServiceBase(nameValuePairs, this, this, CALL_PROFILE_GET_API, true).execute(WebServicesUrls.EDIT_PROFILE);
     }
 
     public void callProfileSaveAPI() {
@@ -294,7 +280,7 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
             }
         }
 
-        UserProfilePOJO userProfilePOJO = Pref.GetUserProfile(this);
+        UserProfilePOJO userProfilePOJO = Constants.userProfilePojo;
         Log.d(TagUtils.getTag(), "profile image:-" + image_path_string);
         try {
             MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -306,13 +292,13 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
             }
             reqEntity.addPart("cover_profile_img", new StringBody(""));
             reqEntity.addPart("request_action", new StringBody("UPDATE_PROFILE_LOGIN"));
-            reqEntity.addPart("citizen_id", new StringBody(userProfilePOJO.getCitizenId()));
+            reqEntity.addPart("citizen_id", new StringBody(userProfilePOJO.getCitizenProfilePOJO().getUserProfileId()));
             reqEntity.addPart("fullname", new StringBody(et_name.getText().toString(), Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("gender", new StringBody(gender, Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("date_of_birth", new StringBody(date, Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("state", new StringBody(tv_state_select.getText().toString(), Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("email", new StringBody(et_email.getText().toString(), Charset.forName(HTTP.UTF_8)));
-            reqEntity.addPart("mobile", new StringBody(userProfilePOJO.getMobile(), Charset.forName(HTTP.UTF_8)));
+            reqEntity.addPart("mobile", new StringBody(userProfilePOJO.getUserMobile(), Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("alt_mobile", new StringBody(et_alternate_mobile.getText().toString(), Charset.forName(HTTP.UTF_8)));
             new WebUploadService(reqEntity, this, this, CALL_PROFILE_SAVE_API, false).execute(WebServicesUrls.CITIZEN_PROFILE);
         } catch (Exception e) {
@@ -440,7 +426,8 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
                 String user_profile = jsonObject.optJSONObject("user_detail").optJSONObject("user_profile").toString();
                 Gson gson = new Gson();
                 UserProfilePOJO userProfilePOJO = gson.fromJson(user_profile, UserProfilePOJO.class);
-                Pref.SaveUserProfile(getApplicationContext(), userProfilePOJO);
+                Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
+                Constants.userProfilePojo=userProfilePOJO;
                 Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, true);
                 Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED, true);
                 Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_SKIPPED, true);

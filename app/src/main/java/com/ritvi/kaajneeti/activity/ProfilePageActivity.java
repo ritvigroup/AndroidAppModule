@@ -27,8 +27,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.FileUtils;
-import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
@@ -60,7 +60,7 @@ public class ProfilePageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_page);
         ButterKnife.bind(this);
-        userProfilePOJO = Pref.GetUserProfile(getApplicationContext());
+        userProfilePOJO = Constants.userProfilePojo;
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -69,10 +69,10 @@ public class ProfilePageActivity extends AppCompatActivity {
 //        +" "+Pref.GetStringPref(getApplicationContext(), StringUtils.CITIZEN_LAST_NAME,""));
 
 
-        tv_user_name.setText(userProfilePOJO.getFullname());
+        tv_user_name.setText(userProfilePOJO.getUserName());
 
         Glide.with(getApplicationContext())
-                .load(userProfilePOJO.getProfileImage())
+                .load(userProfilePOJO.getProfilePhotoPath())
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .error(R.drawable.ic_default_profile_pic)
                 .dontAnimate()

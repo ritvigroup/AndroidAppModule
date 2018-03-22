@@ -100,6 +100,8 @@
                     android:layout_marginTop="20dp"
                     android:hint="OTP"
                     android:ems="10"
+                    android:layout_gravity="center"
+                    android:gravity="center"
                     android:imeOptions="actionDone"
                     android:inputType="number"
                     android:singleLine="true"

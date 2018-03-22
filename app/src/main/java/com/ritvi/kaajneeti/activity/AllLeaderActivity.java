@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import com.akexorcist.localizationactivity.ui.LocalizationActivity;
 import com.google.gson.Gson;
 import com.ritvi.kaajneeti.R;
-import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.adapter.LeaderAdapter;
@@ -69,7 +68,7 @@ public class AllLeaderActivity extends LocalizationActivity implements WebServic
     public void callLeaderAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("request_action", "ALL_LEADERS"));
-        nameValuePairs.add(new BasicNameValuePair("citizen_id", Pref.GetUserProfile(getApplicationContext()).getCitizenId()));
+//        nameValuePairs.add(new BasicNameValuePair("citizen_id", Pref.GetUserProfile(getApplicationContext()).getCitizenId()));
         nameValuePairs.add(new BasicNameValuePair("search_text", "a"));
         new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.CITIZEN_PROCESS);
     }
