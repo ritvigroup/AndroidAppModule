@@ -20,6 +20,10 @@ public class WebServicesUrls {
     public static final String LOGIN_MPIN= BASE_URL + "userlogin/loginMobileMpin";
     public static final String LOGIN_WITH_SOCIAL = BASE_URL + "userlogin/loginWithSocial";
     public static final String SAVE_EVENT = BASE_URL + "event/saveMyEvent";
+    public static final String POST_COMPLAINT = BASE_URL + "complaint/postMyComplaint";
+    public static final String UPDATE_PROFILE_AFTER_LOGIN = BASE_URL + "userprofile/updateProfileAfterLogin";
+    public static final String GET_MY_FAVORITE_LEADER = BASE_URL + "userprofile/getMyAllFavouriteLeader";
+    public static final String SET_MY_FAVORITE_LEADER = BASE_URL + "userprofile/setLeaderAsFavourite";
 
 
     public static final String EDIT_PROFILE= BASE_URL + "editprofile.php";
@@ -31,6 +35,8 @@ public class WebServicesUrls {
 
 
     public static final String SEARCH_USER_PROFILE= BASE_URL + "userprofile/searchAllUserProfiles";
+    public static final String SEARCH_LEADER_PROFILE= BASE_URL + "userprofile/searchLeaderProfiles";
+
     public static final String SAVE_MY_POLL= BASE_URL + "poll/saveMyPoll";
 
 

@@ -2,13 +2,11 @@ package com.ritvi.kaajneeti.pojo.user;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
 /**
- * Created by sunil on 21-03-2018.
+ * Created by sunil on 23-03-2018.
  */
 
-public class CitizenProfilePOJO implements Serializable {
+public class UserProfileLeaderPOJO {
     @SerializedName("UserProfileId")
     private String userProfileId;
     @SerializedName("UserId")

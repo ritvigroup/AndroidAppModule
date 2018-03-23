@@ -5,17 +5,25 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.akexorcist.localizationactivity.ui.LocalizationActivity;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.adapter.LeaderAdapter;
-import com.ritvi.kaajneeti.pojo.leader.LeaderAPIResultPOJO;
-import com.ritvi.kaajneeti.pojo.leader.LeaderPOJO;
+import com.ritvi.kaajneeti.pojo.ResponsePOJO;
+import com.ritvi.kaajneeti.pojo.user.LeaderProfilePOJO;
+import com.ritvi.kaajneeti.pojo.user.LeaderResultPOJO;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -36,7 +44,11 @@ public class AllLeaderActivity extends LocalizationActivity implements WebServic
     RecyclerView rv_leader;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    List<LeaderPOJO> leaderPOJOS = new ArrayList<>();
+    List<LeaderProfilePOJO> leaderPOJOS = new ArrayList<>();
+    @BindView(R.id.et_search)
+    EditText et_search;
+    @BindView(R.id.iv_search_close)
+    ImageView iv_search_close;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +62,36 @@ public class AllLeaderActivity extends LocalizationActivity implements WebServic
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         attachAdapter();
+
+        iv_search_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                et_search.setText("");
+            }
+        });
+        et_search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (et_search.getText().toString().length() > 0) {
+                    iv_search_close.setVisibility(View.VISIBLE);
+                    callLeaderAPI();
+                } else {
+                    iv_search_close.setVisibility(View.GONE);
+                }
+            }
+        });
+
+
         callLeaderAPI();
     }
 
@@ -67,10 +109,9 @@ public class AllLeaderActivity extends LocalizationActivity implements WebServic
 
     public void callLeaderAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("request_action", "ALL_LEADERS"));
-//        nameValuePairs.add(new BasicNameValuePair("citizen_id", Pref.GetUserProfile(getApplicationContext()).getCitizenId()));
-        nameValuePairs.add(new BasicNameValuePair("search_text", "a"));
-        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.CITIZEN_PROCESS);
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("search", et_search.getText().toString()));
+        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, false).execute(WebServicesUrls.SEARCH_LEADER_PROFILE);
     }
 
 
@@ -99,13 +140,16 @@ public class AllLeaderActivity extends LocalizationActivity implements WebServic
     public void parseALLLeaderResponse(String response) {
         leaderPOJOS.clear();
         try {
-            Gson gson = new Gson();
-            LeaderAPIResultPOJO leaderAPIResultPOJO = gson.fromJson(response, LeaderAPIResultPOJO.class);
-            if (leaderAPIResultPOJO.getStatus().equals("success")) {
-                leaderPOJOS.addAll(leaderAPIResultPOJO.getLeaderPOJOS());
+            ResponsePOJO<LeaderResultPOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponsePOJO<LeaderResultPOJO>>() {
+            }.getType());
+            leaderPOJOS.clear();
+            if (responsePOJO.getStatus().equals("success")) {
+                leaderPOJOS.addAll(responsePOJO.getResult().getLeaderProfilePOJOS());
             } else {
-                ToastClass.showShortToast(getApplicationContext(), "No Leader Found");
+                ToastClass.showShortToast(getApplicationContext(), responsePOJO.getMessage());
             }
+            leaderAdapter.notifyDataSetChanged();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -120,7 +120,9 @@
         <activity android:name=".activity.CreatePollActivity" />
         <activity android:name=".activity.CreateEventActivity" />
         <activity android:name=".activity.CreatePostActivity" />
-        <activity android:name=".activity.TagPeopleActivity"></activity>
+        <activity android:name=".activity.TagPeopleActivity" />
+        <activity android:name=".activity.AddComplaintDescriptionActivity"></activity>
+        <activity android:name=".activity.AddGroupComplaintDescriptionActivity"></activity>
     </application>
 
 </manifest>

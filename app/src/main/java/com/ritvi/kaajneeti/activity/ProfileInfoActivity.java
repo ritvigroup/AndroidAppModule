@@ -37,6 +37,8 @@ import com.ritvi.kaajneeti.Util.FileUtils;
 import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
+import com.ritvi.kaajneeti.Util.ToastClass;
+import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -54,10 +56,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -90,6 +89,9 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
     EditText et_email;
     @BindView(R.id.et_alternate_mobile)
     EditText et_alternate_mobile;
+    @BindView(R.id.et_mobile_number)
+    EditText et_mobile_number;
+
     @BindView(R.id.cv_profile_pic)
     CircleImageView cv_profile_pic;
 
@@ -242,6 +244,13 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
 
             et_birth_date.setText(userProfilePOJO.getDateOfBirth());
             et_email.setText(userProfilePOJO.getUserEmail());
+            et_alternate_mobile.setText(userProfilePOJO.getCitizenProfilePOJO().getAltMobile());
+            et_mobile_number.setText(userProfilePOJO.getCitizenProfilePOJO().getMobile());
+            if(userProfilePOJO.getCitizenProfilePOJO().getState().equals("")){
+                tv_state_select.setText("select");
+            }else{
+                tv_state_select.setText(userProfilePOJO.getCitizenProfilePOJO().getState());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -266,41 +275,69 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
             }
         }
 
-        String date = "";
+        String date = UtilityFunction.getConvertedDate(et_birth_date.getText().toString());
 
 
-        if (et_birth_date.getText().toString().length() > 0) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            try {
-                Date d1 = simpleDateFormat.parse(et_birth_date.getText().toString());
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                date = sdf.format(d1);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (et_birth_date.getText().toString().length() > 0) {
+//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+//            try {
+//                Date d1 = simpleDateFormat.parse(et_birth_date.getText().toString());
+//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//                date = sdf.format(d1);
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
-        UserProfilePOJO userProfilePOJO = Constants.userProfilePojo;
+        Log.d(TagUtils.getTag(),"converted b'day:-"+date);
+
         Log.d(TagUtils.getTag(), "profile image:-" + image_path_string);
+
         try {
             MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
             if (image_path_string.length() > 0 && new File(image_path_string).exists()) {
                 FileBody bin1 = new FileBody(new File(image_path_string));
-                reqEntity.addPart("profile_img", bin1);
+                reqEntity.addPart("photo", bin1);
             } else {
-                reqEntity.addPart("profile_img", new StringBody(""));
+                reqEntity.addPart("photo", new StringBody(""));
             }
-            reqEntity.addPart("cover_profile_img", new StringBody(""));
-            reqEntity.addPart("request_action", new StringBody("UPDATE_PROFILE_LOGIN"));
-            reqEntity.addPart("citizen_id", new StringBody(userProfilePOJO.getCitizenProfilePOJO().getUserProfileId()));
+            reqEntity.addPart("user_id", new StringBody(userProfilePOJO.getCitizenProfilePOJO().getUserId()));
+            reqEntity.addPart("user_profile_id", new StringBody(userProfilePOJO.getCitizenProfilePOJO().getUserProfileId()));
             reqEntity.addPart("fullname", new StringBody(et_name.getText().toString(), Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("gender", new StringBody(gender, Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("date_of_birth", new StringBody(date, Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("state", new StringBody(tv_state_select.getText().toString(), Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("email", new StringBody(et_email.getText().toString(), Charset.forName(HTTP.UTF_8)));
-            reqEntity.addPart("mobile", new StringBody(userProfilePOJO.getUserMobile(), Charset.forName(HTTP.UTF_8)));
+            reqEntity.addPart("mobile", new StringBody(et_mobile_number.getText().toString(), Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("alt_mobile", new StringBody(et_alternate_mobile.getText().toString(), Charset.forName(HTTP.UTF_8)));
-            new WebUploadService(reqEntity, this, this, CALL_PROFILE_SAVE_API, false).execute(WebServicesUrls.CITIZEN_PROFILE);
+            new WebUploadService(reqEntity, this, new WebServicesCallBack() {
+                @Override
+                public void onGetMsg(String apicall, String response) {
+                    Log.d(TagUtils.getTag(),apicall+":-"+response);
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        if (jsonObject.optString(Constants.API_STATUS).equals(Constants.API_SUCCESS)) {
+                            String user_profile = jsonObject.optJSONObject("result").toString();
+                            Gson gson = new Gson();
+                            UserProfilePOJO userProfilePOJO = gson.fromJson(user_profile, UserProfilePOJO.class);
+                            Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
+                            Constants.userProfilePojo=userProfilePOJO;
+                            Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, true);
+                            Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED, true);
+                            Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_SKIPPED, true);
+                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                            finishAffinity();
+                        }
+                        ToastClass.showShortToast(getApplicationContext(),jsonObject.optString("message"));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TagUtils.getTag(), "error:-" + e.toString());
+                    }
+
+
+                }
+            }, CALL_PROFILE_SAVE_API, true).execute(WebServicesUrls.UPDATE_PROFILE_AFTER_LOGIN);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -309,7 +346,7 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+        String date = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
         et_birth_date.setText(date);
     }
 
@@ -420,6 +457,7 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
     }
 
     public void parseProfileResponse(String response) {
+        Log.d(TagUtils.getTag(),"profile update response:-"+response);
         try {
             JSONObject jsonObject = new JSONObject(response);
             if (jsonObject.optString("status").equals("success")) {

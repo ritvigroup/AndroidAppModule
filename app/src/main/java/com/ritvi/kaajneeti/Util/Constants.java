@@ -16,6 +16,10 @@ public class Constants {
     public static final int GENDER_FEMALE=2;
     public static final int GENDER_OTHER=3;
 
+    public static final int COMPLAINT_SELF=1;
+    public static final int COMPLAINT_GROUP=2;
+    public static final int COMPLAINT_OTHER=3;
+
     public static final int USER_TYPE_NONE=0;
     public static UserProfilePOJO userProfilePojo = null;
 

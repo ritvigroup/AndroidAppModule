@@ -15,6 +15,7 @@ import android.widget.RadioGroup;
 
 import com.akexorcist.localizationactivity.ui.LocalizationActivity;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
@@ -23,8 +24,8 @@ import com.ritvi.kaajneeti.adapter.ViewPagerAdapter;
 import com.ritvi.kaajneeti.fragment.adcommunication.ComplaintFragment;
 import com.ritvi.kaajneeti.fragment.adcommunication.InformationFragment;
 import com.ritvi.kaajneeti.fragment.adcommunication.SuggestionFragment;
-import com.ritvi.kaajneeti.pojo.leader.LeaderAPIResultPOJO;
-import com.ritvi.kaajneeti.pojo.leader.LeaderPOJO;
+import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
+import com.ritvi.kaajneeti.pojo.user.favorite.FavoriteResultPOJO;
 import com.ritvi.kaajneeti.views.CustomViewPager;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
@@ -81,7 +82,7 @@ public class AddCommunication extends LocalizationActivity implements WebService
 
     String leader_id = "";
 
-    List<LeaderPOJO> leaderPOJOS = new ArrayList<>();
+    List<FavoriteResultPOJO> leaderPOJOS = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,7 +116,7 @@ public class AddCommunication extends LocalizationActivity implements WebService
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (leaderPOJOS.size() > 0) {
-                    leader_id = leaderPOJOS.get(i).getUpLeaderId();
+                    leader_id = leaderPOJOS.get(i).getUserProfileDetailPOJO().getUserProfileLeaderPOJO().getUserProfileId();
                 }
             }
         });
@@ -145,6 +146,8 @@ public class AddCommunication extends LocalizationActivity implements WebService
         rb_complaint.setChecked(true);
         viewPager.setPagingEnabled(false );
     }
+
+
 
     ComplaintFragment complaintFragment;
     SuggestionFragment suggestionFragment;
@@ -219,9 +222,9 @@ public class AddCommunication extends LocalizationActivity implements WebService
 
     public void callLeaderAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("request_action", "MY_FAVOURITE_LEADER"));
-        nameValuePairs.add(new BasicNameValuePair("citizen_id", Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
-        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, false).execute(WebServicesUrls.CITIZEN_PROCESS);
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePojo.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
+        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
     }
 
     @Override
@@ -249,13 +252,15 @@ public class AddCommunication extends LocalizationActivity implements WebService
     public void parseALLLeaderResponse(String response) {
         leaderPOJOS.clear();
         try {
-            Gson gson = new Gson();
-            LeaderAPIResultPOJO leaderAPIResultPOJO = gson.fromJson(response, LeaderAPIResultPOJO.class);
-            if (leaderAPIResultPOJO.getStatus().equals("success")) {
-                leaderPOJOS.addAll(leaderAPIResultPOJO.getLeaderPOJOS());
-                adapter = new CustomAutoCompleteAdapter(this, (ArrayList<LeaderPOJO>) leaderPOJOS);
+            ResponseListPOJO<FavoriteResultPOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponseListPOJO<FavoriteResultPOJO>>() {
+            }.getType());
+            leaderPOJOS.clear();
+            if (responsePOJO.getStatus().equals("success")) {
+                leaderPOJOS.addAll(responsePOJO.getResultList());
+                adapter = new CustomAutoCompleteAdapter(this, (ArrayList<FavoriteResultPOJO>) leaderPOJOS);
                 auto_fav_list.setAdapter(adapter);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

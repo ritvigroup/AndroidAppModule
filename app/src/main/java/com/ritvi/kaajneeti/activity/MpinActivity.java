@@ -117,7 +117,7 @@ public class MpinActivity extends LocalizationActivity implements WebServicesCal
         try{
             JSONObject jsonObject=new JSONObject(response);
             if(jsonObject.optString(Constants.API_STATUS).equals(Constants.API_SUCCESS)){
-                String user_profile=jsonObject.optJSONObject("user_info").toString();
+                String user_profile=jsonObject.optJSONObject("result").toString();
                 Gson gson=new Gson();
                 UserProfilePOJO userProfilePOJO=gson.fromJson(user_profile,UserProfilePOJO.class);
                 Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);

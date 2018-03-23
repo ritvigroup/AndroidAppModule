@@ -1,14 +1,13 @@
-package com.ritvi.kaajneeti.pojo.user;
+package com.ritvi.kaajneeti.pojo.user.favorite;
 
 import com.google.gson.annotations.SerializedName;
-
-import java.io.Serializable;
+import com.ritvi.kaajneeti.pojo.user.CitizenProfilePOJO;
 
 /**
- * Created by sunil on 31-01-2018.
+ * Created by sunil on 23-03-2018.
  */
 
-public class UserProfilePOJO implements Serializable{
+public class UserInfoPOJO {
     @SerializedName("UserId")
     private String userId;
     @SerializedName("UserUniqueId")
@@ -48,30 +47,7 @@ public class UserProfilePOJO implements Serializable{
     @SerializedName("LinkedinProfileId")
     private String linkedinProfileId;
     @SerializedName("UserProfileCitizen")
-    private CitizenProfilePOJO citizenProfilePOJO;
-
-    public UserProfilePOJO(String userId, String userUniqueId, String loginDeviceToken, String userStatus, String loginStatus, String userName, String userEmail, String userMobile, String addedOn, String updatedOn, String dateOfBirth, String gender, String profilePhotoId, String profilePhotoPath, String coverPhotoId, String coverPhotoPath, String facebookProfileId, String googleProfileId, String linkedinProfileId, CitizenProfilePOJO citizenProfilePOJO) {
-        this.userId = userId;
-        this.userUniqueId = userUniqueId;
-        this.loginDeviceToken = loginDeviceToken;
-        this.userStatus = userStatus;
-        this.loginStatus = loginStatus;
-        this.userName = userName;
-        this.userEmail = userEmail;
-        this.userMobile = userMobile;
-        this.addedOn = addedOn;
-        this.updatedOn = updatedOn;
-        this.dateOfBirth = dateOfBirth;
-        this.gender = gender;
-        this.profilePhotoId = profilePhotoId;
-        this.profilePhotoPath = profilePhotoPath;
-        this.coverPhotoId = coverPhotoId;
-        this.coverPhotoPath = coverPhotoPath;
-        this.facebookProfileId = facebookProfileId;
-        this.googleProfileId = googleProfileId;
-        this.linkedinProfileId = linkedinProfileId;
-        this.citizenProfilePOJO = citizenProfilePOJO;
-    }
+    private CitizenProfilePOJO userProfileCitizen;
 
     public String getUserId() {
         return userId;
@@ -225,19 +201,11 @@ public class UserProfilePOJO implements Serializable{
         this.linkedinProfileId = linkedinProfileId;
     }
 
-    public CitizenProfilePOJO getCitizenProfilePOJO() {
-        return citizenProfilePOJO;
+    public CitizenProfilePOJO getUserProfileCitizen() {
+        return userProfileCitizen;
     }
 
-    public void setCitizenProfilePOJO(CitizenProfilePOJO citizenProfilePOJO) {
-        this.citizenProfilePOJO = citizenProfilePOJO;
-    }
-
-    @Override
-    public String toString() {
-        return "UserProfilePOJO{" +
-                "userId='" + userId + '\'' +
-                ", userUniqueId='" + userUniqueId + '\'' +
-                '}';
+    public void setUserProfileCitizen(CitizenProfilePOJO userProfileCitizen) {
+        this.userProfileCitizen = userProfileCitizen;
     }
 }

@@ -5,7 +5,9 @@ import android.content.Context;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by sunil on 01-03-2018.
@@ -27,4 +29,27 @@ public class UtilityFunction {
 
         return nameValuePairs;
     }
+
+
+    public static String getCurrentDate(){
+        Date d=new Date();
+        SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
+        String formatted_date=sdf.format(d);
+        return formatted_date;
+    }
+
+    public static String getConvertedDate(String date){
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            Date d = sdf.parse(date);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String formatted_date = simpleDateFormat.format(d);
+            return formatted_date;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
 }

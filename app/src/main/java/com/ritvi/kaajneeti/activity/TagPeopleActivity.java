@@ -146,16 +146,20 @@ public class TagPeopleActivity extends AppCompatActivity {
         new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
             @Override
             public void onGetMsg(String apicall, String response) {
-                ResponsePOJO<SearchUserProfileCitizen> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponsePOJO<SearchUserProfileCitizen>>() {
-                }.getType());
-                userProfilePOJOS.clear();
-                if (responsePOJO.getStatus().equals("success")) {
-                    userProfilePOJOS.addAll(responsePOJO.getResult().getSearchUserPOJOList());
+                try {
+                    ResponsePOJO<SearchUserProfileCitizen> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponsePOJO<SearchUserProfileCitizen>>() {
+                    }.getType());
+                    userProfilePOJOS.clear();
+                    if (responsePOJO.getStatus().equals("success")) {
+                        userProfilePOJOS.addAll(responsePOJO.getResult().getSearchUserPOJOList());
 
-                } else {
-                    ToastClass.showShortToast(getApplicationContext(), responsePOJO.getMessage());
+                    } else {
+                        ToastClass.showShortToast(getApplicationContext(), responsePOJO.getMessage());
+                    }
+                    tagSearchPeopleAdapter.notifyDataSetChanged();
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
-                tagSearchPeopleAdapter.notifyDataSetChanged();
             }
         }, "CALL_SEARCH_PEOPLE_API", false).execute(WebServicesUrls.SEARCH_USER_PROFILE);
     }
