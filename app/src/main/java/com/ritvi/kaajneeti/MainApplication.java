@@ -34,7 +34,6 @@ public class MainApplication extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(localizationDelegate.attachBaseContext(base));
-
     }
 
     @Override
@@ -52,7 +51,6 @@ public class MainApplication extends Application {
         if (sTracker == null) {
             sTracker = sAnalytics.newTracker(R.xml.global_tracker);
         }
-
         return sTracker;
     }
 }

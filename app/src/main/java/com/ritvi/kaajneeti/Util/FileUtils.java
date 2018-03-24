@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 
 public class FileUtils {
-    public static String BASE_FILE_PATH = Environment.getExternalStorageDirectory().toString() + File.separator + "cms";
+    public static String BASE_FILE_PATH = Environment.getExternalStorageDirectory().toString() + File.separator + "kaajneeti";
 
     public static String getBaseFilePath() {
         File f = new File(BASE_FILE_PATH);

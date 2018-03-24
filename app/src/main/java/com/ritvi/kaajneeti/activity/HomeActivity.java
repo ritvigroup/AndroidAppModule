@@ -62,7 +62,7 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     @BindView(R.id.ic_ham)
     ImageView ic_ham;
-    public UserProfilePOJO userProfilePOJO;
+    public UserProfilePOJO userProfilePOJO=Constants.userProfilePojo;
 //    @BindView(R.id.iv_search)
 //    ImageView iv_search;
     @BindView(R.id.et_search)
@@ -94,10 +94,10 @@ public class HomeActivity extends AppCompatActivity {
                 Analytics.class, Crashes.class);
 
         ButterKnife.bind(this);
-        userProfilePOJO = Pref.GetUserProfile(getApplicationContext());
         settingNavDrawer();
         setupViewPager(viewPager);
         viewPager.setPagingEnabled(false);
+
 //        iv_search.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -205,12 +205,12 @@ public class HomeActivity extends AppCompatActivity {
 
         View headerLayout = nvDrawer.inflateHeaderView(R.layout.home_nav_header);
         TextView tv_header_title = headerLayout.findViewById(R.id.tv_header_title);
-        tv_header_title.setText(userProfilePOJO.getFullname());
+        tv_header_title.setText(userProfilePOJO.getUserName());
 
         ImageView cv_profile_pic = headerLayout.findViewById(R.id.cv_profile_pic);
 
         Glide.with(getApplicationContext())
-                .load(userProfilePOJO.getProfileImage())
+                .load(userProfilePOJO.getProfilePhotoPath())
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .error(R.drawable.ic_default_profile_pic)
                 .dontAnimate()

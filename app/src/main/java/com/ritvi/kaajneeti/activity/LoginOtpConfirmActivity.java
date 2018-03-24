@@ -184,12 +184,10 @@ public class LoginOtpConfirmActivity extends AppCompatActivity implements WebSer
                 String user_profile=jsonObject.optJSONObject("user_detail").optJSONObject("user_profile").toString();
                 Gson gson=new Gson();
                 UserProfilePOJO userProfilePOJO=gson.fromJson(user_profile,UserProfilePOJO.class);
-                Pref.SaveUserProfile(getApplicationContext(),userProfilePOJO);
+                Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
                 Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN,true);
-                if(userProfilePOJO.getFirstname().equals("")||userProfilePOJO.getMiddlename().equals("")||
-                        userProfilePOJO.getLastname().equals("")||userProfilePOJO.getFullname().equals("")||
-                        userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("0000-00-00")||
-                        userProfilePOJO.getState().equals("")){
+                if(userProfilePOJO.getUserName().equals("")||userProfilePOJO.getUserEmail().equals("")||
+                        userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("")){
                     Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,false);
                     startActivity(new Intent(getApplicationContext(), ProfileInfoActivity.class));
                     finishAffinity();

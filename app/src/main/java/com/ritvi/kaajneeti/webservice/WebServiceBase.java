@@ -71,6 +71,7 @@ public class WebServiceBase extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
         try {
             jResult = httpCall(params[0], nameValuePairs);
+            Log.d(TagUtils.getTag(),msg+":-"+jResult);
         } catch (Exception e) {
             if (progressDialog != null) {
                 progressDialog.dismiss();
@@ -108,7 +109,7 @@ public class WebServiceBase extends AsyncTask<String, Void, String> {
 
             httppost.setEntity(new UrlEncodedFormEntity(postParameters, "UTF-8"));
             Log.d(TagUtils.getTag(),"httppost url:-"+httppost.getURI());
-            Log.d(TagUtils.getTag(),"httppost:-"+httppost.toString());
+//            Log.d(TagUtils.getTag(),"httppost:-"+httppost.toString());
             // Execute HTTP Post Request
             response = httpClient.execute(httppost);
 

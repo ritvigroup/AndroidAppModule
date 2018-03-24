@@ -16,11 +16,14 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.akexorcist.localizationactivity.ui.LocalizationActivity;
+import com.google.gson.Gson;
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.GPSTracker;
 import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -227,6 +230,7 @@ public class SplashActivity extends LocalizationActivity {
         getLocation();
 
         if (Pref.GetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, false)) {
+            Constants.userProfilePojo=new Gson().fromJson(Pref.GetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,""), UserProfilePOJO.class);
             if (Pref.GetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED, false) ||
                     Pref.GetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_SKIPPED, false)) {
                 startActivity(new Intent(SplashActivity.this, HomeActivity.class));

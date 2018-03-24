@@ -15,13 +15,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.akexorcist.localizationactivity.ui.LocalizationActivity;
-import com.google.gson.Gson;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
-import com.ritvi.kaajneeti.Util.Pref;
-import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -92,11 +88,10 @@ public class OtpVerificationActivity extends LocalizationActivity implements Web
     public void validateMobileOTP() {
         if (et_otp.getText().length() == 6) {
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("request_action", "VALIDATE_MOBILE_OTP"));
             nameValuePairs.add(new BasicNameValuePair("device_token", ""));
             nameValuePairs.add(new BasicNameValuePair("mobile", mobile_number));
             nameValuePairs.add(new BasicNameValuePair("otp", et_otp.getText().toString()));
-            new WebServiceBase(nameValuePairs, this, this, Constants.CALL_OTP_VERIFIED, true).execute(WebServicesUrls.REGISTER_URL);
+            new WebServiceBase(nameValuePairs, this, this, Constants.CALL_OTP_VERIFIED, true).execute(WebServicesUrls.REGISTER_VALIDATE_MOBILE_OTP);
         } else {
             ToastClass.showShortToast(getApplicationContext(),"Please Enter Correct OTP");
         }
@@ -122,7 +117,6 @@ public class OtpVerificationActivity extends LocalizationActivity implements Web
 
     @Override
     public void onGetMsg(String apicall, String response) {
-        TagUtils.printResponse(apicall, response);
         if(apicall.equals(Constants.CALL_OTP_VERIFIED)){
             parseOTPVerifiedResponse(response);
         }
@@ -132,14 +126,13 @@ public class OtpVerificationActivity extends LocalizationActivity implements Web
         try {
             JSONObject jsonObject=new JSONObject(response);
             if(jsonObject.optString(Constants.API_STATUS).equals(Constants.API_SUCCESS)){
-                String userprofile=jsonObject.optJSONObject("user_detail").optJSONObject("user_profile").toString();
-                Gson gson=new Gson();
-                UserProfilePOJO userProfilePOJO=gson.fromJson(userprofile,UserProfilePOJO.class);
-                Pref.SaveUserProfile(getApplicationContext(),userProfilePOJO);
+//                String userprofile=jsonObject.optJSONObject("user_info").toString();
+//                Gson gson=new Gson();
+//                UserProfilePOJO userProfilePOJO=gson.fromJson(userprofile,UserProfilePOJO.class);
+//                Pref.SaveUserProfile(getApplicationContext(),userProfilePOJO);
                 startActivity(new Intent(OtpVerificationActivity.this,MpinActivity.class).putExtra("mobile_number",mobile_number));
-            }else{
-                ToastClass.showShortToast(getApplicationContext(),"wrong otp");
             }
+            ToastClass.showShortToast(getApplicationContext(),jsonObject.optString("message"));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 
 import org.apache.http.HttpResponse;
@@ -62,6 +63,7 @@ public class WebUploadService extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
         try {
             jResult = httpCall(params[0], reqEntity);
+            Log.d(TagUtils.getTag(),msg+":-"+jResult);
         } catch (Exception e) {
             if (progressDialog != null) {
                 progressDialog.dismiss();

@@ -19,11 +19,11 @@ repositories {
 android {
     compileSdkVersion 26
 
-  dexOptions {
+    dexOptions {
         javaMaxHeapSize "4G"
     }
-    
-     
+
+
     defaultConfig {
         applicationId "com.ritvi.kaajneeti"
         minSdkVersion 17
@@ -47,7 +47,7 @@ android {
         abortOnError false
     }
 
-    dexOptions{
+    dexOptions {
         javaMaxHeapSize "4g"
     }
 }
@@ -97,5 +97,6 @@ dependencies {
     compile 'com.android.support:palette-v7:26.1.0'
     compile 'org.jsoup:jsoup:1.8.3' // required
     compile 'com.leocardz:link-preview:2.0.0@aar'
+    compile 'com.riontech.staggeredtextgridview:staggeredtextgridview:1.0.1'
 }
 apply plugin: 'com.google.gms.google-services'

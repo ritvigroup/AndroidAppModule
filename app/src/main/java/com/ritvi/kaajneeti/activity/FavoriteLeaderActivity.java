@@ -14,13 +14,14 @@ import android.view.View;
 
 import com.akexorcist.localizationactivity.ui.LocalizationActivity;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ritvi.kaajneeti.R;
-import com.ritvi.kaajneeti.Util.Pref;
+import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
-import com.ritvi.kaajneeti.adapter.LeaderAdapter;
-import com.ritvi.kaajneeti.pojo.leader.LeaderAPIResultPOJO;
-import com.ritvi.kaajneeti.pojo.leader.LeaderPOJO;
+import com.ritvi.kaajneeti.adapter.FavoriteLeaderAdapter;
+import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
+import com.ritvi.kaajneeti.pojo.user.favorite.FavoriteResultPOJO;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -42,7 +43,7 @@ public class FavoriteLeaderActivity extends LocalizationActivity implements WebS
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    List<LeaderPOJO> leaderPOJOS = new ArrayList<>();
+    List<FavoriteResultPOJO> leaderPOJOS = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,10 +65,10 @@ public class FavoriteLeaderActivity extends LocalizationActivity implements WebS
         callLeaderAPI();
     }
 
-    LeaderAdapter leaderAdapter;
+    FavoriteLeaderAdapter leaderAdapter;
 
     public void attachAdapter() {
-        leaderAdapter = new LeaderAdapter(this, null, leaderPOJOS);
+        leaderAdapter = new FavoriteLeaderAdapter(this, null, leaderPOJOS);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rv_leader.setHasFixedSize(true);
         rv_leader.setAdapter(leaderAdapter);
@@ -78,17 +79,16 @@ public class FavoriteLeaderActivity extends LocalizationActivity implements WebS
 
     public void callLeaderAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("request_action", "MY_FAVOURITE_LEADER"));
-        nameValuePairs.add(new BasicNameValuePair("citizen_id", Pref.GetUserProfile(getApplicationContext()).getCitizenId()));
-        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.CITIZEN_PROCESS);
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePojo.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
+        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
     }
-
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater=getMenuInflater();
-        inflater.inflate(R.menu.menu_favorite_leader,menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_favorite_leader, menu);
         return true;
     }
 
@@ -99,7 +99,7 @@ public class FavoriteLeaderActivity extends LocalizationActivity implements WebS
                 finish();
                 break;
             case R.id.menu_all:
-                startActivity(new Intent(FavoriteLeaderActivity.this,AllLeaderActivity.class));
+                startActivity(new Intent(FavoriteLeaderActivity.this, AllLeaderActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -119,15 +119,17 @@ public class FavoriteLeaderActivity extends LocalizationActivity implements WebS
     public void parseALLLeaderResponse(String response) {
         leaderPOJOS.clear();
         try {
-            Gson gson = new Gson();
-            LeaderAPIResultPOJO leaderAPIResultPOJO = gson.fromJson(response, LeaderAPIResultPOJO.class);
-            if (leaderAPIResultPOJO.getStatus().equals("success")) {
-                leaderPOJOS.addAll(leaderAPIResultPOJO.getLeaderPOJOS());
+            ResponseListPOJO<FavoriteResultPOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponseListPOJO<FavoriteResultPOJO>>() {
+            }.getType());
+            leaderPOJOS.clear();
+            if (responsePOJO.getStatus().equals("success")) {
+                leaderPOJOS.addAll(responsePOJO.getResultList());
                 rv_leader.setVisibility(View.VISIBLE);
             } else {
                 rv_leader.setVisibility(View.GONE);
                 ToastClass.showShortToast(getApplicationContext(), "No Leader Found");
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

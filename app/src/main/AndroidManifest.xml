@@ -45,6 +45,7 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -53,7 +54,8 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_places_api_key"/>
+            android:value="@string/google_places_api_key" />
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -117,7 +119,10 @@
         <activity android:name=".testing.FacebookMainActivity" />
         <activity android:name=".activity.CreatePollActivity" />
         <activity android:name=".activity.CreateEventActivity" />
-        <activity android:name=".activity.CreatePostActivity"></activity>
+        <activity android:name=".activity.CreatePostActivity" />
+        <activity android:name=".activity.TagPeopleActivity" />
+        <activity android:name=".activity.AddComplaintDescriptionActivity"></activity>
+        <activity android:name=".activity.AddGroupComplaintDescriptionActivity"></activity>
     </application>
 
 </manifest>

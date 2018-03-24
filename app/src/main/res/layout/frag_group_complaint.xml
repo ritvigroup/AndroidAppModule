@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="7dp">
+
+    <com.riontech.staggeredtextgridview.StaggeredTextGridView
+        custom:horizontalSpace="2dp"
+        custom:verticalSpace="2dp"
+        custom:isFitToScreen="false"
+        android:background="@drawable/et_rect_border"
+        android:minHeight="100dp"
+        android:id="@+id/staggerdGV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_add_applicants"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Applicants"
+            android:layout_gravity="right"/>
+
+    </FrameLayout>
+
+    <EditText
+        android:id="@+id/et_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="50dp"
+        android:background="@drawable/et_rect_border"
+        android:hint="write a message to your applicants"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp">
+
+        <EditText
+            android:id="@+id/et_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/et_rect_border"
+            android:editable="false"
+            android:gravity="center"
+            android:hint="Submission Date"
+            android:minHeight="35dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="10dp" />
+
+        <ImageView
+            android:id="@+id/iv_date"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="right|center"
+            android:src="@drawable/ic_calendar" />
+
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

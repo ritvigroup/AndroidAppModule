@@ -2,200 +2,147 @@ package com.ritvi.kaajneeti.pojo.user;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by sunil on 31-01-2018.
  */
 
-public class UserProfilePOJO {
-
-    @SerializedName("citizen_id")
-    private String citizenId;
-    @SerializedName("profile_id")
-    private String profileId;
-    @SerializedName("firstname")
-    private String firstname;
-    @SerializedName("middlename")
-    private String middlename;
-    @SerializedName("lastname")
-    private String lastname;
-    @SerializedName("fullname")
-    private String fullname;
-    @SerializedName("email")
-    private String email;
-    @SerializedName("username")
-    private String username;
-    @SerializedName("mobile")
-    private String mobile;
-    @SerializedName("alt_mobile")
-    private String altMobile;
-    @SerializedName("gender")
-    private String gender;
-    @SerializedName("status")
-    private String status;
-    @SerializedName("created_on")
-    private String createdOn;
-    @SerializedName("updated_on")
+public class UserProfilePOJO implements Serializable{
+    @SerializedName("UserId")
+    private String userId;
+    @SerializedName("UserUniqueId")
+    private String userUniqueId;
+    @SerializedName("LoginDeviceToken")
+    private String loginDeviceToken;
+    @SerializedName("UserStatus")
+    private String userStatus;
+    @SerializedName("LoginStatus")
+    private String loginStatus;
+    @SerializedName("UserName")
+    private String userName;
+    @SerializedName("UserEmail")
+    private String userEmail;
+    @SerializedName("UserMobile")
+    private String userMobile;
+    @SerializedName("AddedOn")
+    private String addedOn;
+    @SerializedName("UpdatedOn")
     private String updatedOn;
-    @SerializedName("address")
-    private String address;
-    @SerializedName("city")
-    private String city;
-    @SerializedName("state")
-    private String state;
-    @SerializedName("country")
-    private String country;
-    @SerializedName("zipcode")
-    private String zipcode;
-    @SerializedName("about_me")
-    private String aboutMe;
-    @SerializedName("device_token")
-    private String deviceToken;
-    @SerializedName("date_of_birth")
+    @SerializedName("DateOfBirth")
     private String dateOfBirth;
-    @SerializedName("profile_image")
-    private String profileImage;
-    @SerializedName("cover_image")
-    private String coverImage;
-    @SerializedName("facebook_profile_id")
+    @SerializedName("Gender")
+    private String gender;
+    @SerializedName("ProfilePhotoId")
+    private String profilePhotoId;
+    @SerializedName("ProfilePhotoPath")
+    private String profilePhotoPath;
+    @SerializedName("CoverPhotoId")
+    private String coverPhotoId;
+    @SerializedName("CoverPhotoPath")
+    private String coverPhotoPath;
+    @SerializedName("FacebookProfileId")
     private String facebookProfileId;
-    @SerializedName("google_profile_id")
+    @SerializedName("GoogleProfileId")
     private String googleProfileId;
-    @SerializedName("twitter_profile_id")
-    private String twitterProfileId;
+    @SerializedName("LinkedinProfileId")
+    private String linkedinProfileId;
+    @SerializedName("UserProfileCitizen")
+    private CitizenProfilePOJO citizenProfilePOJO;
 
-    public UserProfilePOJO(String citizenId, String profileId, String firstname, String middlename, String lastname, String fullname, String email, String username, String mobile, String altMobile, String gender, String status, String createdOn, String updatedOn, String address, String city, String state, String country, String zipcode, String aboutMe, String deviceToken, String dateOfBirth, String profileImage, String coverImage, String facebookProfileId, String googleProfileId, String twitterProfileId) {
-        this.citizenId = citizenId;
-        this.profileId = profileId;
-        this.firstname = firstname;
-        this.middlename = middlename;
-        this.lastname = lastname;
-        this.fullname = fullname;
-        this.email = email;
-        this.username = username;
-        this.mobile = mobile;
-        this.altMobile = altMobile;
-        this.gender = gender;
-        this.status = status;
-        this.createdOn = createdOn;
+    public UserProfilePOJO(String userId, String userUniqueId, String loginDeviceToken, String userStatus, String loginStatus, String userName, String userEmail, String userMobile, String addedOn, String updatedOn, String dateOfBirth, String gender, String profilePhotoId, String profilePhotoPath, String coverPhotoId, String coverPhotoPath, String facebookProfileId, String googleProfileId, String linkedinProfileId, CitizenProfilePOJO citizenProfilePOJO) {
+        this.userId = userId;
+        this.userUniqueId = userUniqueId;
+        this.loginDeviceToken = loginDeviceToken;
+        this.userStatus = userStatus;
+        this.loginStatus = loginStatus;
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.userMobile = userMobile;
+        this.addedOn = addedOn;
         this.updatedOn = updatedOn;
-        this.address = address;
-        this.city = city;
-        this.state = state;
-        this.country = country;
-        this.zipcode = zipcode;
-        this.aboutMe = aboutMe;
-        this.deviceToken = deviceToken;
         this.dateOfBirth = dateOfBirth;
-        this.profileImage = profileImage;
-        this.coverImage = coverImage;
+        this.gender = gender;
+        this.profilePhotoId = profilePhotoId;
+        this.profilePhotoPath = profilePhotoPath;
+        this.coverPhotoId = coverPhotoId;
+        this.coverPhotoPath = coverPhotoPath;
         this.facebookProfileId = facebookProfileId;
         this.googleProfileId = googleProfileId;
-        this.twitterProfileId = twitterProfileId;
+        this.linkedinProfileId = linkedinProfileId;
+        this.citizenProfilePOJO = citizenProfilePOJO;
     }
 
-
-    public String getCitizenId() {
-        return citizenId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setCitizenId(String citizenId) {
-        this.citizenId = citizenId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getProfileId() {
-        return profileId;
+    public String getUserUniqueId() {
+        return userUniqueId;
     }
 
-    public void setProfileId(String profileId) {
-        this.profileId = profileId;
+    public void setUserUniqueId(String userUniqueId) {
+        this.userUniqueId = userUniqueId;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getLoginDeviceToken() {
+        return loginDeviceToken;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setLoginDeviceToken(String loginDeviceToken) {
+        this.loginDeviceToken = loginDeviceToken;
     }
 
-    public String getMiddlename() {
-        return middlename;
+    public String getUserStatus() {
+        return userStatus;
     }
 
-    public void setMiddlename(String middlename) {
-        this.middlename = middlename;
+    public void setUserStatus(String userStatus) {
+        this.userStatus = userStatus;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getLoginStatus() {
+        return loginStatus;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setLoginStatus(String loginStatus) {
+        this.loginStatus = loginStatus;
     }
 
-    public String getFullname() {
-        return fullname;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserMobile() {
+        return userMobile;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserMobile(String userMobile) {
+        this.userMobile = userMobile;
     }
 
-    public String getMobile() {
-        return mobile;
+    public String getAddedOn() {
+        return addedOn;
     }
 
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-    public String getAltMobile() {
-        return altMobile;
-    }
-
-    public void setAltMobile(String altMobile) {
-        this.altMobile = altMobile;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(String createdOn) {
-        this.createdOn = createdOn;
+    public void setAddedOn(String addedOn) {
+        this.addedOn = addedOn;
     }
 
     public String getUpdatedOn() {
@@ -206,62 +153,6 @@ public class UserProfilePOJO {
         this.updatedOn = updatedOn;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getZipcode() {
-        return zipcode;
-    }
-
-    public void setZipcode(String zipcode) {
-        this.zipcode = zipcode;
-    }
-
-    public String getAboutMe() {
-        return aboutMe;
-    }
-
-    public void setAboutMe(String aboutMe) {
-        this.aboutMe = aboutMe;
-    }
-
-    public String getDeviceToken() {
-        return deviceToken;
-    }
-
-    public void setDeviceToken(String deviceToken) {
-        this.deviceToken = deviceToken;
-    }
-
     public String getDateOfBirth() {
         return dateOfBirth;
     }
@@ -270,20 +161,44 @@ public class UserProfilePOJO {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getProfileImage() {
-        return profileImage;
+    public String getGender() {
+        return gender;
     }
 
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
-    public String getCoverImage() {
-        return coverImage;
+    public String getProfilePhotoId() {
+        return profilePhotoId;
     }
 
-    public void setCoverImage(String coverImage) {
-        this.coverImage = coverImage;
+    public void setProfilePhotoId(String profilePhotoId) {
+        this.profilePhotoId = profilePhotoId;
+    }
+
+    public String getProfilePhotoPath() {
+        return profilePhotoPath;
+    }
+
+    public void setProfilePhotoPath(String profilePhotoPath) {
+        this.profilePhotoPath = profilePhotoPath;
+    }
+
+    public String getCoverPhotoId() {
+        return coverPhotoId;
+    }
+
+    public void setCoverPhotoId(String coverPhotoId) {
+        this.coverPhotoId = coverPhotoId;
+    }
+
+    public String getCoverPhotoPath() {
+        return coverPhotoPath;
+    }
+
+    public void setCoverPhotoPath(String coverPhotoPath) {
+        this.coverPhotoPath = coverPhotoPath;
     }
 
     public String getFacebookProfileId() {
@@ -302,44 +217,27 @@ public class UserProfilePOJO {
         this.googleProfileId = googleProfileId;
     }
 
-    public String getTwitterProfileId() {
-        return twitterProfileId;
+    public String getLinkedinProfileId() {
+        return linkedinProfileId;
     }
 
-    public void setTwitterProfileId(String twitterProfileId) {
-        this.twitterProfileId = twitterProfileId;
+    public void setLinkedinProfileId(String linkedinProfileId) {
+        this.linkedinProfileId = linkedinProfileId;
+    }
+
+    public CitizenProfilePOJO getCitizenProfilePOJO() {
+        return citizenProfilePOJO;
+    }
+
+    public void setCitizenProfilePOJO(CitizenProfilePOJO citizenProfilePOJO) {
+        this.citizenProfilePOJO = citizenProfilePOJO;
     }
 
     @Override
     public String toString() {
         return "UserProfilePOJO{" +
-                "citizenId='" + citizenId + '\'' +
-                ", profileId='" + profileId + '\'' +
-                ", firstname='" + firstname + '\'' +
-                ", middlename='" + middlename + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", fullname='" + fullname + '\'' +
-                ", email='" + email + '\'' +
-                ", username='" + username + '\'' +
-                ", mobile='" + mobile + '\'' +
-                ", altMobile='" + altMobile + '\'' +
-                ", gender='" + gender + '\'' +
-                ", status='" + status + '\'' +
-                ", createdOn='" + createdOn + '\'' +
-                ", updatedOn='" + updatedOn + '\'' +
-                ", address='" + address + '\'' +
-                ", city='" + city + '\'' +
-                ", state='" + state + '\'' +
-                ", country='" + country + '\'' +
-                ", zipcode='" + zipcode + '\'' +
-                ", aboutMe='" + aboutMe + '\'' +
-                ", deviceToken='" + deviceToken + '\'' +
-                ", dateOfBirth='" + dateOfBirth + '\'' +
-                ", profileImage='" + profileImage + '\'' +
-                ", coverImage='" + coverImage + '\'' +
-                ", facebookProfileId='" + facebookProfileId + '\'' +
-                ", googleProfileId='" + googleProfileId + '\'' +
-                ", twitterProfileId='" + twitterProfileId + '\'' +
+                "userId='" + userId + '\'' +
+                ", userUniqueId='" + userUniqueId + '\'' +
                 '}';
     }
 }
