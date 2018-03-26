@@ -41,7 +41,6 @@ import com.ritvi.kaajneeti.fragment.RewardsFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.InvestigateFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.KaajFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.MyConnectionFragment;
-import com.ritvi.kaajneeti.fragment.homeactivity.UniounFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.WithdrawalFragment;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.views.CustomViewPager;
@@ -183,7 +182,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         KaajFragment kaajFragment=new KaajFragment();
-        UniounFragment uniounFragment=new UniounFragment();
+        MyConnectionFragment uniounFragment=new MyConnectionFragment();
         InvestigateFragment investigateFragment=new InvestigateFragment();
         WithdrawalFragment withdrawalFragment=new WithdrawalFragment();
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());

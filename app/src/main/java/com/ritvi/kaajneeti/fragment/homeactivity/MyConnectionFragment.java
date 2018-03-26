@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.adapter.ViewPagerWithTitleAdapter;
-import com.ritvi.kaajneeti.fragment.adcommunication.SuggestionFragment;
 import com.ritvi.kaajneeti.fragment.myconnection.ConnectionLeaderFragment;
 import com.ritvi.kaajneeti.fragment.myconnection.ContactFragment;
 import com.ritvi.kaajneeti.fragment.myconnection.FriendsFragment;
@@ -54,7 +53,7 @@ public class MyConnectionFragment extends Fragment{
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerWithTitleAdapter adapter = new ViewPagerWithTitleAdapter(getChildFragmentManager());
-        adapter.addFrag(new SuggestionFragment(), "Suggestion");
+//        adapter.addFrag(new SuggestionFragment(), "Suggestion");
         adapter.addFrag(new SearchFragment(), "Search");
         adapter.addFrag(new RequestFragment(), "Request");
         adapter.addFrag(new ContactFragment(), "Contact");
@@ -62,6 +61,6 @@ public class MyConnectionFragment extends Fragment{
         adapter.addFrag(new ConnectionLeaderFragment(), "Leader");
         adapter.addFrag(new OutgoingFragment(), "Outgoing");
         viewPager.setAdapter(adapter);
-
+        viewPager.setOffscreenPageLimit(adapter.getCount());
     }
 }

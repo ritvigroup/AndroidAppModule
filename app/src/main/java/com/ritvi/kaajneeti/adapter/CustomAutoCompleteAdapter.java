@@ -61,9 +61,10 @@ public class CustomAutoCompleteAdapter extends ArrayAdapter<FavoriteResultPOJO> 
         protected FilterResults performFiltering(CharSequence constraint) {
             if (constraint != null) {
                 suggestions.clear();
-                for (FavoriteResultPOJO people : tempCustomer) {
-                    if (people.getUserProfileDetailPOJO().getUserInfoPOJO().getUserName().toLowerCase().startsWith(constraint.toString().toLowerCase())) {
-                        suggestions.add(people);
+                for (Object people : tempCustomer) {
+                    FavoriteResultPOJO favoriteResultPOJO= (FavoriteResultPOJO) people;
+                    if (favoriteResultPOJO.getUserProfileDetailPOJO().getUserInfoPOJO().getUserName().toLowerCase().startsWith(constraint.toString().toLowerCase())) {
+                        suggestions.add(favoriteResultPOJO);
                     }
                 }
 

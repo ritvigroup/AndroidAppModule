@@ -9,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Switch;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.activity.InformationSubmittedActivity;
 
 import butterknife.BindView;
@@ -24,6 +26,8 @@ public class InformationFragment extends Fragment{
 
     @BindView(R.id.btn_next)
     Button btn_next;
+    @BindView(R.id.switch_identity)
+    Switch switch_identity;
 
     @Nullable
     @Override
@@ -39,7 +43,12 @@ public class InformationFragment extends Fragment{
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), InformationSubmittedActivity.class));
+                Intent intent=new Intent(getActivity(), InformationSubmittedActivity.class);
+
+                intent.putExtra("applicant_name", Constants.userProfilePojo.getUserName());
+                intent.putExtra("applicant_father_name","");
+                intent.putExtra("applicant_mobile",Constants.userProfilePojo.getUserMobile());
+                startActivity(intent);
             }
         });
     }

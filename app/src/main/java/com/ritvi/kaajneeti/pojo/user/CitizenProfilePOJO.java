@@ -47,6 +47,8 @@ public class CitizenProfilePOJO implements Serializable {
     private String addedOn;
     @SerializedName("UpdatedOn")
     private String updatedOn;
+    @SerializedName("MyFriend")
+    private String myFriend;
 
     public String getUserProfileId() {
         return userProfileId;
@@ -198,5 +200,13 @@ public class CitizenProfilePOJO implements Serializable {
 
     public void setUpdatedOn(String updatedOn) {
         this.updatedOn = updatedOn;
+    }
+
+    public String getMyFriend() {
+        return myFriend;
+    }
+
+    public void setMyFriend(String myFriend) {
+        this.myFriend = myFriend;
     }
 }

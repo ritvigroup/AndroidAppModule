@@ -27,7 +27,8 @@ import com.ritvi.kaajneeti.fragment.adcommunication.SuggestionFragment;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.user.favorite.FavoriteResultPOJO;
 import com.ritvi.kaajneeti.views.CustomViewPager;
-import com.ritvi.kaajneeti.webservice.WebServiceBase;
+import com.ritvi.kaajneeti.webservice.ResponseListCallback;
+import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 
@@ -48,25 +49,6 @@ public class AddCommunication extends LocalizationActivity implements WebService
     ImageView iv_favorite_leader_add;
     @BindView(R.id.auto_fav_list)
     AutoCompleteTextView auto_fav_list;
-//    @BindView(R.id.et_name)
-//    EditText et_name;
-//    @BindView(R.id.et_father_name)
-//    EditText et_father_name;
-//    @BindView(R.id.et_mobile_number)
-//    EditText et_mobile_number;
-//    @BindView(R.id.et_email)
-//    EditText et_email;
-//    @BindView(R.id.et_aadhar)
-//    EditText et_aadhar;
-
-//    @BindView(R.id.rg_gender)
-//    RadioGroup rg_gender;
-//    @BindView(R.id.rb_male)
-//    RadioButton rb_male;
-//    @BindView(R.id.rb_female)
-//    RadioButton rb_female;
-//    @BindView(R.id.rb_other)
-//    RadioButton rb_other;
 
     @BindView(R.id.rg_comm_type)
     RadioGroup rg_comm_type;
@@ -224,7 +206,18 @@ public class AddCommunication extends LocalizationActivity implements WebService
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePojo.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
-        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
+//        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
+        new WebServiceBaseResponseList<FavoriteResultPOJO>(nameValuePairs, this, new ResponseListCallback<FavoriteResultPOJO>() {
+            @Override
+            public void onGetMsg(ResponseListPOJO<FavoriteResultPOJO> responseListPOJO) {
+                leaderPOJOS.clear();
+                if (responseListPOJO.getStatus().equals("success")) {
+                    leaderPOJOS.addAll(responseListPOJO.getResultList());
+                    adapter = new CustomAutoCompleteAdapter(AddCommunication.this, (ArrayList<FavoriteResultPOJO>) leaderPOJOS);
+                    auto_fav_list.setAdapter(adapter);
+                }
+            }
+        },FavoriteResultPOJO.class,"CALL_LEADER_API",true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
     }
 
     @Override

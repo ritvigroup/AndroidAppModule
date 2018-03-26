@@ -411,7 +411,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         Uri videoUri = Uri.fromFile(mediaFile);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.capri4physio.fileProvider", mediaFile);
+            Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName()+".fileProvider", mediaFile);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
 
         } else {
@@ -612,6 +612,55 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     }
 
 
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        String month = "";
+        String day = "";
+        if ((monthOfYear + 1) < 10) {
+            month = "0" + (monthOfYear + 1);
+        } else {
+            month = String.valueOf(monthOfYear + 1);
+        }
+
+        if (dayOfMonth < 10) {
+            day = "0" + dayOfMonth;
+        } else {
+            day = String.valueOf(dayOfMonth);
+        }
+
+        String date = day + "-" + month + "-" + year;
+        if (start_date) {
+            et_start_date.setText(date);
+        } else {
+            et_end_date.setText(date);
+        }
+    }
+
+
+    @Override
+    public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
+        String hour = "";
+        String minutes = "";
+        if (hourOfDay < 10) {
+            hour = "0" + hourOfDay;
+        } else {
+            hour = String.valueOf(hourOfDay);
+        }
+
+        if (minute < 10) {
+            minutes = "0" + minute;
+        } else {
+            minutes = String.valueOf(minute);
+        }
+
+        String time = hour + ":" + minutes;
+        if (start_time) {
+            et_start_time.setText(time);
+        } else {
+            et_end_time.setText(time);
+        }
+    }
+
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static String getPath(final Context context, final Uri uri) {
 
@@ -720,54 +769,5 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     public static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri
                 .getAuthority());
-    }
-
-
-    @Override
-    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String month = "";
-        String day = "";
-        if ((monthOfYear + 1) < 10) {
-            month = "0" + (monthOfYear + 1);
-        } else {
-            month = String.valueOf(monthOfYear + 1);
-        }
-
-        if (dayOfMonth < 10) {
-            day = "0" + dayOfMonth;
-        } else {
-            day = String.valueOf(dayOfMonth);
-        }
-
-        String date = day + "-" + month + "-" + year;
-        if (start_date) {
-            et_start_date.setText(date);
-        } else {
-            et_end_date.setText(date);
-        }
-    }
-
-    @Override
-    public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-        String hour = "";
-        String minutes = "";
-        if (hourOfDay < 10) {
-            hour = "0" + hourOfDay;
-        } else {
-            hour = String.valueOf(hourOfDay);
-        }
-
-        if (minute < 10) {
-            minutes = "0" + minute;
-        } else {
-            minutes = String.valueOf(minute);
-        }
-
-        String time = hour + ":" + minutes;
-        if (start_time) {
-            et_start_time.setText(time);
-        } else {
-            et_end_time.setText(time);
-        }
     }
 }

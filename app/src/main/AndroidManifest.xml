@@ -121,8 +121,10 @@
         <activity android:name=".activity.CreateEventActivity" />
         <activity android:name=".activity.CreatePostActivity" />
         <activity android:name=".activity.TagPeopleActivity" />
-        <activity android:name=".activity.AddComplaintDescriptionActivity"></activity>
-        <activity android:name=".activity.AddGroupComplaintDescriptionActivity"></activity>
+        <activity android:name=".activity.AddComplaintDescriptionActivity" />
+        <activity android:name=".activity.AddGroupComplaintDescriptionActivity" />
+        <activity android:name=".activity.CreateSuggestionActivity" />
+        <activity android:name=".activity.CreateInformationActivity"></activity>
     </application>
 
 </manifest>

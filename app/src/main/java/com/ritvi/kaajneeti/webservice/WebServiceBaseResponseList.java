@@ -9,9 +9,11 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
+import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -30,7 +32,7 @@ import java.util.ArrayList;
  * Created by sunil on 28-12-2016.
  */
 
-public class WebServiceBase extends AsyncTask<String, Void, String> {
+public class WebServiceBaseResponseList<T> extends AsyncTask<String, Void, ResponseListPOJO<T>> {
     ArrayList<NameValuePair> nameValuePairs;
     String jResult;
     Context context;
@@ -44,13 +46,14 @@ public class WebServiceBase extends AsyncTask<String, Void, String> {
     boolean isdialog = true;
     String msg;
     private final String TAG = getClass().getName();
-
-    public WebServiceBase(ArrayList<NameValuePair> nameValuePairs,Context context,Object object, String msg, boolean isdialog) {
+    Class<T> clazz;
+    public WebServiceBaseResponseList(ArrayList<NameValuePair> nameValuePairs, Context context, Object object,Class<T> clazz, String msg, boolean isdialog) {
         this.nameValuePairs = nameValuePairs;
         this.nameValuePairs.addAll(UtilityFunction.getNameValuePairs(context));
         this.object = object;
         this.context=context;
         this.msg = msg;
+        this.clazz=clazz;
         this.isdialog = isdialog;
         Log.d(TAG, this.toString());
     }
@@ -68,10 +71,15 @@ public class WebServiceBase extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected ResponseListPOJO<T> doInBackground(String... params) {
         try {
             jResult = httpCall(params[0], nameValuePairs);
             Log.d(TagUtils.getTag(),msg+":-"+jResult);
+            if(jResult!=null&&jResult.length()>0){
+                ResponseListPOJO<T> responsePOJO = (ResponseListPOJO<T>) new Gson().fromJson(jResult, clazz);
+//                ResponseListPOJO<T> responseListPOJO = (ResponseListPOJO<T>) new Gson().fromJson(jResult, type.getClass());
+                return responsePOJO;
+            }
 
 
 
@@ -81,25 +89,32 @@ public class WebServiceBase extends AsyncTask<String, Void, String> {
             }
             e.printStackTrace();
         }
-        return jResult;
+        return null;
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
+    protected void onPostExecute(ResponseListPOJO<T> responsePOJO) {
+        super.onPostExecute(responsePOJO);
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
-        if(s!=null&&s.length()>0) {
-            if (object != null) {
-                WebServicesCallBack mcallback = (WebServicesCallBack) object;
-                mcallback.onGetMsg(msg, s);
-            } else {
-                ToastClass.showShortToast(context, "Something went wrong");
-            }
+
+        if (responsePOJO != null) {
+            ResponseListCallback<T> mcallback = (ResponseListCallback<T>) object;
+            mcallback.onGetMsg(responsePOJO);
         }else{
-            ToastClass.showShortToast(context,"No Internet");
+            ToastClass.showShortToast(context,"No response from server");
         }
+//        if(s!=null&&s.length()>0) {
+//            if (object != null) {
+//                WebServicesCallBack mcallback = (WebServicesCallBack) object;
+//                mcallback.onGetMsg(msg, s);
+//            } else {
+//                ToastClass.showShortToast(context, "Something went wrong");
+//            }
+//        }else{
+//            ToastClass.showShortToast(context,"No Internet");
+//        }
 
     }
 

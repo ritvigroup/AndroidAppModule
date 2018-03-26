@@ -36,6 +36,7 @@
                     android:layout_weight="1">
 
                     <EditText
+                        android:id="@+id/et_subject"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/et_border"
@@ -44,6 +45,7 @@
                         android:paddingLeft="5dp" />
 
                     <EditText
+                        android:id="@+id/et_suggestion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="7dp"
@@ -54,10 +56,19 @@
 
                 </LinearLayout>
 
-                <LinearLayout
+                <FrameLayout
+                    android:id="@+id/frame_attach"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center">
 
