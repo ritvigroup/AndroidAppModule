@@ -39,7 +39,7 @@ import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 import com.ritvi.kaajneeti.webservice.WebUploadService;
@@ -102,9 +102,6 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
     @BindView(R.id.btn_accept)
     Button btn_accept;
 
-
-    UserProfilePOJO userProfilePOJO=Constants.userProfilePojo;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,7 +112,7 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Log.d(TagUtils.getTag(),"user profile:-"+userProfilePOJO.toString());
+        Log.d(TagUtils.getTag(),"user profile:-"+Constants.userInfoPOJO.toString());
         autoFillForm();
 
         iv_calendar.setOnClickListener(new View.OnClickListener() {
@@ -214,8 +211,8 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
 
     public void autoFillForm() {
         try {
-            et_name.setText(userProfilePOJO.getUserName());
-            switch (userProfilePOJO.getGender()) {
+            et_name.setText(Constants.userInfoPOJO.getUserName());
+            switch (Constants.userInfoPOJO.getGender()) {
                 case "1":
                     rb_male.setChecked(true);
                     break;
@@ -230,7 +227,7 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
             }
 
             Glide.with(getApplicationContext())
-                    .load(userProfilePOJO.getProfilePhotoPath())
+                    .load(Constants.userInfoPOJO.getProfilePhotoPath())
                     .placeholder(R.drawable.ic_default_profile_pic)
                     .error(R.drawable.ic_default_profile_pic)
                     .dontAnimate()
@@ -242,14 +239,14 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
 //                tv_state_select.setText("select");
 //            }
 
-            et_birth_date.setText(userProfilePOJO.getDateOfBirth());
-            et_email.setText(userProfilePOJO.getUserEmail());
-            et_alternate_mobile.setText(userProfilePOJO.getCitizenProfilePOJO().getAltMobile());
-            et_mobile_number.setText(userProfilePOJO.getCitizenProfilePOJO().getMobile());
-            if(userProfilePOJO.getCitizenProfilePOJO().getState().equals("")){
+            et_birth_date.setText(Constants.userInfoPOJO.getDateOfBirth());
+            et_email.setText(Constants.userInfoPOJO.getUserEmail());
+            et_alternate_mobile.setText(Constants.userInfoPOJO.getUserProfileCitizen().getAltMobile());
+            et_mobile_number.setText(Constants.userInfoPOJO.getUserProfileCitizen().getMobile());
+            if(Constants.userInfoPOJO.getUserProfileCitizen().getState().equals("")){
                 tv_state_select.setText("select");
             }else{
-                tv_state_select.setText(userProfilePOJO.getCitizenProfilePOJO().getState());
+                tv_state_select.setText(Constants.userInfoPOJO.getUserProfileCitizen().getState());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -301,8 +298,8 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
             } else {
                 reqEntity.addPart("photo", new StringBody(""));
             }
-            reqEntity.addPart("user_id", new StringBody(userProfilePOJO.getCitizenProfilePOJO().getUserId()));
-            reqEntity.addPart("user_profile_id", new StringBody(userProfilePOJO.getCitizenProfilePOJO().getUserProfileId()));
+            reqEntity.addPart("user_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
             reqEntity.addPart("fullname", new StringBody(et_name.getText().toString(), Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("gender", new StringBody(gender, Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("date_of_birth", new StringBody(date, Charset.forName(HTTP.UTF_8)));
@@ -320,9 +317,10 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
                         if (jsonObject.optString(Constants.API_STATUS).equals(Constants.API_SUCCESS)) {
                             String user_profile = jsonObject.optJSONObject("result").toString();
                             Gson gson = new Gson();
-                            UserProfilePOJO userProfilePOJO = gson.fromJson(user_profile, UserProfilePOJO.class);
+                            UserInfoPOJO userProfilePOJO = gson.fromJson(user_profile, UserInfoPOJO.class);
+//                Pref.SaveUserProfile(LoginActivity.this, user_profile);
                             Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
-                            Constants.userProfilePojo=userProfilePOJO;
+                            Constants.userInfoPOJO =userProfilePOJO;
                             Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, true);
                             Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED, true);
                             Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_SKIPPED, true);
@@ -461,11 +459,12 @@ public class ProfileInfoActivity extends LocalizationActivity implements DatePic
         try {
             JSONObject jsonObject = new JSONObject(response);
             if (jsonObject.optString("status").equals("success")) {
-                String user_profile = jsonObject.optJSONObject("user_detail").optJSONObject("user_profile").toString();
+                String user_profile = jsonObject.optJSONObject("result").toString();
                 Gson gson = new Gson();
-                UserProfilePOJO userProfilePOJO = gson.fromJson(user_profile, UserProfilePOJO.class);
+                UserInfoPOJO userProfilePOJO = gson.fromJson(user_profile, UserInfoPOJO.class);
+//                Pref.SaveUserProfile(LoginActivity.this, user_profile);
                 Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
-                Constants.userProfilePojo=userProfilePOJO;
+                Constants.userInfoPOJO =userProfilePOJO;
                 Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, true);
                 Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED, true);
                 Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_SKIPPED, true);

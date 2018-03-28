@@ -30,7 +30,7 @@ import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.FileUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,65 +42,93 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfilePageActivity extends AppCompatActivity {
 
+    private int PICK_IMAGE_REQUEST = 101;
+    private final int STATE_SELECT_INTENT = 102;
+    private static final int CAMERA_REQUEST = 103;
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.tv_user_name)
     TextView tv_user_name;
+    @BindView(R.id.tv_location)
+    TextView tv_location;
+    @BindView(R.id.tv_user_type)
+    TextView tv_user_type;
+    @BindView(R.id.tv_mobile_number)
+    TextView tv_mobile_number;
+    @BindView(R.id.tv_email)
+    TextView tv_email;
+
     @BindView(R.id.cv_profile)
     CircleImageView cv_profile;
     @BindView(R.id.iv_edit)
     ImageView iv_edit;
+    @BindView(R.id.iv_unfavorite)
+    ImageView iv_unfavorite;
 
-    UserProfilePOJO userProfilePOJO;
-    private int PICK_IMAGE_REQUEST = 101;
-    private final int STATE_SELECT_INTENT = 102;
-    private static final int CAMERA_REQUEST = 103;
+    UserInfoPOJO userInfoPOJO;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_page);
         ButterKnife.bind(this);
-        userProfilePOJO = Constants.userProfilePojo;
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        userInfoPOJO= (UserInfoPOJO) getIntent().getSerializableExtra("userInfo");
 
-//        tv_user_name.setText(Pref.GetStringPref(getApplicationContext(), StringUtils.CITIZEN_FIRST_NAME,"")
-//        +" "+Pref.GetStringPref(getApplicationContext(), StringUtils.CITIZEN_LAST_NAME,""));
+        tv_user_name.setText(userInfoPOJO.getUserName());
+        tv_mobile_number.setText(userInfoPOJO.getUserMobile());
+        tv_email.setText(userInfoPOJO.getUserEmail());
 
-
-        tv_user_name.setText(userProfilePOJO.getUserName());
 
         Glide.with(getApplicationContext())
-                .load(userProfilePOJO.getProfilePhotoPath())
+                .load(userInfoPOJO.getProfilePhotoPath())
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .error(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
                 .into(cv_profile);
 
-        cv_profile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final PopupMenu menu = new PopupMenu(ProfilePageActivity.this, view);
 
-                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuitem) {
-                        switch (menuitem.getItemId()) {
-                            case R.id.popup_camera:
-                                startCamera();
-                                break;
-                            case R.id.popup_gallery:
-                                selectProfilePic();
-                                break;
+        if(userInfoPOJO.getUserId().equals(Constants.userInfoPOJO.getUserId())){
+            iv_edit.setVisibility(View.VISIBLE);
+            cv_profile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final PopupMenu menu = new PopupMenu(ProfilePageActivity.this, view);
+
+                    menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuitem) {
+                            switch (menuitem.getItemId()) {
+                                case R.id.popup_camera:
+                                    startCamera();
+                                    break;
+                                case R.id.popup_gallery:
+                                    selectProfilePic();
+                                    break;
+                            }
+                            return false;
                         }
-                        return false;
-                    }
-                });
-                menu.inflate(R.menu.menu_profile_pic_option);
-                menu.show();
-            }
-        });
+                    });
+                    menu.inflate(R.menu.menu_profile_pic_option);
+                    menu.show();
+                }
+            });
+        }else{
+            iv_edit.setVisibility(View.GONE);
+        }
+
+        if(userInfoPOJO.getUserProfileCitizen()!=null){
+            tv_user_type.setText("Citizen");
+            iv_unfavorite.setVisibility(View.GONE);
+            tv_location.setText(userInfoPOJO.getUserProfileCitizen().getCity());
+        }else{
+            tv_user_type.setText("Leader");
+            iv_unfavorite.setVisibility(View.VISIBLE);
+            tv_location.setText(userInfoPOJO.getUserProfileLeader().getCity());
+        }
 
         iv_edit.setOnClickListener(new View.OnClickListener() {
             @Override

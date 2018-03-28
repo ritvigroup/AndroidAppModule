@@ -41,7 +41,7 @@ import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -470,11 +470,11 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
             if (jsonObject.optString(Constants.API_STATUS).equals(Constants.API_SUCCESS)) {
                 String user_profile = jsonObject.optJSONObject("result").toString();
                 Gson gson = new Gson();
-                UserProfilePOJO userProfilePOJO = gson.fromJson(user_profile, UserProfilePOJO.class);
+                UserInfoPOJO userProfilePOJO = gson.fromJson(user_profile, UserInfoPOJO.class);
 //                Pref.SaveUserProfile(LoginActivity.this, user_profile);
                 Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
                 Pref.SetBooleanPref(LoginActivity.this, StringUtils.IS_LOGIN, true);
-                Constants.userProfilePojo=userProfilePOJO;
+                Constants.userInfoPOJO =userProfilePOJO;
                 if(userProfilePOJO.getUserName().equals("")||userProfilePOJO.getUserEmail().equals("")||
                         userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("")){
                     Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,false);

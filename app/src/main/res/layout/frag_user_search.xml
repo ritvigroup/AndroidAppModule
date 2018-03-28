@@ -2,15 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="15dp">
+    android:orientation="vertical">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_complaints"
+        android:id="@+id/rv_users"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/et_search_border"
+        android:background="@drawable/et_border"
         android:padding="5dp"></android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

@@ -25,7 +25,7 @@ import com.ritvi.kaajneeti.fragment.adcommunication.ComplaintFragment;
 import com.ritvi.kaajneeti.fragment.adcommunication.InformationFragment;
 import com.ritvi.kaajneeti.fragment.adcommunication.SuggestionFragment;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
-import com.ritvi.kaajneeti.pojo.user.favorite.FavoriteResultPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.views.CustomViewPager;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
@@ -64,7 +64,7 @@ public class AddCommunication extends LocalizationActivity implements WebService
 
     String leader_id = "";
 
-    List<FavoriteResultPOJO> leaderPOJOS = new ArrayList<>();
+    List<UserInfoPOJO> leaderPOJOS = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,7 +98,7 @@ public class AddCommunication extends LocalizationActivity implements WebService
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (leaderPOJOS.size() > 0) {
-                    leader_id = leaderPOJOS.get(i).getUserProfileDetailPOJO().getUserProfileLeaderPOJO().getUserProfileId();
+                    leader_id = leaderPOJOS.get(i).getUserProfileLeader().getUserProfileId();
                 }
             }
         });
@@ -146,56 +146,6 @@ public class AddCommunication extends LocalizationActivity implements WebService
 
     }
 
-//    public void checkValidation() {
-//        if (et_name.getText().toString().length() > 0 && et_father_name.getText().toString().length() > 0 &&
-//                et_mobile_number.getText().toString().length() > 0 && auto_fav_list.getText().toString().length() > 0 &&
-//                leader_id.length() > 0) {
-//            CommunicationSubmittionPOJO communicationSubmittionPOJO = new CommunicationSubmittionPOJO();
-//            communicationSubmittionPOJO.setUser_id(Pref.GetUserProfile(getApplicationContext()).getCitizenId());
-//            communicationSubmittionPOJO.setC_name(et_name.getText().toString());
-//            communicationSubmittionPOJO.setC_gender(((RadioButton) findViewById(rg_gender.getCheckedRadioButtonId())).getText().toString());
-//            communicationSubmittionPOJO.setSelf_other_group("1");
-//            communicationSubmittionPOJO.setC_father_name(et_father_name.getText().toString());
-//            communicationSubmittionPOJO.setC_mobile(et_mobile_number.getText().toString());
-//            communicationSubmittionPOJO.setC_email(et_email.getText().toString());
-//            communicationSubmittionPOJO.setC_aadhaar_number(et_aadhar.getText().toString());
-//            communicationSubmittionPOJO.setLeader_id(leader_id);
-//            Intent intent = new Intent(AddCommunication.this, AddCommunicationAddressActivity.class);
-//            intent.putExtra("complaintPOJO", communicationSubmittionPOJO);
-//            startActivity(intent);
-//        } else {
-//            ToastClass.showShortToast(getApplicationContext(), "Please Enter Mandatory Fields");
-//        }
-//    }
-//
-//    public void autoFillForm() {
-//        UserProfilePOJO userProfilePOJO = Pref.GetUserProfile(getApplicationContext());
-//        setField(userProfilePOJO.getFullname(), et_name);
-//        setField(userProfilePOJO.getMobile(), et_mobile_number);
-//        setField(userProfilePOJO.getEmail(), et_email);
-//
-//        String gender = userProfilePOJO.getGender();
-//        if (gender != null && gender.length() > 0) {
-//            switch (gender.toLowerCase().toString()) {
-//                case "male":
-//                    rb_male.setChecked(true);
-//                    break;
-//                case "female":
-//                    rb_female.setChecked(true);
-//                    break;
-//                case "other":
-//                    rb_other.setChecked(true);
-//                    break;
-//            }
-//        }
-//    }
-//
-//    public void setField(String text, EditText editText) {
-//        if (text != null && text.length() > 0) {
-//            editText.setText(text);
-//        }
-//    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -204,20 +154,20 @@ public class AddCommunication extends LocalizationActivity implements WebService
 
     public void callLeaderAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePojo.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
 //        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
-        new WebServiceBaseResponseList<FavoriteResultPOJO>(nameValuePairs, this, new ResponseListCallback<FavoriteResultPOJO>() {
+        new WebServiceBaseResponseList<UserInfoPOJO>(nameValuePairs, this, new ResponseListCallback<UserInfoPOJO>() {
             @Override
-            public void onGetMsg(ResponseListPOJO<FavoriteResultPOJO> responseListPOJO) {
+            public void onGetMsg(ResponseListPOJO<UserInfoPOJO> responseListPOJO) {
                 leaderPOJOS.clear();
-                if (responseListPOJO.getStatus().equals("success")) {
+                if (responseListPOJO.isSuccess()) {
                     leaderPOJOS.addAll(responseListPOJO.getResultList());
-                    adapter = new CustomAutoCompleteAdapter(AddCommunication.this, (ArrayList<FavoriteResultPOJO>) leaderPOJOS);
+                    adapter = new CustomAutoCompleteAdapter(AddCommunication.this, (ArrayList<UserInfoPOJO>) leaderPOJOS);
                     auto_fav_list.setAdapter(adapter);
                 }
             }
-        },FavoriteResultPOJO.class,"CALL_LEADER_API",true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
+        },UserInfoPOJO.class,"CALL_LEADER_API",true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
     }
 
     @Override
@@ -245,12 +195,12 @@ public class AddCommunication extends LocalizationActivity implements WebService
     public void parseALLLeaderResponse(String response) {
         leaderPOJOS.clear();
         try {
-            ResponseListPOJO<FavoriteResultPOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponseListPOJO<FavoriteResultPOJO>>() {
+            ResponseListPOJO<UserInfoPOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponseListPOJO<UserInfoPOJO>>() {
             }.getType());
             leaderPOJOS.clear();
-            if (responsePOJO.getStatus().equals("success")) {
+            if (responsePOJO.isSuccess()) {
                 leaderPOJOS.addAll(responsePOJO.getResultList());
-                adapter = new CustomAutoCompleteAdapter(this, (ArrayList<FavoriteResultPOJO>) leaderPOJOS);
+                adapter = new CustomAutoCompleteAdapter(this, (ArrayList<UserInfoPOJO>) leaderPOJOS);
                 auto_fav_list.setAdapter(adapter);
             }
 

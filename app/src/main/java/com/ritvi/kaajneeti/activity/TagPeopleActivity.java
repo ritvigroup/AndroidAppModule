@@ -24,8 +24,8 @@ import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.adapter.TagPeopleAdapter;
 import com.ritvi.kaajneeti.adapter.TagSearchPeopleAdapter;
 import com.ritvi.kaajneeti.pojo.ResponsePOJO;
-import com.ritvi.kaajneeti.pojo.searchuser.SearchUserProfileCitizen;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.pojo.user.SearchUserResultPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -63,7 +63,7 @@ public class TagPeopleActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            peopleTagged.addAll((List<UserProfilePOJO>) bundle.getSerializable("taggedpeople"));
+            peopleTagged.addAll((List<UserInfoPOJO>) bundle.getSerializable("taggedpeople"));
         }
 
         act_search.addTextChangedListener(new TextWatcher() {
@@ -99,7 +99,7 @@ public class TagPeopleActivity extends AppCompatActivity {
         act_search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (!ifAlreadyTagged(userProfilePOJOS.get(i).getCitizenProfilePOJO().getUserProfileId())) {
+                if (!ifAlreadyTagged(userProfilePOJOS.get(i))) {
                     peopleTagged.add(userProfilePOJOS.get(i));
                     tagPeopleAdapter.notifyDataSetChanged();
                     act_search.setText("");
@@ -108,9 +108,19 @@ public class TagPeopleActivity extends AppCompatActivity {
         });
     }
 
-    public boolean ifAlreadyTagged(String id) {
-        for (UserProfilePOJO userProfilePOJO : peopleTagged) {
-            if (id.equals(userProfilePOJO.getCitizenProfilePOJO().getParentUserId())) {
+    public boolean ifAlreadyTagged(UserInfoPOJO userInfoPOJO) {
+        for (UserInfoPOJO userProfilePOJO : peopleTagged) {
+            String id="";
+            if(userInfoPOJO.getUserProfileCitizen()!=null){
+                id=userInfoPOJO.getUserProfileCitizen().getUserProfileId();
+            }else{
+                id=userInfoPOJO.getUserProfileLeader().getUserProfileId();
+            }
+
+            if (userProfilePOJO.getUserProfileLeader()!=null&&id.equals(userProfilePOJO.getUserProfileLeader().getParentUserId())) {
+                return true;
+            }
+            if (userProfilePOJO.getUserProfileCitizen()!=null&&id.equals(userProfilePOJO.getUserProfileCitizen().getParentUserId())) {
                 return true;
             }
         }
@@ -136,22 +146,23 @@ public class TagPeopleActivity extends AppCompatActivity {
 
 
     TagSearchPeopleAdapter tagSearchPeopleAdapter;
-    ArrayList<UserProfilePOJO> userProfilePOJOS = new ArrayList<>();
-    List<UserProfilePOJO> peopleTagged = new ArrayList<>();
+    ArrayList<UserInfoPOJO> userProfilePOJOS = new ArrayList<>();
+    List<UserInfoPOJO> peopleTagged = new ArrayList<>();
 
     public void searchUser() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("search", act_search.getText().toString()));
         new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
             @Override
             public void onGetMsg(String apicall, String response) {
                 try {
-                    ResponsePOJO<SearchUserProfileCitizen> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponsePOJO<SearchUserProfileCitizen>>() {
+                    ResponsePOJO<SearchUserResultPOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponsePOJO<SearchUserResultPOJO>>() {
                     }.getType());
                     userProfilePOJOS.clear();
-                    if (responsePOJO.getStatus().equals("success")) {
-                        userProfilePOJOS.addAll(responsePOJO.getResult().getSearchUserPOJOList());
+                    if (responsePOJO.isSuccess()) {
+                        userProfilePOJOS.addAll(responsePOJO.getResult().getCitizenUserInfoPOJOS());
+                        userProfilePOJOS.addAll(responsePOJO.getResult().getLeaderUserInfoPOJOS());
 
                     } else {
                         ToastClass.showShortToast(getApplicationContext(), responsePOJO.getMessage());

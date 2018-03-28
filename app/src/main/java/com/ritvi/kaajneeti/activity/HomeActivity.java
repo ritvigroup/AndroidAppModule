@@ -42,7 +42,6 @@ import com.ritvi.kaajneeti.fragment.homeactivity.InvestigateFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.KaajFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.MyConnectionFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.WithdrawalFragment;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.views.CustomViewPager;
 
 import java.util.ArrayList;
@@ -53,7 +52,7 @@ import butterknife.ButterKnife;
 
 public class HomeActivity extends AppCompatActivity {
 
-    List<Fragment> fragmentList=new ArrayList<>();
+    List<Fragment> fragmentList = new ArrayList<>();
 
     private DrawerLayout mDrawer;
     private ActionBarDrawerToggle drawerToggle;
@@ -61,8 +60,7 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     @BindView(R.id.ic_ham)
     ImageView ic_ham;
-    public UserProfilePOJO userProfilePOJO=Constants.userProfilePojo;
-//    @BindView(R.id.iv_search)
+    //    @BindView(R.id.iv_search)
 //    ImageView iv_search;
     @BindView(R.id.et_search)
     EditText et_search;
@@ -124,9 +122,9 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(et_search.getText().toString().length()>0){
+                if (et_search.getText().toString().length() > 0) {
                     iv_search_close.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     iv_search_close.setVisibility(View.GONE);
                 }
             }
@@ -161,36 +159,70 @@ public class HomeActivity extends AppCompatActivity {
         iv_speaker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this,AddPostActivity.class));
+                startActivity(new Intent(HomeActivity.this, AddPostActivity.class));
             }
         });
 
-        Log.d(TagUtils.getTag(),"user profile:-"+userProfilePOJO.toString());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(getApplication() instanceof MainApplication) {
+        if (getApplication() instanceof MainApplication) {
             MainApplication application = (MainApplication) getApplication();
             Tracker mTracker = application.getDefaultTracker();
-            Log.d(TagUtils.getTag(),"local class name:-"+this.getLocalClassName());
+            Log.d(TagUtils.getTag(), "local class name:-" + this.getLocalClassName());
             mTracker.setScreenName(this.getLocalClassName());
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         }
     }
 
+    KaajFragment kaajFragment;
+    MyConnectionFragment myConnectionFragment;
+    InvestigateFragment investigateFragment;
+    WithdrawalFragment withdrawalFragment;
+
     private void setupViewPager(ViewPager viewPager) {
-        KaajFragment kaajFragment=new KaajFragment();
-        MyConnectionFragment uniounFragment=new MyConnectionFragment();
-        InvestigateFragment investigateFragment=new InvestigateFragment();
-        WithdrawalFragment withdrawalFragment=new WithdrawalFragment();
+
+        kaajFragment = new KaajFragment();
+        myConnectionFragment = new MyConnectionFragment();
+        investigateFragment = new InvestigateFragment();
+        withdrawalFragment = new WithdrawalFragment();
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(kaajFragment, "Rural");
-        adapter.addFrag(uniounFragment, "Urban");
+        adapter.addFrag(myConnectionFragment, "Urban");
         adapter.addFrag(investigateFragment, "Urban");
         adapter.addFrag(withdrawalFragment, "Urban");
         viewPager.setAdapter(adapter);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        break;
+                    case 1:
+                        myConnectionFragment.initialize();
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private void settingNavDrawer() {
@@ -204,12 +236,12 @@ public class HomeActivity extends AppCompatActivity {
 
         View headerLayout = nvDrawer.inflateHeaderView(R.layout.home_nav_header);
         TextView tv_header_title = headerLayout.findViewById(R.id.tv_header_title);
-        tv_header_title.setText(userProfilePOJO.getUserName());
+        tv_header_title.setText(Constants.userInfoPOJO.getUserName());
 
         ImageView cv_profile_pic = headerLayout.findViewById(R.id.cv_profile_pic);
 
         Glide.with(getApplicationContext())
-                .load(userProfilePOJO.getProfilePhotoPath())
+                .load(Constants.userInfoPOJO.getProfilePhotoPath())
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .error(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
@@ -273,15 +305,15 @@ public class HomeActivity extends AppCompatActivity {
                 showMyConnectionFragment();
                 break;
             case R.id.nav_act:
-                startActivity(new Intent(HomeActivity.this,AddPostActivity.class));
+                startActivity(new Intent(HomeActivity.this, AddPostActivity.class));
                 break;
             case R.id.nav_analyze:
                 break;
             case R.id.nav_elect:
-                startActivity(new Intent(HomeActivity.this,FavoriteLeaderActivity.class));
+                startActivity(new Intent(HomeActivity.this, FavoriteLeaderActivity.class));
                 break;
             case R.id.nav_setting:
-                startActivity(new Intent(HomeActivity.this,SettingActivity.class));
+                startActivity(new Intent(HomeActivity.this, SettingActivity.class));
                 break;
             case R.id.nav_earn:
                 showEarnFragment();

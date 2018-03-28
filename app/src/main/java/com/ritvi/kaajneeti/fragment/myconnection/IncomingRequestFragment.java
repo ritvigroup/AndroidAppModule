@@ -34,14 +34,15 @@ import butterknife.ButterKnife;
  * Created by sunil on 05-03-2018.
  */
 
-public class OutgoingFragment extends Fragment {
+public class IncomingRequestFragment extends Fragment {
     @BindView(R.id.rv_complaints)
     RecyclerView rv_complaints;
 
+    boolean is_initialized=false;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frag_outgoing, container, false);
+        View view = inflater.inflate(R.layout.frag_conn_request, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -53,17 +54,15 @@ public class OutgoingFragment extends Fragment {
         callAPI();
     }
 
-    boolean is_initialize=false;
     public void initialize(){
-        if(!is_initialize){
-
+        if(!is_initialized) {
+            attachAdapter();
 //            callAPI();
-//            is_initialize=true;
+//            is_initialized=true;
         }
     }
 
     public void callAPI() {
-
 
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
@@ -79,7 +78,8 @@ public class OutgoingFragment extends Fragment {
                 }
                 searchUserProfileAdapter.notifyDataSetChanged();
             }
-        },OutGoingRequestPOJO.class,"CALL_ALL_REQUEST_API",false).execute(WebServicesUrls.OUTGOING_FRIEND_REQUEST);
+        },OutGoingRequestPOJO.class,"CALL_ALL_INCOMING_API",false).execute(WebServicesUrls.INCOMING_FRIEND_REQUEST);
+
     }
 
     SentRequestAdapter searchUserProfileAdapter;

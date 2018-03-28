@@ -21,7 +21,7 @@ import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.activity.AddComplaintDescriptionActivity;
 import com.ritvi.kaajneeti.activity.TagPeopleActivity;
 import com.ritvi.kaajneeti.adapter.AttachPeopleAdapter;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.io.Serializable;
@@ -51,7 +51,7 @@ public class GroupComplaintFragment extends Fragment implements DatePickerDialog
     @BindView(R.id.staggerdGV)
     StaggeredTextGridView staggerdGV;
 
-    List<UserProfilePOJO> taggedUserProfilePOJOS = new ArrayList<>();
+    List<UserInfoPOJO> taggedUserProfilePOJOS = new ArrayList<>();
     private static final int TAG_PEOPLE = 105;
 
     @Nullable
@@ -91,7 +91,7 @@ public class GroupComplaintFragment extends Fragment implements DatePickerDialog
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), AddComplaintDescriptionActivity.class);
-                intent.putExtra("applicant_name", Constants.userProfilePojo.getCitizenProfilePOJO().getFirstName()+" "+Constants.userProfilePojo.getCitizenProfilePOJO().getLastName());
+                intent.putExtra("applicant_name", Constants.userInfoPOJO.getUserProfileCitizen().getFirstName()+" "+Constants.userInfoPOJO.getUserProfileCitizen().getLastName());
                 intent.putExtra("applicant_father_name", "");
                 intent.putExtra("applicant_mobile", "");
                 intent.putExtra("complaint_type_id", "3");
@@ -116,7 +116,7 @@ public class GroupComplaintFragment extends Fragment implements DatePickerDialog
             if (resultCode == Activity.RESULT_OK) {
                 Log.d(TagUtils.getTag(), "people tag fragment");
                 taggedUserProfilePOJOS.clear();
-                List<UserProfilePOJO> userProfilePOJOS = (List<UserProfilePOJO>) data.getSerializableExtra("taggedpeople");
+                List<UserInfoPOJO> userProfilePOJOS = (List<UserInfoPOJO>) data.getSerializableExtra("taggedpeople");
                 Log.d(TagUtils.getTag(), "tagged users:-" + userProfilePOJOS.toString());
                 taggedUserProfilePOJOS.addAll(userProfilePOJOS);
                 attachStaggeredAdapter();

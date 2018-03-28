@@ -27,14 +27,14 @@ import com.leocardz.link.preview.library.LinkPreviewCallback;
 import com.leocardz.link.preview.library.SourceContent;
 import com.leocardz.link.preview.library.TextCrawler;
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.activity.AddPostActivity;
 import com.ritvi.kaajneeti.activity.HomeActivity;
+import com.ritvi.kaajneeti.activity.ProfilePageActivity;
 import com.ritvi.kaajneeti.pojo.newsfeeds.EventFeed;
 import com.ritvi.kaajneeti.pojo.newsfeeds.PollFeed;
 import com.ritvi.kaajneeti.pojo.newsfeeds.PostFeed;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
-import com.ritvi.kaajneeti.testing.FacebookMainActivity;
 import com.ritvi.kaajneeti.webservice.GetWebServices;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 
@@ -62,7 +62,6 @@ public class KaajFragment extends Fragment implements WebServicesCallBack {
     @BindView(R.id.tv_profile_name)
     TextView tv_profile_name;
 
-    UserProfilePOJO userProfilePOJO;
 
     @Nullable
     @Override
@@ -79,7 +78,7 @@ public class KaajFragment extends Fragment implements WebServicesCallBack {
         cv_profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), FacebookMainActivity.class));
+                startActivity(new Intent(getActivity(), ProfilePageActivity.class).putExtra("userInfo",Constants.userInfoPOJO));
             }
         });
 
@@ -92,14 +91,12 @@ public class KaajFragment extends Fragment implements WebServicesCallBack {
         });
 
         if (getActivity() instanceof HomeActivity) {
-            HomeActivity homeActivity = (HomeActivity) getActivity();
-            userProfilePOJO = homeActivity.userProfilePOJO;
 
 //            inflateNewsFeeds();
-            tv_profile_name.setText(userProfilePOJO.getUserName());
+            tv_profile_name.setText(Constants.userInfoPOJO.getUserName());
 
             Glide.with(getActivity().getApplicationContext())
-                    .load(userProfilePOJO.getProfilePhotoPath())
+                    .load(Constants.userInfoPOJO.getProfilePhotoPath())
                     .placeholder(R.drawable.ic_default_profile_pic)
                     .error(R.drawable.ic_default_profile_pic)
                     .dontAnimate()
@@ -191,9 +188,9 @@ public class KaajFragment extends Fragment implements WebServicesCallBack {
             CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
             TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
 
-            tv_profile_name.setText(userProfilePOJO.getUserName());
+            tv_profile_name.setText(Constants.userInfoPOJO.getUserName());
             Glide.with(getActivity().getApplicationContext())
-                    .load(userProfilePOJO.getProfilePhotoPath())
+                    .load(Constants.userInfoPOJO.getProfilePhotoPath())
                     .placeholder(R.drawable.ic_default_profile_pic)
                     .error(R.drawable.ic_default_profile_pic)
                     .dontAnimate()

@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ritvi.kaajneeti.R;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 
 import java.util.List;
 
@@ -25,9 +25,9 @@ import java.util.List;
 public class AttachPeopleAdapter extends BaseAdapter {
 
     private Context context;
-    private List<UserProfilePOJO> names;
+    private List<UserInfoPOJO> names;
 
-    public AttachPeopleAdapter(Context context, List<UserProfilePOJO> names) {
+    public AttachPeopleAdapter(Context context, List<UserInfoPOJO> names) {
         this.context = context;
         this.names = names;
     }

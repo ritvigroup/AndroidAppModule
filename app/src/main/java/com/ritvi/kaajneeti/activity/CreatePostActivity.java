@@ -112,7 +112,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("", ""));
-            reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
             reqEntity.addPart("title", new StringBody(et_title.getText().toString()));
             reqEntity.addPart("location", new StringBody(check_in_place));
             reqEntity.addPart("description", new StringBody(et_description.getText().toString()));
@@ -169,7 +169,7 @@ public class CreatePostActivity extends AppCompatActivity {
                 ResponseListPOJO<FeelingPOJO> responseListPOJO = new Gson().fromJson(response, new TypeToken<ResponseListPOJO<FeelingPOJO>>() {
                 }.getType());
                 feelingPOJOArrayList.clear();
-                if (responseListPOJO.getStatus().equals("success")) {
+                if (responseListPOJO.isSuccess()) {
                     feelingPOJOArrayList.addAll(responseListPOJO.getResultList());
 
                     List<String> feelingStringList = new ArrayList<>();

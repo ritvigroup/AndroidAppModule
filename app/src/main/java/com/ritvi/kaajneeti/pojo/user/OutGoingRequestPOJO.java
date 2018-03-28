@@ -1,12 +1,12 @@
-package com.ritvi.kaajneeti.pojo.user.favorite;
+package com.ritvi.kaajneeti.pojo.user;
 
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by sunil on 23-03-2018.
+ * Created by sunil on 28-03-2018.
  */
 
-public class FavoriteResultPOJO {
+public class OutGoingRequestPOJO {
     @SerializedName("user_profile_detail")
     UserProfileDetailPOJO userProfileDetailPOJO;
 

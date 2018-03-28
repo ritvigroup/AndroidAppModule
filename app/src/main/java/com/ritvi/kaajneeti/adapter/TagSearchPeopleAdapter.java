@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 
 import java.util.ArrayList;
 
@@ -20,21 +20,21 @@ import java.util.ArrayList;
  * Created by sunil on 29-12-2017.
  */
 
-public class TagSearchPeopleAdapter extends ArrayAdapter<UserProfilePOJO> {
-    ArrayList<UserProfilePOJO> customers, tempCustomer, suggestions ;
+public class TagSearchPeopleAdapter extends ArrayAdapter<UserInfoPOJO> {
+    ArrayList<UserInfoPOJO> customers, tempCustomer, suggestions ;
     Context context;
-    public TagSearchPeopleAdapter(Context context, ArrayList<UserProfilePOJO> objects) {
+    public TagSearchPeopleAdapter(Context context, ArrayList<UserInfoPOJO> objects) {
         super(context, android.R.layout.simple_list_item_1, objects);
         this.context=context;
         this.customers = objects;
-        this.tempCustomer = new ArrayList<UserProfilePOJO>(objects);
-        this.suggestions = new ArrayList<UserProfilePOJO>(objects);
+        this.tempCustomer = new ArrayList<UserInfoPOJO>(objects);
+        this.suggestions = new ArrayList<UserInfoPOJO>(objects);
 
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        UserProfilePOJO customer = getItem(position);
+        UserInfoPOJO customer = getItem(position);
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.inflate_tag_user_item, parent, false);
         }
@@ -66,7 +66,7 @@ public class TagSearchPeopleAdapter extends ArrayAdapter<UserProfilePOJO> {
     Filter myFilter = new Filter() {
         @Override
         public CharSequence convertResultToString(Object resultValue) {
-            UserProfilePOJO customer = (UserProfilePOJO) resultValue;
+            UserInfoPOJO customer = (UserInfoPOJO) resultValue;
             return customer.getUserName();
         }
 
@@ -74,7 +74,7 @@ public class TagSearchPeopleAdapter extends ArrayAdapter<UserProfilePOJO> {
         protected FilterResults performFiltering(CharSequence constraint) {
             if (constraint != null) {
                 suggestions.clear();
-                for (UserProfilePOJO people : tempCustomer) {
+                for (UserInfoPOJO people : tempCustomer) {
                     if (people.getUserName().toLowerCase().startsWith(constraint.toString().toLowerCase())
                             ||people.getUserEmail().toLowerCase().startsWith(constraint.toString().toLowerCase())) {
                         suggestions.add(people);
@@ -92,10 +92,10 @@ public class TagSearchPeopleAdapter extends ArrayAdapter<UserProfilePOJO> {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            ArrayList<UserProfilePOJO> c = (ArrayList<UserProfilePOJO>) results.values;
+            ArrayList<UserInfoPOJO> c = (ArrayList<UserInfoPOJO>) results.values;
             if (results != null && results.count > 0) {
                 clear();
-                for (UserProfilePOJO cust : c) {
+                for (UserInfoPOJO cust : c) {
                     add(cust);
                     notifyDataSetChanged();
                 }

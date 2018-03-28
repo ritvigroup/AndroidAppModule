@@ -10,14 +10,11 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
-import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
+import com.ritvi.kaajneeti.pojo.ResponsePOJO;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -32,13 +29,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by sunil on 28-12-2016.
  */
 
-public class WebServiceBaseResponseList<T> extends AsyncTask<String, Void, ResponseListPOJO<T>> {
+public class WebServiceBaseResponse<T> extends AsyncTask<String, Void, ResponsePOJO<T>> {
     ArrayList<NameValuePair> nameValuePairs;
     String jResult;
     Context context;
@@ -53,7 +49,7 @@ public class WebServiceBaseResponseList<T> extends AsyncTask<String, Void, Respo
     String msg;
     private final String TAG = getClass().getName();
     Class<T> cls;
-    public WebServiceBaseResponseList(ArrayList<NameValuePair> nameValuePairs, Context context, Object object,Class<T> cls, String msg, boolean isdialog) {
+    public WebServiceBaseResponse(ArrayList<NameValuePair> nameValuePairs, Context context, Object object, Class<T> cls, String msg, boolean isdialog) {
         this.nameValuePairs = nameValuePairs;
         this.nameValuePairs.addAll(UtilityFunction.getNameValuePairs(context));
         this.object = object;
@@ -77,7 +73,7 @@ public class WebServiceBaseResponseList<T> extends AsyncTask<String, Void, Respo
     }
 
     @Override
-    protected ResponseListPOJO<T> doInBackground(String... params) {
+    protected ResponsePOJO<T> doInBackground(String... params) {
         try {
             jResult = httpCall(params[0], nameValuePairs);
             Log.d(TagUtils.getTag(),msg+":-"+jResult);
@@ -87,13 +83,13 @@ public class WebServiceBaseResponseList<T> extends AsyncTask<String, Void, Respo
 //                return responsePOJO;
 
                 try {
-                    ResponseListPOJO<T> responseListPOJO=new ResponseListPOJO<>();
+                    ResponsePOJO<T> responseListPOJO=new ResponsePOJO<>();
                     JSONObject jsonObject=new JSONObject(jResult);
                     if(jsonObject.optString("status").equals(Constants.API_SUCCESS)){
                         responseListPOJO.setSuccess(true);
                         responseListPOJO.setMessage(jsonObject.optString("message"));
-                        List<T> list = getObjectList(jsonObject.optJSONArray("result").toString(),cls);
-                        responseListPOJO.setResultList(list);
+                        T t = getObject(jsonObject.optJSONObject("result").toString(),cls);
+                        responseListPOJO.setResult(t);
                     }else{
                         responseListPOJO.setSuccess(false);
                         responseListPOJO.setMessage(jsonObject.optString("message"));
@@ -117,43 +113,30 @@ public class WebServiceBaseResponseList<T> extends AsyncTask<String, Void, Respo
     }
 
     @Override
-    protected void onPostExecute(ResponseListPOJO<T> responsePOJO) {
+    protected void onPostExecute(ResponsePOJO<T> responsePOJO) {
         super.onPostExecute(responsePOJO);
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
 
         if (responsePOJO != null) {
-            ResponseListCallback<T> mcallback = (ResponseListCallback<T>) object;
+            ResponseCallBack<T> mcallback = (ResponseCallBack<T>) object;
             mcallback.onGetMsg(responsePOJO);
         }else{
             ToastClass.showShortToast(context,"No response from server");
         }
-//        if(s!=null&&s.length()>0) {
-//            if (object != null) {
-//                WebServicesCallBack mcallback = (WebServicesCallBack) object;
-//                mcallback.onGetMsg(msg, s);
-//            } else {
-//                ToastClass.showShortToast(context, "Something went wrong");
-//            }
-//        }else{
-//            ToastClass.showShortToast(context,"No Internet");
-//        }
 
     }
 
-    public static <T> List<T> getObjectList(String jsonString, Class<T> cls){
-        List<T> list = new ArrayList<T>();
+    public static <T> T getObject(String jsonString, Class<T> cls){
+        T t = null;
         try {
             Gson gson = new Gson();
-            JsonArray arry = new JsonParser().parse(jsonString).getAsJsonArray();
-            for (JsonElement jsonElement : arry) {
-                list.add(gson.fromJson(jsonElement, cls));
-            }
+            t=gson.fromJson(jsonString, cls);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return list;
+        return t;
     }
 
     public static String httpCall(String url, ArrayList<NameValuePair> postParameters) {

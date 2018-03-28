@@ -94,7 +94,7 @@
             android:ems="10"
             android:hint="@string/lmn_mpin"
             android:imeOptions="actionDone"
-            android:inputType="number"
+            android:inputType="numberPassword"
             android:singleLine="true"
             android:textStyle="bold" />
 

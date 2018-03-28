@@ -6,10 +6,9 @@ package com.ritvi.kaajneeti.webservice;
 
 public class WebServicesUrls {
 
-    //    public static final String BASE_URL = "http://10.0.2.2/ritvigroup.com/ritvigroup/api/V1/";
+//    public static final String BASE_URL = "http://10.0.2.2/ritvigroup.com/ritvigroup/api/V1/";
 //    public static final String BASE_URL = "http://rajesh1may.000webhostapp.com/ritvigroup/api_old/V1/";
     public static final String BASE_URL = "http://ritvigroup.com/ritvigroup.com/ritvigroup/api/V1/";
-
 
     public static final String NEWS_API = "https://newsapi.org/v2/top-headlines?country=in&category=business&apiKey=311c1e78e72c4bb9a64542528d871871";
 
@@ -27,7 +26,6 @@ public class WebServicesUrls {
 
     public static final String COMPLAINT = BASE_URL + "complaint.php";
 
-
     public static final String SEARCH_USER_PROFILE = BASE_URL + "userprofile/searchAllUserProfiles";
     public static final String SEARCH_LEADER_PROFILE = BASE_URL + "userprofile/searchLeaderProfiles";
 
@@ -37,11 +35,11 @@ public class WebServicesUrls {
     public static final String SAVE_POST = BASE_URL + "post/postMyStatus";
     public static final String GET_FEELINGS = BASE_URL + "post/getAllFeelings";
 
-
     public static final String SEND_FRIEND_REQUEST = BASE_URL + "userconnect/sendUserProfileFriendRequest";
     public static final String CANCEL_FRIEND_REQUEST = BASE_URL + "userconnect/cancelUserProfileFriendRequest";
     public static final String UNDO_FRIEND_REQUEST = BASE_URL + "userconnect/undoUserProfileFriendRequest";
     public static final String OUTGOING_FRIEND_REQUEST = BASE_URL + "userconnect/getMyAllRequestToFriends";
     public static final String INCOMING_FRIEND_REQUEST = BASE_URL + "userconnect/getMyAllFriendRequest";
+    public static final String MY_FRIENDS = BASE_URL + "userconnect/getMyAllFriends";
 
 }

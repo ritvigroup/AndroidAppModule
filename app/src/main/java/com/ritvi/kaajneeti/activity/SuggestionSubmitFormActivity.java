@@ -104,7 +104,7 @@ public class SuggestionSubmitFormActivity extends AppCompatActivity {
 
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("", ""));
-            reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
             reqEntity.addPart("assign_to_profile_id", new StringBody(assigned_profile_id));
             reqEntity.addPart("suggestion_subject", new StringBody(et_subject.getText().toString()));
             reqEntity.addPart("suggestion_description", new StringBody(et_suggestion.getText().toString()));

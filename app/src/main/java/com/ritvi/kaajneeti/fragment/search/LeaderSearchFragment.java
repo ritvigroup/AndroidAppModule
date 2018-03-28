@@ -1,5 +1,6 @@
-package com.ritvi.kaajneeti.fragment.myconnection;
+package com.ritvi.kaajneeti.fragment.search;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,28 +12,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.tamir7.contacts.Contact;
-import com.github.tamir7.contacts.Contacts;
-import com.ritvi.kaajneeti.adapter.ContactsAdapter;
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.adapter.SearchUserProfileAdapter;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by sunil on 04-03-2018.
+ * Created by sunil on 28-03-2018.
  */
 
-public class ContactFragment extends Fragment{
+@SuppressLint("ValidFragment")
+public class LeaderSearchFragment extends Fragment{
+
     @BindView(R.id.rv_users)
     RecyclerView rv_users;
-    boolean is_initialized;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.frag_search_voter,container,false);
+        View view=inflater.inflate(R.layout.frag_user_search,container,false);
         ButterKnife.bind(this,view);
         return view;
     }
@@ -40,23 +44,23 @@ public class ContactFragment extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-    }
-    List<Contact> contacts;
-    public void initialize(){
-        if(!is_initialized) {
-            contacts = Contacts.getQuery().find();
-            attachAdapter();
-            is_initialized=true;
-        }
+        attachAdapter();
     }
 
-    ContactsAdapter searchVoterAdapter;
-    public void attachAdapter(){
-        searchVoterAdapter= new ContactsAdapter(getActivity(), this, contacts);
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(getActivity());
+    public void setRv_users(List<UserInfoPOJO> userProfilePOJOS){
+        this.userProfilePOJOS.clear();
+        this.userProfilePOJOS.addAll(userProfilePOJOS);
+        searchUserProfileAdapter.notifyDataSetChanged();
+    }
+
+
+    SearchUserProfileAdapter searchUserProfileAdapter;
+    List<UserInfoPOJO> userProfilePOJOS=new ArrayList<>();
+    public void attachAdapter() {
+        searchUserProfileAdapter = new SearchUserProfileAdapter(getActivity(), this, userProfilePOJOS);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         rv_users.setHasFixedSize(true);
-        rv_users.setAdapter(searchVoterAdapter);
+        rv_users.setAdapter(searchUserProfileAdapter);
         rv_users.setLayoutManager(linearLayoutManager);
         rv_users.setItemAnimator(new DefaultItemAnimator());
     }

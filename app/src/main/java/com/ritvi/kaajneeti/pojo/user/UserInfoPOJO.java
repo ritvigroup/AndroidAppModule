@@ -1,13 +1,15 @@
-package com.ritvi.kaajneeti.pojo.user.favorite;
+package com.ritvi.kaajneeti.pojo.user;
 
 import com.google.gson.annotations.SerializedName;
-import com.ritvi.kaajneeti.pojo.user.CitizenProfilePOJO;
+
+import java.io.Serializable;
 
 /**
- * Created by sunil on 23-03-2018.
+ * Created by sunil on 28-03-2018.
  */
 
-public class UserInfoPOJO {
+public class UserInfoPOJO implements Serializable{
+
     @SerializedName("UserId")
     private String userId;
     @SerializedName("UserUniqueId")
@@ -26,8 +28,12 @@ public class UserInfoPOJO {
     private String userMobile;
     @SerializedName("AddedOn")
     private String addedOn;
+    @SerializedName("AddedOnTime")
+    private String addedOnTime;
     @SerializedName("UpdatedOn")
     private String updatedOn;
+    @SerializedName("UpdatedOnTime")
+    private String updatedOnTime;
     @SerializedName("DateOfBirth")
     private String dateOfBirth;
     @SerializedName("Gender")
@@ -46,8 +52,12 @@ public class UserInfoPOJO {
     private String googleProfileId;
     @SerializedName("LinkedinProfileId")
     private String linkedinProfileId;
+    @SerializedName("UserProfileLeader")
+    private UserProfilePOJO userProfileLeader;
     @SerializedName("UserProfileCitizen")
-    private CitizenProfilePOJO userProfileCitizen;
+    private UserProfilePOJO userProfileCitizen;
+    @SerializedName("MyFavouriteLeader")
+    private Integer myFavouriteLeader;
 
     public String getUserId() {
         return userId;
@@ -121,12 +131,28 @@ public class UserInfoPOJO {
         this.addedOn = addedOn;
     }
 
+    public String getAddedOnTime() {
+        return addedOnTime;
+    }
+
+    public void setAddedOnTime(String addedOnTime) {
+        this.addedOnTime = addedOnTime;
+    }
+
     public String getUpdatedOn() {
         return updatedOn;
     }
 
     public void setUpdatedOn(String updatedOn) {
         this.updatedOn = updatedOn;
+    }
+
+    public String getUpdatedOnTime() {
+        return updatedOnTime;
+    }
+
+    public void setUpdatedOnTime(String updatedOnTime) {
+        this.updatedOnTime = updatedOnTime;
     }
 
     public String getDateOfBirth() {
@@ -201,11 +227,27 @@ public class UserInfoPOJO {
         this.linkedinProfileId = linkedinProfileId;
     }
 
-    public CitizenProfilePOJO getUserProfileCitizen() {
+    public UserProfilePOJO getUserProfileLeader() {
+        return userProfileLeader;
+    }
+
+    public void setUserProfileLeader(UserProfilePOJO userProfileLeader) {
+        this.userProfileLeader = userProfileLeader;
+    }
+
+    public UserProfilePOJO getUserProfileCitizen() {
         return userProfileCitizen;
     }
 
-    public void setUserProfileCitizen(CitizenProfilePOJO userProfileCitizen) {
+    public void setUserProfileCitizen(UserProfilePOJO userProfileCitizen) {
         this.userProfileCitizen = userProfileCitizen;
+    }
+
+    public Integer getMyFavouriteLeader() {
+        return myFavouriteLeader;
+    }
+
+    public void setMyFavouriteLeader(Integer myFavouriteLeader) {
+        this.myFavouriteLeader = myFavouriteLeader;
     }
 }

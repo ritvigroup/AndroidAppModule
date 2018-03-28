@@ -74,7 +74,7 @@ public class CreatePollActivity extends AppCompatActivity {
 
     public void createPoll() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("poll_question", et_question.getText().toString()));
         nameValuePairs.add(new BasicNameValuePair("event_description", ""));
         nameValuePairs.add(new BasicNameValuePair("poll_privacy", "1"));
@@ -91,7 +91,7 @@ public class CreatePollActivity extends AppCompatActivity {
             public void onGetMsg(String apicall, String response) {
                 ResponsePOJO<PollPOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponsePOJO<PollPOJO>>() {
                 }.getType());
-                if (responsePOJO.getStatus().equals("success")) {
+                if (responsePOJO.isSuccess()) {
                     finish();
                 }
                 ToastClass.showShortToast(getApplicationContext(), responsePOJO.getMessage());

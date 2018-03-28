@@ -98,13 +98,13 @@ public class InformationSubmittedActivity extends AppCompatActivity {
 
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("", ""));
-            reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
             reqEntity.addPart("information_subject", new StringBody(et_subject.getText().toString()));
             reqEntity.addPart("information_description", new StringBody(et_description.getText().toString()));
             reqEntity.addPart("applicant_name", new StringBody(applicant_name));
             reqEntity.addPart("applicant_father_name", new StringBody(applicant_father_name));
             reqEntity.addPart("applicant_mobile", new StringBody(""));
-            reqEntity.addPart("applicant_email", new StringBody(Constants.userProfilePojo.getCitizenProfilePOJO().getEmail()));
+            reqEntity.addPart("applicant_email", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getEmail()));
 
             int count = 0;
 

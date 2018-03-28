@@ -43,6 +43,14 @@ public class ConnectionLeaderFragment extends Fragment {
         attachAdapter();
     }
 
+    boolean is_initialize=false;
+    public void initialize(){
+        if(!is_initialize){
+
+            is_initialize=true;
+        }
+    }
+
     ConnectionLeaderAdapter connectionSuggestionAdapter;
 
     public void attachAdapter() {
