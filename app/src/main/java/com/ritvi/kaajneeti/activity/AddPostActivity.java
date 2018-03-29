@@ -51,6 +51,8 @@ public class AddPostActivity extends AppCompatActivity {
                     startActivity(new Intent(AddPostActivity.this,CreateSuggestionActivity.class));
                 }else if(position==4){
                     startActivity(new Intent(AddPostActivity.this,CreateInformationActivity.class));
+                }else if(position==1){
+                    startActivity(new Intent(AddPostActivity.this,CreateIssueActivity.class));
                 }
             }
         });

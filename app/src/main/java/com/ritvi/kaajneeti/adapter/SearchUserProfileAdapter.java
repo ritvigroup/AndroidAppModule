@@ -174,17 +174,17 @@ public class SearchUserProfileAdapter extends RecyclerView.Adapter<SearchUserPro
     }
 
     public void acceptRequest(final UserProfilePOJO userProfilePOJO, TextView textView){
-//        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-//        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
-//        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
-//        nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id",userProfilePOJO.getCitizenProfilePOJO().getUserProfileId()));
-//        new WebServiceBase(nameValuePairs, activity, new WebServicesCallBack() {
-//            @Override
-//            public void onGetMsg(String apicall, String response) {
-//                userProfilePOJO.getCitizenProfilePOJO().setMyFriend("4");
-//                notifyDataSetChanged();
-//            }
-//        },"CALL_ADD_FRIEND_API",true).execute(WebServicesUrls.CANCEL_FRIEND_REQUEST);
+        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id",userProfilePOJO.getUserProfileId()));
+        new WebServiceBase(nameValuePairs, activity, new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                userProfilePOJO.setMyFriend(3);
+                notifyDataSetChanged();
+            }
+        },"CALL_ADD_FRIEND_API",true).execute(WebServicesUrls.SEND_FRIEND_REQUEST);
     }
 
     @Override

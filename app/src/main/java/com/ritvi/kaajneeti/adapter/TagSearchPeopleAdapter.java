@@ -2,6 +2,7 @@ package com.ritvi.kaajneeti.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 
 import java.util.ArrayList;
@@ -84,6 +86,7 @@ public class TagSearchPeopleAdapter extends ArrayAdapter<UserInfoPOJO> {
                 FilterResults filterResults = new FilterResults();
                 filterResults.values = suggestions;
                 filterResults.count = suggestions.size();
+                Log.d(TagUtils.getTag(),"filter size:-"+suggestions.size());
                 return filterResults;
             } else {
                 return new FilterResults();

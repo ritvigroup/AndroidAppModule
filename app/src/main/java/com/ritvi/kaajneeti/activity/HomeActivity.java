@@ -81,6 +81,8 @@ public class HomeActivity extends AppCompatActivity {
     LinearLayout ll_withdrawal;
     @BindView(R.id.iv_speaker)
     ImageView iv_speaker;
+    @BindView(R.id.iv_notification)
+    ImageView iv_notification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,7 +164,12 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(new Intent(HomeActivity.this, AddPostActivity.class));
             }
         });
-
+        iv_notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(HomeActivity.this,NotificationActivity.class));
+            }
+        });
     }
 
     @Override

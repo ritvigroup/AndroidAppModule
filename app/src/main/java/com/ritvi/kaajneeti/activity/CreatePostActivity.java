@@ -1,5 +1,6 @@
 package com.ritvi.kaajneeti.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -18,9 +19,10 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.jmpergar.awesometext.AwesomeTextHandler;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
@@ -28,7 +30,12 @@ import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.communication.FeelingPOJO;
 import com.ritvi.kaajneeti.pojo.event.EventAttachment;
-import com.ritvi.kaajneeti.webservice.WebServiceBase;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.testing.HashtagsSpanRenderer;
+import com.ritvi.kaajneeti.testing.MentionSpanRenderer;
+import com.ritvi.kaajneeti.webservice.ResponseListCallback;
+import com.ritvi.kaajneeti.webservice.WebServiceBaseResponse;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 import com.ritvi.kaajneeti.webservice.WebUploadService;
@@ -42,6 +49,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +59,9 @@ import butterknife.ButterKnife;
 
 public class CreatePostActivity extends AppCompatActivity {
 
+    private static final String HASHTAG_PATTERN = "(#[\\p{L}0-9-_]+)";
+    private static final String MENTION_PATTERN = "(@[\\p{L}0-9-_]+)";
+    private static final int TAG_PEOPLE = 105;
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 101;
     private int PICK_IMAGE_REQUEST = 102;
     private static final int CAMERA_REQUEST = 103;
@@ -65,8 +76,8 @@ public class CreatePostActivity extends AppCompatActivity {
     Button btn_save;
     @BindView(R.id.spinner_feeling)
     Spinner spinner_feeling;
-    @BindView(R.id.btn_tag)
-    Button btn_tag;
+    @BindView(R.id.tv_tags)
+    TextView tv_tags;
     @BindView(R.id.et_title)
     EditText et_title;
     @BindView(R.id.et_description)
@@ -74,7 +85,8 @@ public class CreatePostActivity extends AppCompatActivity {
 
     String tag_people="";
     String check_in_place="";
-
+    AwesomeTextHandler awesomeTextViewHandler;
+    List<UserInfoPOJO> taggedUserProfilePOJOS=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +113,20 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         });
         getAllFeelings();
+
+        awesomeTextViewHandler = new AwesomeTextHandler();
+        awesomeTextViewHandler
+                .addViewSpanRenderer(HASHTAG_PATTERN, new HashtagsSpanRenderer())
+                .addViewSpanRenderer(MENTION_PATTERN, new MentionSpanRenderer())
+                .setView(tv_tags);
+
+
+        tv_tags.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(new Intent(CreatePostActivity.this,TagPeopleActivity.class).putExtra("taggedpeople", (Serializable) taggedUserProfilePOJOS),TAG_PEOPLE);
+            }
+        });
     }
 
 
@@ -110,6 +136,12 @@ public class CreatePostActivity extends AppCompatActivity {
 
             MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
+            String activity="";
+            if(spinner_feeling.getSelectedItemPosition()!=0){
+                activity=feelingPOJOArrayList.get(spinner_feeling.getSelectedItemPosition()).getFeelingId();
+            }
+
+
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("", ""));
             reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
@@ -117,7 +149,7 @@ public class CreatePostActivity extends AppCompatActivity {
             reqEntity.addPart("location", new StringBody(check_in_place));
             reqEntity.addPart("description", new StringBody(et_description.getText().toString()));
             reqEntity.addPart("url", new StringBody(""));
-            reqEntity.addPart("feeling", new StringBody(feelingPOJOArrayList.get(spinner_feeling.getSelectedItemPosition()).getFeelingId()));
+            reqEntity.addPart("feeling", new StringBody(activity));
             reqEntity.addPart("post_tag", new StringBody(""));
 
             int count = 0;
@@ -163,29 +195,28 @@ public class CreatePostActivity extends AppCompatActivity {
 
     public void getAllFeelings(){
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+        new WebServiceBaseResponse<FeelingPOJO>(nameValuePairs, this, new ResponseListCallback<FeelingPOJO>() {
             @Override
-            public void onGetMsg(String apicall, String response) {
-                ResponseListPOJO<FeelingPOJO> responseListPOJO = new Gson().fromJson(response, new TypeToken<ResponseListPOJO<FeelingPOJO>>() {
-                }.getType());
+            public void onGetMsg(ResponseListPOJO<FeelingPOJO> responseListPOJO) {
                 feelingPOJOArrayList.clear();
                 if (responseListPOJO.isSuccess()) {
                     feelingPOJOArrayList.addAll(responseListPOJO.getResultList());
 
                     List<String> feelingStringList = new ArrayList<>();
+                    feelingStringList.add("Select Activity");
                     for (FeelingPOJO feelingPOJO : feelingPOJOArrayList) {
                         feelingStringList.add(feelingPOJO.getFeelingName());
                     }
-
                     ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
                             getApplicationContext(), R.layout.dropsimpledown, feelingStringList);
                     spinner_feeling.setAdapter(spinnerArrayAdapter);
+
                 } else {
                     ToastClass.showShortToast(getApplicationContext(), responseListPOJO.getMessage());
                 }
-
             }
-        }, "CALL_GET_ALL_BRANCH", true).execute(WebServicesUrls.GET_FEELINGS);
+        },FeelingPOJO.class,"CALL_GET_ALL_BRANCH", true).execute(WebServicesUrls.GET_FEELINGS);
+
     }
 
 
@@ -229,30 +260,58 @@ public class CreatePostActivity extends AppCompatActivity {
         tv_profile_description.setText(Html.fromHtml(description));
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        Log.d(TagUtils.getTag(),"onactivity called");
-//        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
-//            if (resultCode == RESULT_OK) {
-//                Place place = PlaceAutocomplete.getPlace(this, data);
-//                Log.i(TagUtils.getTag(), "Place: " + place.getName());
-//                check_in_place= (String) place.getName();
-//                checkProfileDescription();
-//            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-//                Status status = PlaceAutocomplete.getStatus(this, data);
-//                // TODO: Handle the error.
-//                Log.i(TagUtils.getTag(), status.getStatusMessage());
-//
-//            } else if (resultCode == RESULT_CANCELED) {
-//                // The user canceled the operation.
-//            }
-//        }else{
-////            Log.d(TagUtils.getTag(),"onactivity called");
-////            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-////                fragment.onActivityResult(requestCode, resultCode, data);
-////            }
-//            attachFragment.onActivityResult(requestCode,resultCode,data);
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TagUtils.getTag(),"onactivity called");
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                Log.i(TagUtils.getTag(), "Place: " + place.getName());
+                check_in_place= (String) place.getName();
+                checkProfileDescription();
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                // TODO: Handle the error.
+                Log.i(TagUtils.getTag(), status.getStatusMessage());
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }else if (requestCode == TAG_PEOPLE) {
+            if(resultCode == Activity.RESULT_OK){
+                taggedUserProfilePOJOS = (List<UserInfoPOJO>) data.getSerializableExtra("taggedpeople");
+                if(taggedUserProfilePOJOS!=null){
+                    awesomeTextViewHandler.setText(getStaggeredText());
+                }
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }
+
+    public String getStaggeredText(){
+        String tagged_people="";
+        for(UserInfoPOJO userInfoPOJO:taggedUserProfilePOJOS){
+            UserProfilePOJO userProfilePOJO=null;
+            if(userInfoPOJO.getUserProfileCitizen()!=null){
+                userProfilePOJO=userInfoPOJO.getUserProfileCitizen();
+            }
+            if(userInfoPOJO.getUserProfileLeader()!=null){
+                userProfilePOJO=userInfoPOJO.getUserProfileLeader();
+            }
+
+            if(userProfilePOJO!=null){
+                if(userProfilePOJO.getFirstName()!=null||userProfilePOJO.getFirstName().equals("")
+                        ||userProfilePOJO.getLastName()!=null||userProfilePOJO.getLastName().equals("")){
+                    tagged_people+=" #"+userProfilePOJO.getFirstName()+""+userProfilePOJO.getLastName();
+                }else{
+                    tagged_people+=" #"+userInfoPOJO.getUserName();
+                }
+            }
+
+        }
+        return tagged_people;
+    }
 
 }

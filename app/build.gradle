@@ -98,5 +98,7 @@ dependencies {
     compile 'org.jsoup:jsoup:1.8.3' // required
     compile 'com.leocardz:link-preview:2.0.0@aar'
     compile 'com.riontech.staggeredtextgridview:staggeredtextgridview:1.0.1'
+    compile 'com.jmpergar:AwesomeText:1.0.0'
+    compile 'com.github.qapqap:TimelineView:v1.6'
 }
 apply plugin: 'com.google.gms.google-services'

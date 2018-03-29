@@ -124,7 +124,12 @@
         <activity android:name=".activity.AddComplaintDescriptionActivity" />
         <activity android:name=".activity.AddGroupComplaintDescriptionActivity" />
         <activity android:name=".activity.CreateSuggestionActivity" />
-        <activity android:name=".activity.CreateInformationActivity"></activity>
+        <activity android:name=".activity.CreateInformationActivity" />
+        <activity android:name=".testing.StaggeredTextViewActivity" />
+        <activity android:name=".activity.CreateNewPostActivity" />
+        <activity android:name=".activity.CreateIssueActivity" />
+        <activity android:name=".activity.ViewComplaintActivity" />
+        <activity android:name=".activity.NotificationActivity"></activity>
     </application>
 
 </manifest>
