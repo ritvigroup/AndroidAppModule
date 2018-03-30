@@ -54,10 +54,10 @@ import butterknife.ButterKnife;
 
 public class AttachFragment extends Fragment{
 
-    private static final int CAMERA_REQUEST = 101;
-    private static final int PICK_IMAGE_REQUEST = 102;
-    private static final int VIDEO_CAPTURE = 103;
-    private static final int PICK_VIDEO_REQUEST = 104;
+    public static final int CAMERA_REQUEST = 101;
+    public static final int PICK_IMAGE_REQUEST = 102;
+    public static final int VIDEO_CAPTURE = 103;
+    public static final int PICK_VIDEO_REQUEST = 104;
 
     private final String ATTACH_CAMERA = "attach_image";
     private final String ATTACH_CAMERA_GALLERY = "attach_image_gallery";
@@ -224,8 +224,7 @@ public class AttachFragment extends Fragment{
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
+        Log.d(TagUtils.getTag(),"onactivity result:-"+requestCode);
         if (requestCode == PICK_IMAGE_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 if (null == data)
@@ -307,7 +306,6 @@ public class AttachFragment extends Fragment{
                 System.out.println("Image Path =" + selectedImagePath);
             }
         }
-
     }
 
     public void setAttach(String path) {

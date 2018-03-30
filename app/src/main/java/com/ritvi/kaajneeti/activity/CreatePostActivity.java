@@ -35,7 +35,7 @@ import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.testing.HashtagsSpanRenderer;
 import com.ritvi.kaajneeti.testing.MentionSpanRenderer;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
-import com.ritvi.kaajneeti.webservice.WebServiceBaseResponse;
+import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 import com.ritvi.kaajneeti.webservice.WebUploadService;
@@ -138,9 +138,8 @@ public class CreatePostActivity extends AppCompatActivity {
 
             String activity="";
             if(spinner_feeling.getSelectedItemPosition()!=0){
-                activity=feelingPOJOArrayList.get(spinner_feeling.getSelectedItemPosition()).getFeelingId();
+                activity=feelingPOJOArrayList.get(spinner_feeling.getSelectedItemPosition()-1).getFeelingId();
             }
-
 
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("", ""));
@@ -150,7 +149,14 @@ public class CreatePostActivity extends AppCompatActivity {
             reqEntity.addPart("description", new StringBody(et_description.getText().toString()));
             reqEntity.addPart("url", new StringBody(""));
             reqEntity.addPart("feeling", new StringBody(activity));
-            reqEntity.addPart("post_tag", new StringBody(""));
+
+            for(int i=0;i<taggedUserProfilePOJOS.size();i++) {
+                if(taggedUserProfilePOJOS.get(i).getUserProfileCitizen()!=null){
+                    reqEntity.addPart("post_tag["+i+"]", new StringBody(taggedUserProfilePOJOS.get(i).getUserProfileCitizen().getUserProfileId()));
+                }else{
+                    reqEntity.addPart("post_tag["+i+"]", new StringBody(taggedUserProfilePOJOS.get(i).getUserProfileLeader().getUserProfileId()));
+                }
+            }
 
             int count = 0;
 
@@ -195,7 +201,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
     public void getAllFeelings(){
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        new WebServiceBaseResponse<FeelingPOJO>(nameValuePairs, this, new ResponseListCallback<FeelingPOJO>() {
+        new WebServiceBaseResponseList<FeelingPOJO>(nameValuePairs, this, new ResponseListCallback<FeelingPOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<FeelingPOJO> responseListPOJO) {
                 feelingPOJOArrayList.clear();
@@ -262,7 +268,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TagUtils.getTag(),"onactivity called");
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
@@ -287,6 +293,9 @@ public class CreatePostActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
             }
+        }else{
+            attachFragment.onActivityResult(requestCode,resultCode,data);
+            Log.d(TagUtils.getTag(),"on activity result:-"+requestCode);
         }
     }
 

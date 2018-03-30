@@ -202,6 +202,8 @@ public class HomeActivity extends AppCompatActivity {
         adapter.addFrag(investigateFragment, "Urban");
         adapter.addFrag(withdrawalFragment, "Urban");
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(adapter.getCount());
+
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

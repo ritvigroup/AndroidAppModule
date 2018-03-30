@@ -41,5 +41,6 @@ public class WebServicesUrls {
     public static final String OUTGOING_FRIEND_REQUEST = BASE_URL + "userconnect/getMyAllRequestToFriends";
     public static final String INCOMING_FRIEND_REQUEST = BASE_URL + "userconnect/getMyAllFriendRequest";
     public static final String MY_FRIENDS = BASE_URL + "userconnect/getMyAllFriends";
+    public static final String HOME_PAGE_DATA = BASE_URL + "leader/getAllHomePageData";
 
 }

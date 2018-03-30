@@ -12,28 +12,27 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
-import com.ritvi.kaajneeti.pojo.ResponsePOJO;
-import com.ritvi.kaajneeti.pojo.poll.PollPOJO;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CreatePollActivity extends AppCompatActivity {
+public class CreatePollActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
 
     @BindView(R.id.toolbar)
     android.support.v7.widget.Toolbar toolbar;
@@ -45,7 +44,16 @@ public class CreatePollActivity extends AppCompatActivity {
     Button btn_create;
     @BindView(R.id.et_question)
     EditText et_question;
+    @BindView(R.id.et_start_date)
+    EditText et_start_date;
+    @BindView(R.id.iv_start_calendar)
+    ImageView iv_start_calendar;
+    @BindView(R.id.et_end_date)
+    EditText et_end_date;
+    @BindView(R.id.iv_end_calendar)
+    ImageView iv_end_calendar;
 
+    boolean start_date = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +78,37 @@ public class CreatePollActivity extends AppCompatActivity {
                 createPoll();
             }
         });
+
+
+        iv_start_calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                start_date = true;
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        CreatePollActivity.this,
+                        now.get(Calendar.YEAR),
+                        now.get(Calendar.MONTH),
+                        now.get(Calendar.DAY_OF_MONTH)
+                );
+                dpd.show(getFragmentManager(), "Datepickerdialog");
+            }
+        });
+
+        iv_end_calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                start_date = false;
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        CreatePollActivity.this,
+                        now.get(Calendar.YEAR),
+                        now.get(Calendar.MONTH),
+                        now.get(Calendar.DAY_OF_MONTH)
+                );
+                dpd.show(getFragmentManager(), "Datepickerdialog");
+            }
+        });
     }
 
     public void createPoll() {
@@ -78,8 +117,8 @@ public class CreatePollActivity extends AppCompatActivity {
         nameValuePairs.add(new BasicNameValuePair("poll_question", et_question.getText().toString()));
         nameValuePairs.add(new BasicNameValuePair("event_description", ""));
         nameValuePairs.add(new BasicNameValuePair("poll_privacy", "1"));
-        nameValuePairs.add(new BasicNameValuePair("valid_from_date", ""));
-        nameValuePairs.add(new BasicNameValuePair("valid_end_date", ""));
+        nameValuePairs.add(new BasicNameValuePair("valid_from_date", et_start_date.getText().toString()));
+        nameValuePairs.add(new BasicNameValuePair("valid_end_date", et_end_date.getText().toString()));
 
         List<String> pollAns = getAllAns();
         for (int i = 0; i < pollAns.size(); i++) {
@@ -89,12 +128,22 @@ public class CreatePollActivity extends AppCompatActivity {
         new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
             @Override
             public void onGetMsg(String apicall, String response) {
-                ResponsePOJO<PollPOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponsePOJO<PollPOJO>>() {
-                }.getType());
-                if (responsePOJO.isSuccess()) {
-                    finish();
+//                ResponsePOJO<PollPOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponsePOJO<PollPOJO>>() {
+//                }.getType());
+//                if (responsePOJO.isSuccess()) {
+//                    finish();
+//                }
+                try{
+                    JSONObject jsonObject=new JSONObject(response);
+                    if(jsonObject.optString("status").equals("success")){
+                        finish();
+                    }else {
+                        ToastClass.showShortToast(getApplicationContext(), jsonObject.optString(jsonObject.optString("message")));
+                    }
                 }
-                ToastClass.showShortToast(getApplicationContext(), responsePOJO.getMessage());
+                catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }, "CREATE_POLL", true).execute(WebServicesUrls.SAVE_MY_POLL);
     }
@@ -135,5 +184,30 @@ public class CreatePollActivity extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        String month = "";
+        String day = "";
+        if ((monthOfYear + 1) < 10) {
+            month = "0" + (monthOfYear + 1);
+        } else {
+            month = String.valueOf(monthOfYear + 1);
+        }
+
+        if (dayOfMonth < 10) {
+            day = "0" + dayOfMonth;
+        } else {
+            day = String.valueOf(dayOfMonth);
+        }
+
+        String date = day + "-" + month + "-" + year;
+        if (start_date) {
+            et_start_date.setText(date);
+        } else {
+            et_end_date.setText(date);
+        }
     }
 }
