@@ -42,7 +42,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by sunil on 12-03-2018.
  */
 
-public class KaajFragment extends Fragment{
+public class KaajFragment extends Fragment {
 
     private static final String CALL_NEWS_FEED = "call_news_feed";
     @BindView(R.id.ll_scroll)
@@ -71,7 +71,7 @@ public class KaajFragment extends Fragment{
         cv_profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), ProfilePageActivity.class).putExtra("userInfo",Constants.userInfoPOJO));
+                startActivity(new Intent(getActivity(), ProfilePageActivity.class).putExtra("userInfo", Constants.userInfoPOJO));
             }
         });
 
@@ -117,31 +117,32 @@ public class KaajFragment extends Fragment{
         }
     }
 
-    public void getAllData(){
-        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id",Constants.userInfoPOJO.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+    public void getAllData() {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
         new WebServiceBaseResponseList<FeedPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<FeedPOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<FeedPOJO> responseListPOJO) {
-                try{
+                try {
                     feedPOJOS.clear();
-                    if(responseListPOJO.isSuccess()){
+                    if (responseListPOJO.isSuccess()) {
                         feedPOJOS.addAll(responseListPOJO.getResultList());
-                    }else{
-                        ToastClass.showShortToast(getActivity(),responseListPOJO.getMessage());
+                    } else {
+                        ToastClass.showShortToast(getActivity(), responseListPOJO.getMessage());
                     }
                     homeFeedAdapter.notifyDataSetChanged();
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        },FeedPOJO.class,"CALL_FEED_DATA",true).execute(WebServicesUrls.HOME_PAGE_DATA);
+        }, FeedPOJO.class, "CALL_FEED_DATA", true).execute(WebServicesUrls.HOME_PAGE_DATA);
 
     }
 
     HomeFeedAdapter homeFeedAdapter;
-    List<FeedPOJO> feedPOJOS=new ArrayList<>();
+    List<FeedPOJO> feedPOJOS = new ArrayList<>();
+
     public void attachAdapter() {
         homeFeedAdapter = new HomeFeedAdapter(getActivity(), this, feedPOJOS);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);

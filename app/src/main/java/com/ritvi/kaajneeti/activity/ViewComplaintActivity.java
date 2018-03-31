@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.pojo.analyze.ComplaintPOJO;
 
 import org.qap.ctimelineview.TimelineRow;
 import org.qap.ctimelineview.TimelineViewAdapter;
@@ -26,6 +27,7 @@ public class ViewComplaintActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
+    ComplaintPOJO complaintPOJO;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,10 +37,10 @@ public class ViewComplaintActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            complaint_name = bundle.getString("complaint");
-            getSupportActionBar().setTitle(complaint_name);
+
+        complaintPOJO= (ComplaintPOJO) getIntent().getSerializableExtra("complaint");
+        if(complaintPOJO!=null){
+            getSupportActionBar().setTitle(complaintPOJO.getComplaintSubject());
         }
 
 // Create Timeline rows List

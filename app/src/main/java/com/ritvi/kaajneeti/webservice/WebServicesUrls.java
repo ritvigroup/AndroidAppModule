@@ -42,5 +42,11 @@ public class WebServicesUrls {
     public static final String INCOMING_FRIEND_REQUEST = BASE_URL + "userconnect/getMyAllFriendRequest";
     public static final String MY_FRIENDS = BASE_URL + "userconnect/getMyAllFriends";
     public static final String HOME_PAGE_DATA = BASE_URL + "leader/getAllHomePageData";
+    public static final String COMPLAINT_LIST = BASE_URL + "complaint/getMyAllComplaint";
+    public static final String SUGGESTION_LIST = BASE_URL + "suggestion/getMyAllSuggestion";
+    public static final String INFORMATION_LIST = BASE_URL + "information/getMyAllInformation";
+    public static final String ALL_POST = BASE_URL + "post/getMyAllPost";
+    public static final String ALL_EVENT = BASE_URL + "event/getMyAllEvent";
+    public static final String ALL_POLL = BASE_URL + "poll/getMyAllPoll";
 
 }

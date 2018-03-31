@@ -32,7 +32,7 @@
             android:id="@+id/nav_elect"
             android:checked="true"
             android:icon="@drawable/ic_elect"
-            android:title="Elect &amp; Contribute" />
+            android:title="Contribute" />
         <item
             android:id="@+id/nav_contribute"
             android:checked="true"
@@ -43,7 +43,7 @@
             android:id="@+id/nav_earn"
             android:checked="true"
             android:icon="@drawable/ic_dashboard"
-            android:title="Rewards &amp; Offers" />
+            android:title="Rewards" />
     </group>
     <group
         android:id="@+id/group2"
@@ -52,7 +52,7 @@
             android:id="@+id/nav_rti"
             android:checked="true"
             android:icon="@drawable/ic_rti"
-            android:title="Right To Information" />
+            android:title="RTI" />
 
         <item
             android:id="@+id/nav_setting"

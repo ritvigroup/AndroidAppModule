@@ -1,7 +1,6 @@
 package com.ritvi.kaajneeti.adapter;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
-import com.ritvi.kaajneeti.activity.ViewComplaintActivity;
+import com.ritvi.kaajneeti.pojo.analyze.InformationPOJO;
 
 import java.util.List;
 
@@ -19,12 +18,12 @@ import java.util.List;
  * Created by sunil on 03-11-2017.
  */
 
-public class ComplaitnAnalyzeAdapter extends RecyclerView.Adapter<ComplaitnAnalyzeAdapter.ViewHolder> {
-    private List<String> items;
+public class InformationAnalyzeAdapter extends RecyclerView.Adapter<InformationAnalyzeAdapter.ViewHolder> {
+    private List<InformationPOJO> items;
     Activity activity;
     Fragment fragment;
 
-    public ComplaitnAnalyzeAdapter(Activity activity, Fragment fragment, List<String> items) {
+    public InformationAnalyzeAdapter(Activity activity, Fragment fragment, List<InformationPOJO> items) {
         this.items = items;
         this.activity = activity;
         this.fragment = fragment;
@@ -39,14 +38,15 @@ public class ComplaitnAnalyzeAdapter extends RecyclerView.Adapter<ComplaitnAnaly
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        holder.tv_analyze.setText(items.get(position));
+        holder.tv_analyze.setText(items.get(position).getInformationSubject());
+        holder.tv_id.setText("CID:-"+items.get(position).getInformationId());
 
         holder.ll_analyze.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(activity, ViewComplaintActivity.class);
-                intent.putExtra("complaint",items.get(position));
-                activity.startActivity(intent);
+//                Intent intent=new Intent(activity, ViewComplaintActivity.class);
+//                intent.putExtra("complaint",items.get(position));
+//                activity.startActivity(intent);
             }
         });
 

@@ -309,14 +309,17 @@ public class HomeActivity extends AppCompatActivity {
         switch (menuItem.getItemId()) {
 
             case R.id.nav_explore:
+                viewPager.setCurrentItem(0);
                 break;
             case R.id.nav_connect:
-                showMyConnectionFragment();
+//                showMyConnectionFragment();
+                viewPager.setCurrentItem(1);
                 break;
             case R.id.nav_act:
-                startActivity(new Intent(HomeActivity.this, AddPostActivity.class));
+                startActivity(new Intent(this, AddPostActivity.class));
                 break;
             case R.id.nav_analyze:
+                viewPager.setCurrentItem(2);
                 break;
             case R.id.nav_elect:
                 startActivity(new Intent(HomeActivity.this, FavoriteLeaderActivity.class));
@@ -325,7 +328,8 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(new Intent(HomeActivity.this, SettingActivity.class));
                 break;
             case R.id.nav_earn:
-                showEarnFragment();
+//                showEarnFragment();
+                viewPager.setCurrentItem(3);
                 break;
             case R.id.nav_logout:
                 Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, false);
