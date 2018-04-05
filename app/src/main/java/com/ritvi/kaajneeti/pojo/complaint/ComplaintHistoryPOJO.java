@@ -6,10 +6,10 @@ import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
 import java.util.List;
 
 /**
- * Created by sunil on 19-02-2018.
+ * Created by sunil on 03-04-2018.
  */
 
-public class ComplaintPOJO {
+public class ComplaintHistoryPOJO {
     @SerializedName("ComplaintHistoryId")
     private String complaintHistoryId;
     @SerializedName("ComplaintId")

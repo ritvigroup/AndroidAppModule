@@ -42,6 +42,7 @@ import com.ritvi.kaajneeti.fragment.homeactivity.InvestigateFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.KaajFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.MyConnectionFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.WithdrawalFragment;
+import com.ritvi.kaajneeti.testing.PayUMoneyIntegration;
 import com.ritvi.kaajneeti.views.CustomViewPager;
 
 import java.util.ArrayList;
@@ -83,6 +84,8 @@ public class HomeActivity extends AppCompatActivity {
     ImageView iv_speaker;
     @BindView(R.id.iv_notification)
     ImageView iv_notification;
+    @BindView(R.id.iv_settings)
+    ImageView iv_settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,6 +171,12 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(HomeActivity.this,NotificationActivity.class));
+            }
+        });
+        iv_settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(HomeActivity.this,SettingsActivity.class));
             }
         });
     }
@@ -322,10 +331,11 @@ public class HomeActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(2);
                 break;
             case R.id.nav_elect:
-                startActivity(new Intent(HomeActivity.this, FavoriteLeaderActivity.class));
+//                startActivity(new Intent(HomeActivity.this, FavoriteLeaderActivity.class));
+                startActivity(new Intent(HomeActivity.this, PayUMoneyIntegration.class));
                 break;
             case R.id.nav_setting:
-                startActivity(new Intent(HomeActivity.this, SettingActivity.class));
+                startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
                 break;
             case R.id.nav_earn:
 //                showEarnFragment();

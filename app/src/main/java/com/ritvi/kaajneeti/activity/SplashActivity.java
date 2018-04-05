@@ -234,6 +234,7 @@ public class SplashActivity extends LocalizationActivity {
             if (Pref.GetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED, false) ||
                     Pref.GetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_SKIPPED, false)) {
                 startActivity(new Intent(SplashActivity.this, HomeActivity.class));
+//                startActivity(new Intent(SplashActivity.this, PayUMoneyIntegration.class));
             } else {
                 startActivity(new Intent(SplashActivity.this, ProfileInfoActivity.class));
             }

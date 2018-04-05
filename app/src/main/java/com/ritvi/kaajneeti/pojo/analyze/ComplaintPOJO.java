@@ -36,7 +36,7 @@ public class ComplaintPOJO implements Serializable {
     @SerializedName("ComplaintProfile")
     private OutGoingRequestPOJO complaintProfile;
     @SerializedName("ComplaintMember")
-    private List<Object> complaintMember;
+    private List<OutGoingRequestPOJO> complaintMember;
     @SerializedName("ComplaintAttachment")
     private List<ComplaintAttachmentPOJO> complaintAttachmentPOJOS;
 
@@ -136,11 +136,11 @@ public class ComplaintPOJO implements Serializable {
         this.complaintProfile = complaintProfile;
     }
 
-    public List<Object> getComplaintMember() {
+    public List<OutGoingRequestPOJO> getComplaintMember() {
         return complaintMember;
     }
 
-    public void setComplaintMember(List<Object> complaintMember) {
+    public void setComplaintMember(List<OutGoingRequestPOJO> complaintMember) {
         this.complaintMember = complaintMember;
     }
 

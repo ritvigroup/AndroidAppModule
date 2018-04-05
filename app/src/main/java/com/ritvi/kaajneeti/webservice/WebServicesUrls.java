@@ -48,5 +48,8 @@ public class WebServicesUrls {
     public static final String ALL_POST = BASE_URL + "post/getMyAllPost";
     public static final String ALL_EVENT = BASE_URL + "event/getMyAllEvent";
     public static final String ALL_POLL = BASE_URL + "poll/getMyAllPoll";
+    public static final String ALL_SUMMARY_DATA = BASE_URL + "citizen/getMyAllSummaryTotal";
+    public static final String SAVE_COMPLAINT_HISTORY = BASE_URL + "complaint/saveComplaintHistory";
 
+    public static final String COMPLAINT_DETAIL = BASE_URL+"complaint/getComplaintHistory";
 }

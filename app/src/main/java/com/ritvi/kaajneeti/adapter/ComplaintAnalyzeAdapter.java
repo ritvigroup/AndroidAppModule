@@ -7,10 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.activity.ComplaintDetailActivity;
 import com.ritvi.kaajneeti.activity.ViewComplaintActivity;
 import com.ritvi.kaajneeti.pojo.analyze.ComplaintPOJO;
 
@@ -52,7 +54,16 @@ public class ComplaintAnalyzeAdapter extends RecyclerView.Adapter<ComplaintAnaly
             }
         });
 
+        holder.iv_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(activity, ComplaintDetailActivity.class);
+                intent.putExtra("complaintPOJO",items.get(position));
+                activity.startActivity(intent);
+            }
+        });
         holder.itemView.setTag(items.get(position));
+
     }
 
     @Override
@@ -60,15 +71,16 @@ public class ComplaintAnalyzeAdapter extends RecyclerView.Adapter<ComplaintAnaly
         return items.size();
     }
 
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tv_analyze,tv_id;
         public LinearLayout ll_analyze;
+        public ImageView iv_info;
         public ViewHolder(View itemView) {
             super(itemView);
             tv_analyze=itemView.findViewById(R.id.tv_analyze);
             tv_id=itemView.findViewById(R.id.tv_id);
             ll_analyze=itemView.findViewById(R.id.ll_analyze);
+            iv_info=itemView.findViewById(R.id.iv_info);
         }
     }
 }

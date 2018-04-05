@@ -38,6 +38,7 @@ import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.adapter.EventAttachAdapter;
 import com.ritvi.kaajneeti.pojo.event.EventAttachment;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 import com.ritvi.kaajneeti.webservice.WebUploadService;
@@ -92,6 +93,9 @@ public class AddComplaintDescriptionActivity extends AppCompatActivity {
     String applicant_father_name="";
     String applicant_mobile="";
     String complaint_type_id="";
+
+    List<UserInfoPOJO> taggedUserInfoPOJOS=new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +115,11 @@ public class AddComplaintDescriptionActivity extends AppCompatActivity {
             applicant_father_name=bundle.getString("applicant_father_name");
             applicant_mobile=bundle.getString("applicant_mobile");
             complaint_type_id=bundle.getString("complaint_type_id");
+            taggedUserInfoPOJOS=(List<UserInfoPOJO>) bundle.getSerializable("taggedpeople");
+
+            if(taggedUserInfoPOJOS!=null&&taggedUserInfoPOJOS.size()>0){
+                Log.d(TagUtils.getTag(),"tagged people:-"+taggedUserInfoPOJOS.toString());
+            }
         }
 
         btn_submit.setOnClickListener(new View.OnClickListener() {
@@ -133,7 +142,19 @@ public class AddComplaintDescriptionActivity extends AppCompatActivity {
             reqEntity.addPart("applicant_name", new StringBody(applicant_name));
             reqEntity.addPart("applicant_father_name", new StringBody(applicant_father_name));
             reqEntity.addPart("applicant_mobile", new StringBody(applicant_mobile));
-            reqEntity.addPart("complaint_member", new StringBody(complaint_type_id));
+
+
+            if(taggedUserInfoPOJOS!=null&&taggedUserInfoPOJOS.size()>0){
+                for(int i=0;i<taggedUserInfoPOJOS.size();i++){
+                    if(taggedUserInfoPOJOS.get(i).getUserProfileCitizen()!=null) {
+                        reqEntity.addPart("complaint_member[" + i + "]", new StringBody(taggedUserInfoPOJOS.get(i).getUserProfileCitizen().getUserProfileId()));
+                    }else{
+                        reqEntity.addPart("complaint_member[" + i + "]", new StringBody(taggedUserInfoPOJOS.get(i).getUserProfileLeader().getUserProfileId()));
+                    }
+                }
+            }else{
+                reqEntity.addPart("complaint_member", new StringBody(complaint_type_id));
+            }
 
             int count = 0;
 

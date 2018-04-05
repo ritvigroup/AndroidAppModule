@@ -250,4 +250,12 @@ public class UserInfoPOJO implements Serializable{
     public void setMyFavouriteLeader(Integer myFavouriteLeader) {
         this.myFavouriteLeader = myFavouriteLeader;
     }
+
+    @Override
+    public String toString() {
+        return "UserInfoPOJO{" +
+                "userId='" + userId + '\'' +
+                ", userName='" + userName + '\'' +
+                '}';
+    }
 }

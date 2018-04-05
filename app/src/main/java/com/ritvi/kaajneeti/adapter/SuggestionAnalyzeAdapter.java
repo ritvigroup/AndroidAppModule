@@ -1,6 +1,7 @@
 package com.ritvi.kaajneeti.adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.activity.ViewSuggestionActivity;
 import com.ritvi.kaajneeti.pojo.analyze.SuggestionPOJO;
 
 import java.util.List;
@@ -44,9 +46,9 @@ public class SuggestionAnalyzeAdapter extends RecyclerView.Adapter<SuggestionAna
         holder.ll_analyze.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent=new Intent(activity, ViewComplaintActivity.class);
-//                intent.putExtra("complaint",items.get(position));
-//                activity.startActivity(intent);
+                Intent intent=new Intent(activity, ViewSuggestionActivity.class);
+                intent.putExtra("suggestion",items.get(position));
+                activity.startActivity(intent);
             }
         });
 
