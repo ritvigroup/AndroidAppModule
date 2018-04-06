@@ -18,6 +18,7 @@ import com.riontech.staggeredtextgridview.StaggeredTextGridView;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
+import com.ritvi.kaajneeti.activity.AddCommunication;
 import com.ritvi.kaajneeti.activity.AddComplaintDescriptionActivity;
 import com.ritvi.kaajneeti.activity.TagPeopleActivity;
 import com.ritvi.kaajneeti.adapter.AttachPeopleAdapter;
@@ -90,13 +91,18 @@ public class GroupComplaintFragment extends Fragment implements DatePickerDialog
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), AddComplaintDescriptionActivity.class);
-                intent.putExtra("applicant_name", Constants.userInfoPOJO.getUserProfileCitizen().getFirstName()+" "+Constants.userInfoPOJO.getUserProfileCitizen().getLastName());
-                intent.putExtra("applicant_father_name", "");
-                intent.putExtra("applicant_mobile", "");
-                intent.putExtra("complaint_type_id", "3");
-                intent.putExtra("taggedpeople", (Serializable) taggedUserProfilePOJOS);
-                startActivity(intent);
+                if(getActivity() instanceof AddCommunication) {
+                    AddCommunication addCommunication = (AddCommunication) getActivity();
+                    Log.d(TagUtils.getTag(), "leader id:-" + addCommunication.leader_id);
+                    Intent intent = new Intent(getActivity(), AddComplaintDescriptionActivity.class);
+                    intent.putExtra("applicant_name", Constants.userInfoPOJO.getUserProfileCitizen().getFirstName() + " " + Constants.userInfoPOJO.getUserProfileCitizen().getLastName());
+                    intent.putExtra("applicant_father_name", "");
+                    intent.putExtra("applicant_mobile", "");
+                    intent.putExtra("complaint_type_id", "3");
+                    intent.putExtra("leader_id", addCommunication.leader_id);
+                    intent.putExtra("taggedpeople", (Serializable) taggedUserProfilePOJOS);
+                    startActivity(intent);
+                }
             }
         });
         attachStaggeredAdapter();

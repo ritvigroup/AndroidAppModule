@@ -62,7 +62,7 @@ public class AddCommunication extends LocalizationActivity implements WebService
     @BindView(R.id.viewPager)
     CustomViewPager viewPager;
 
-    String leader_id = "";
+    public String leader_id = "";
 
     List<UserInfoPOJO> leaderPOJOS = new ArrayList<>();
 

@@ -52,7 +52,8 @@
             android:id="@+id/nav_rti"
             android:checked="true"
             android:icon="@drawable/ic_rti"
-            android:title="RTI" />
+            android:title="RTI"
+            android:visible="false"/>
 
         <item
             android:id="@+id/nav_setting"

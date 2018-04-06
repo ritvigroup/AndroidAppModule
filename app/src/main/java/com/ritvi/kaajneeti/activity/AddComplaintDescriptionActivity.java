@@ -93,7 +93,7 @@ public class AddComplaintDescriptionActivity extends AppCompatActivity {
     String applicant_father_name="";
     String applicant_mobile="";
     String complaint_type_id="";
-
+    String leader_id="";
     List<UserInfoPOJO> taggedUserInfoPOJOS=new ArrayList<>();
 
     @Override
@@ -115,6 +115,7 @@ public class AddComplaintDescriptionActivity extends AppCompatActivity {
             applicant_father_name=bundle.getString("applicant_father_name");
             applicant_mobile=bundle.getString("applicant_mobile");
             complaint_type_id=bundle.getString("complaint_type_id");
+            leader_id=bundle.getString("leader_id");
             taggedUserInfoPOJOS=(List<UserInfoPOJO>) bundle.getSerializable("taggedpeople");
 
             if(taggedUserInfoPOJOS!=null&&taggedUserInfoPOJOS.size()>0){
@@ -142,6 +143,8 @@ public class AddComplaintDescriptionActivity extends AppCompatActivity {
             reqEntity.addPart("applicant_name", new StringBody(applicant_name));
             reqEntity.addPart("applicant_father_name", new StringBody(applicant_father_name));
             reqEntity.addPart("applicant_mobile", new StringBody(applicant_mobile));
+            reqEntity.addPart("assign_to_profile_id", new StringBody(leader_id));
+            reqEntity.addPart("complaint_type_id", new StringBody(complaint_type_id));
 
 
             if(taggedUserInfoPOJOS!=null&&taggedUserInfoPOJOS.size()>0){
