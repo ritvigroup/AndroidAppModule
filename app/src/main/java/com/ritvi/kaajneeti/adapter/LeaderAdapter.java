@@ -19,6 +19,7 @@ import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.activity.AllLeaderActivity;
+import com.ritvi.kaajneeti.fragment.homeactivity.ContributeFragment;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.webservice.AdapterWebService;
 import com.ritvi.kaajneeti.webservice.MsgPassInterface;
@@ -83,7 +84,12 @@ public class LeaderAdapter extends RecyclerView.Adapter<LeaderAdapter.ViewHolder
         holder.ll_leader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLeaderProfile(items.get(position));
+                if(fragment!=null&&fragment instanceof ContributeFragment) {
+                    ContributeFragment contributeFragment= (ContributeFragment) fragment;
+//                    contributeFragment.showpaymentDialog(items.get(position),items.get(position).getUserProfileLeader().getUserProfileId());
+                }else{
+                    showLeaderProfile(items.get(position));
+                }
             }
         });
 

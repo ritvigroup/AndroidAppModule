@@ -2,6 +2,7 @@ package com.ritvi.kaajneeti.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +21,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,11 +35,26 @@ import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.FileUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
+import com.ritvi.kaajneeti.Util.ToastClass;
+import com.ritvi.kaajneeti.Util.UtilityFunction;
+import com.ritvi.kaajneeti.pojo.ResponsePOJO;
+import com.ritvi.kaajneeti.pojo.payment.WalletDetailPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.webservice.ResponseCallBack;
+import com.ritvi.kaajneeti.webservice.WebServiceBase;
+import com.ritvi.kaajneeti.webservice.WebServiceBaseResponse;
+import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
+import com.ritvi.kaajneeti.webservice.WebServicesUrls;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,6 +85,8 @@ public class ProfilePageActivity extends AppCompatActivity {
     ImageView iv_edit;
     @BindView(R.id.iv_unfavorite)
     ImageView iv_unfavorite;
+    @BindView(R.id.tv_contribute)
+    TextView tv_contribute;
 
     UserInfoPOJO userInfoPOJO;
 
@@ -124,11 +146,19 @@ public class ProfilePageActivity extends AppCompatActivity {
             tv_user_type.setText("Citizen");
             iv_unfavorite.setVisibility(View.GONE);
             tv_location.setText(userInfoPOJO.getUserProfileCitizen().getCity());
+            tv_contribute.setVisibility(View.GONE);
         }else{
             tv_user_type.setText("Leader");
             iv_unfavorite.setVisibility(View.VISIBLE);
             tv_location.setText(userInfoPOJO.getUserProfileLeader().getCity());
         }
+
+        tv_contribute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getWalletDetailAPI();
+            }
+        });
 
         iv_edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,6 +168,103 @@ public class ProfilePageActivity extends AppCompatActivity {
         });
 
     }
+
+    public void showAmountDialog(final String amount){
+        final Dialog dialog1 = new Dialog(this, android.R.style.Theme_DeviceDefault_Light_Dialog);
+        dialog1.setCancelable(true);
+        dialog1.setContentView(R.layout.dialog_enter_amount);
+        dialog1.setTitle("Enter Amount");
+        dialog1.show();
+        dialog1.setCancelable(true);
+        Window window = dialog1.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        final EditText et_amount=dialog1.findViewById(R.id.et_amount);
+        final EditText et_remark=dialog1.findViewById(R.id.et_remark);
+        TextView tv_amount=dialog1.findViewById(R.id.tv_amount);
+        final Button btn_cancel=dialog1.findViewById(R.id.btn_cancel);
+        Button btn_send=dialog1.findViewById(R.id.btn_send);
+
+        tv_amount.setText("Rs "+amount);
+
+        btn_send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try{
+                    double balance_amount=Double.parseDouble(amount);
+                    double transfer_amount=Double.parseDouble(et_amount.getText().toString());
+                    if(transfer_amount<=balance_amount){
+                        callTransferAPI(et_remark.getText().toString(),transfer_amount);
+                        dialog1.dismiss();
+                    }else{
+                        ToastClass.showShortToast(getApplicationContext(),"You don't have sufficient balance");
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    ToastClass.showShortToast(getApplicationContext(),"Enter valid amount");
+                }
+            }
+        });
+
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog1.dismiss();
+            }
+        });
+    }
+
+    public void getWalletDetailAPI(){
+        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        new WebServiceBaseResponse<WalletDetailPOJO>(nameValuePairs, this, new ResponseCallBack<WalletDetailPOJO>() {
+            @Override
+            public void onGetMsg(ResponsePOJO<WalletDetailPOJO> responsePOJO) {
+                try {
+                    if (responsePOJO.isSuccess()) {
+                        WalletDetailPOJO walletDetailPOJO=responsePOJO.getResult();
+                        showAmountDialog(walletDetailPOJO.getMyWalletBalance());
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        },WalletDetailPOJO.class,"GET_WALLET_DETAIL",true).execute(WebServicesUrls.WALLET_DETAIL_API);
+
+    }
+
+    public void callTransferAPI(String comment,double transfer_amount){
+        Random rand = new Random();
+        String randomString = Integer.toString(rand.nextInt()) + (System.currentTimeMillis() / 1000L);
+
+        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
+
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("payment_gateway_id","4"));
+        nameValuePairs.add(new BasicNameValuePair("transaction_id",UtilityFunction.hashCal("SHA-256", randomString).substring(0, 20)));
+        nameValuePairs.add(new BasicNameValuePair("payment_to_user_profile_id",UtilityFunction.getProfileID(userInfoPOJO)));
+        nameValuePairs.add(new BasicNameValuePair("transaction_date", UtilityFunction.getCurrentDate()));
+        nameValuePairs.add(new BasicNameValuePair("transaction_amount",String.valueOf(transfer_amount)));
+        nameValuePairs.add(new BasicNameValuePair("transaction_shipping_amount",String.valueOf(transfer_amount)));
+        nameValuePairs.add(new BasicNameValuePair("transaction_status","1"));
+        nameValuePairs.add(new BasicNameValuePair("debit_or_credit","0"));
+        nameValuePairs.add(new BasicNameValuePair("comments",comment));
+        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                Log.d(TagUtils.getTag(),"trans response:-"+response);
+                try{
+                    JSONObject jsonObject=new JSONObject(response);
+                    if(jsonObject.optString("status").equals("success")){
+                        ToastClass.showShortToast(getApplicationContext(),"Thanks for your contribution.");
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        },"CALL_TRANS_API",true).execute(WebServicesUrls.SAVE_PAYMENT_TRANSACTIONS);
+    }
+
 
     String pictureImagePath = "";
 

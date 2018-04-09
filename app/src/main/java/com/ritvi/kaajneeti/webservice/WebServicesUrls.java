@@ -52,4 +52,11 @@ public class WebServicesUrls {
     public static final String SAVE_COMPLAINT_HISTORY = BASE_URL + "complaint/saveComplaintHistory";
 
     public static final String COMPLAINT_DETAIL = BASE_URL+"complaint/getComplaintHistory";
+    public static final String PAYMENT_GATEWAY_API_DETAILS= BASE_URL+"payment/getPaymentGatewayApiDetail";
+    public static final String ALL_PAYMENT_GATEWAY= BASE_URL+"payment/getAllPaymentGateway";
+    public static final String SAVE_PAYMENT_TRANSACTIONS = BASE_URL+"payment/savePaymentTransactionLog";
+    public static final String GET_PAYMENT_TRANS_LOGS = BASE_URL+"payment/getMyAllPaymentTransactionLog";
+    public static final String WALLET_DETAIL_API = BASE_URL+"payment/getMyTotalWalletAmount";
+    public static final String DEBIT_TRANS_LOGS = BASE_URL+"payment/getMyAllPaymentDebitTransactionLog";
+    public static final String CREDIT_TRANS_LOGS = BASE_URL+"payment/getMyAllPaymentCreditTransactionLog";
 }

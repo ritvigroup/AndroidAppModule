@@ -38,11 +38,12 @@ import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.adapter.ViewPagerAdapter;
 import com.ritvi.kaajneeti.fragment.RewardsFragment;
+import com.ritvi.kaajneeti.fragment.homeactivity.ContributeFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.InvestigateFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.KaajFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.MyConnectionFragment;
+import com.ritvi.kaajneeti.fragment.homeactivity.WalletFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.WithdrawalFragment;
-import com.ritvi.kaajneeti.testing.PayUMoneyIntegration;
 import com.ritvi.kaajneeti.views.CustomViewPager;
 
 import java.util.ArrayList;
@@ -332,7 +333,8 @@ public class HomeActivity extends AppCompatActivity {
                 break;
             case R.id.nav_elect:
 //                startActivity(new Intent(HomeActivity.this, FavoriteLeaderActivity.class));
-                startActivity(new Intent(HomeActivity.this, PayUMoneyIntegration.class));
+//                startActivity(new Intent(HomeActivity.this, PayUMoneyIntegration.class));
+                showContributeFragment();
                 break;
             case R.id.nav_setting:
                 startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
@@ -340,6 +342,9 @@ public class HomeActivity extends AppCompatActivity {
             case R.id.nav_earn:
 //                showEarnFragment();
                 viewPager.setCurrentItem(3);
+                break;
+            case R.id.nav_wallet:
+                showWalletFragment();
                 break;
             case R.id.nav_logout:
                 Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, false);
@@ -353,11 +358,21 @@ public class HomeActivity extends AppCompatActivity {
         mDrawer.closeDrawers();
     }
 
+    private void showWalletFragment() {
+        WalletFragment walletFragment = new WalletFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_frag, walletFragment , "walletFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(myConnectionFragment);
+    }
+
     public void showMyConnectionFragment() {
         MyConnectionFragment myConnectionFragment = new MyConnectionFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.frame_main, myConnectionFragment, "myConnectionFragment");
+        transaction.add(R.id.frame_frag, myConnectionFragment, "myConnectionFragment");
         transaction.addToBackStack(null);
         transaction.commit();
         fragmentList.add(myConnectionFragment);
@@ -367,9 +382,20 @@ public class HomeActivity extends AppCompatActivity {
         RewardsFragment rewardsFragment = new RewardsFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.frame_main, rewardsFragment, "rewardsFragment");
+        transaction.add(R.id.frame_frag, rewardsFragment, "rewardsFragment");
         transaction.addToBackStack(null);
         transaction.commit();
         fragmentList.add(rewardsFragment);
+    }
+
+
+    public void showContributeFragment(){
+        ContributeFragment contributeFragment = new ContributeFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_frag, contributeFragment, "contributeFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(contributeFragment);
     }
 }

@@ -2,9 +2,13 @@ package com.ritvi.kaajneeti.Util;
 
 import android.content.Context;
 
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,6 +53,34 @@ public class UtilityFunction {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static String getProfileID(UserInfoPOJO userInfoPOJO){
+        if(userInfoPOJO.getUserProfileCitizen()!=null){
+            return userInfoPOJO.getUserProfileCitizen().getUserProfileId();
+        }else{
+            return userInfoPOJO.getUserProfileLeader().getUserProfileId();
+        }
+    }
+
+    public static String hashCal(String type, String str) {
+        byte[] hashSequence = str.getBytes();
+        StringBuffer hexString = new StringBuffer();
+        try {
+            MessageDigest algorithm = MessageDigest.getInstance(type);
+            algorithm.reset();
+            algorithm.update(hashSequence);
+            byte messageDigest[] = algorithm.digest();
+
+            for (int i = 0; i < messageDigest.length; i++) {
+                String hex = Integer.toHexString(0xFF & messageDigest[i]);
+                if (hex.length() == 1)
+                    hexString.append("0");
+                hexString.append(hex);
+            }
+        } catch (NoSuchAlgorithmException NSAE) {
+        }
+        return hexString.toString();
     }
 
 

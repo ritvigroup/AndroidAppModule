@@ -20,12 +20,23 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
+import com.ritvi.kaajneeti.Util.UtilityFunction;
+import com.ritvi.kaajneeti.pojo.payment.PaymentPOJO;
+import com.ritvi.kaajneeti.webservice.WebServiceBase;
+import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
+import com.ritvi.kaajneeti.webservice.WebServicesUrls;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,7 +84,8 @@ public class PayUMoneyIntegration extends AppCompatActivity {
     private String mServiceProvider = "payu_paisa";
     private String mSuccessUrl = "success.com";
     private String mFailedUrl = "failure.com";
-
+    private String transfer_leader_id = "";
+    PaymentPOJO paymentPOJO;
 
     boolean isFromOrder;
     /**
@@ -120,20 +132,22 @@ public class PayUMoneyIntegration extends AppCompatActivity {
         /**
          * Getting Intent Variables...
          */
+        paymentPOJO= (PaymentPOJO) getIntent().getSerializableExtra("paymentPOJO");
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
 
+            this.transfer_leader_id = bundle.getString("transfer_leader_id");
 //            mFirstName = bundle.getString("name");
 //            mEmailId = bundle.getString("email");
 //            mAmount = bundle.getDouble("amount");
 //            mPhone = bundle.getString("phone");
 //            mId = bundle.getInt("id");
 
-            mFirstName="sunil";
-            mEmailId="sundroid1993@gmail.com";
-            mAmount=10;
-            mPhone="9876543210";
-            mId=122;
+            mFirstName = "sunil";
+            mEmailId = "sundroid1993@gmail.com";
+            mAmount = 10;
+            mPhone = "9876543210";
+            mId = 122;
 
             isFromOrder = bundle.getBoolean("isFromOrder");
 
@@ -163,7 +177,7 @@ public class PayUMoneyIntegration extends AppCompatActivity {
              * Final Action URL...
              */
             mAction = mBaseURL.concat("/_payment");
-
+            callpaymentSuccessfullAPI();
             /**
              * WebView Client
              */
@@ -198,7 +212,7 @@ public class PayUMoneyIntegration extends AppCompatActivity {
 //                        intent.putExtra("isFromOrder", isFromOrder);
 //                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //                        startActivity(intent);
-                        Log.d(TagUtils.getTag(),"txnID:-"+mTXNId+" , id:-"+mId);
+                        Log.d(TagUtils.getTag(), "txnID:-" + mTXNId + " , id:-" + mId);
                     } else if (url.equals(mFailedUrl)) {
 //                        Intent intent = new Intent(PayUMoneyIntegration.this, PaymentStatusActivity.class);
 //                        intent.putExtra("status", false);
@@ -208,7 +222,7 @@ public class PayUMoneyIntegration extends AppCompatActivity {
 //                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //                        startActivity(intent);
 
-                        Log.d(TagUtils.getTag(),"txnID:-"+mTXNId+" , id:-"+mId);
+                        Log.d(TagUtils.getTag(), "txnID:-" + mTXNId + " , id:-" + mId);
                     }
                     super.onPageFinished(view, url);
                 }
@@ -247,6 +261,41 @@ public class PayUMoneyIntegration extends AppCompatActivity {
         } else {
             Toast.makeText(activity, "Something went wrong, Try again.", Toast.LENGTH_LONG).show();
         }
+
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    public void callpaymentSuccessfullAPI(){
+        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
+
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("payment_gateway_id",paymentPOJO.getPaymentGatewayId()));
+        nameValuePairs.add(new BasicNameValuePair("transaction_id",mTXNId));
+        nameValuePairs.add(new BasicNameValuePair("payment_to_user_profile_id",Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("transaction_date", UtilityFunction.getCurrentDate()));
+        nameValuePairs.add(new BasicNameValuePair("transaction_amount","10"));
+        nameValuePairs.add(new BasicNameValuePair("transaction_shipping_amount","10"));
+        nameValuePairs.add(new BasicNameValuePair("transaction_status","1"));
+        nameValuePairs.add(new BasicNameValuePair("debit_or_credit","1"));
+        nameValuePairs.add(new BasicNameValuePair("comments","Trans Checking"));
+        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                Log.d(TagUtils.getTag(),"trans response:-"+response);
+                try{
+                    JSONObject jsonObject=new JSONObject(response);
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        },"CALL_TRANS_API",true).execute(WebServicesUrls.SAVE_PAYMENT_TRANSACTIONS);
     }
 
     /**
@@ -302,7 +351,7 @@ public class PayUMoneyIntegration extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             onPressingBack();
         }
         return super.onOptionsItemSelected(item);
@@ -378,8 +427,10 @@ public class PayUMoneyIntegration extends AppCompatActivity {
 
 }
 
+//
 //    String MERCHENT_KEY = "xit8dtfA";
 //    String MERCHENT_SALT = "dlr4AbGetK";
+//    String MERCHENT_ID = "6175876";
 //    String TEST_AUTH_HEADER = "L3hbeVHY7LR6e7dKpy+NWj2n2K5/J9Sdjg65SI6e98w=";
 //
 //    @Override
@@ -387,27 +438,43 @@ public class PayUMoneyIntegration extends AppCompatActivity {
 //        super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_pay_umoney_integration);
 //
-//        String hashSequence = MERCHENT_KEY + "|txnid|50|salt" + MERCHENT_SALT;
-//        String serverCalculatedHash = hashCal("SHA-512", hashSequence);
+////        String hashSequence = MERCHENT_KEY + "|txnid|50|salt" + MERCHENT_SALT;
+////        String serverCalculatedHash = hashCal("SHA-512", hashSequence);
+//
+//        Random rand = new Random();
+//        String randomString = Integer.toString(rand.nextInt()) + (System.currentTimeMillis() / 1000L);
+//        String mTXNId = hashCal("SHA-256", randomString).substring(0, 20);
+//        String mHash = hashCal("SHA-512", MERCHENT_KEY + "|" +
+//                mTXNId + "|" +
+//                500 + "|" +
+//                "funding" + "|" +
+//                "sunil" + "|" +
+//                "sundroid@gmail.com" + "|||||||||||" +
+//                MERCHENT_SALT);
 //
 //        PayUmoneySdkInitializer.PaymentParam.Builder builder = new
 //                PayUmoneySdkInitializer.PaymentParam.Builder();
 //        builder.setAmount(50)                          // Payment amount
-//                .setTxnId("100151")                                             // Transaction ID
+//                .setTxnId(mTXNId)                                             // Transaction ID
 //                .setPhone("9873738969")                                           // User Phone number
 //                .setProductName("Funding")                   // Product Name or description
 //                .setFirstName("Sunil")                              // User First name
-//                .setEmail("sundroid1993@gmail.com")                                            // User Email ID
+//                .setEmail("sundroid@gmail.com")                                            // User Email ID
+//                .setUdf1("")
+//                .setUdf2("")
+//                .setUdf3("")
+//                .setUdf4("")
+//                .setUdf5("")
 //                .setsUrl("failure.com")                    // Success URL (surl)
 //                .setfUrl("success.com")                     //Failure URL (furl)
 //                .setIsDebug(true)                              // Integration environment - true (Debug)/ false(Production)
 //                .setKey(MERCHENT_KEY)                        // Merchant key
-//                .setMerchantId(MERCHENT_SALT);             // Merchant ID
+//                .setMerchantId(MERCHENT_ID);             // Merchant ID
 //
 //
 //        PayUmoneySdkInitializer.PaymentParam paymentParam = builder.build();
 ////set the hash
-//        paymentParam.setMerchantHash(serverCalculatedHash);
+//        paymentParam.setMerchantHash(mHash);
 //
 //        PayUmoneyFlowManager.startPayUMoneyFlow(
 //                paymentParam,
@@ -440,17 +507,17 @@ public class PayUMoneyIntegration extends AppCompatActivity {
 //        if (requestCode == PayUmoneyFlowManager.REQUEST_CODE_PAYMENT && resultCode == RESULT_OK && data != null) {
 //            TransactionResponse transactionResponse = data.getParcelableExtra(PayUmoneyFlowManager.INTENT_EXTRA_TRANSACTION_RESPONSE);
 //            if (transactionResponse != null && transactionResponse.getPayuResponse() != null) {
-//                if(transactionResponse.getTransactionStatus().equals(TransactionResponse.TransactionStatus.SUCCESSFUL)){
+//                if (transactionResponse.getTransactionStatus().equals(TransactionResponse.TransactionStatus.SUCCESSFUL)) {
 ////Success Transaction
-//                } else{
+//                } else {
 ////Failure Transaction
 //                }
 //// Response from Payumoney
 //                String payuResponse = transactionResponse.getPayuResponse();
-//                Log.d(TagUtils.getTag(),"payuResponse:-"+payuResponse);
+//                Log.d(TagUtils.getTag(), "payuResponse:-" + payuResponse);
 //// Response from SURl and FURL
 //                String merchantResponse = transactionResponse.getTransactionDetails();
-//                Log.d(TagUtils.getTag(),"merchantResponse:-"+merchantResponse);
+//                Log.d(TagUtils.getTag(), "merchantResponse:-" + merchantResponse);
 //            }
 //        }
 //    }
