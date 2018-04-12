@@ -23,6 +23,8 @@ public class WebServicesUrls {
     public static final String UPDATE_PROFILE_AFTER_LOGIN = BASE_URL + "userprofile/updateProfileAfterLogin";
     public static final String GET_MY_FAVORITE_LEADER = BASE_URL + "userprofile/getMyAllFavouriteLeader";
     public static final String SET_MY_FAVORITE_LEADER = BASE_URL + "userprofile/setLeaderAsFavourite";
+    public static final String UPDATE_PROFILE = BASE_URL + "userprofile/updateProfile";
+    public static final String GET_MORE_PROFILE_DATA = BASE_URL + "userprofile/getMoreDetailAboutUserProfile";
 
     public static final String COMPLAINT = BASE_URL + "complaint.php";
 

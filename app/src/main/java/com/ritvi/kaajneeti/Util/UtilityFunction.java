@@ -3,6 +3,7 @@ package com.ritvi.kaajneeti.Util;
 import android.content.Context;
 
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -60,6 +61,14 @@ public class UtilityFunction {
             return userInfoPOJO.getUserProfileCitizen().getUserProfileId();
         }else{
             return userInfoPOJO.getUserProfileLeader().getUserProfileId();
+        }
+    }
+
+    public static UserProfilePOJO getUserProfilePOJO(UserInfoPOJO userInfoPOJO) {
+        if(userInfoPOJO.getUserProfileCitizen()!=null){
+            return userInfoPOJO.getUserProfileCitizen();
+        }else{
+            return userInfoPOJO.getUserProfileLeader();
         }
     }
 

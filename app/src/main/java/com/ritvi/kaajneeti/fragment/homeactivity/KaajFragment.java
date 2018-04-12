@@ -20,6 +20,7 @@ import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.activity.AddPostActivity;
 import com.ritvi.kaajneeti.activity.HomeActivity;
+import com.ritvi.kaajneeti.activity.Profile.ProfileDescriptionActivity;
 import com.ritvi.kaajneeti.activity.ProfilePageActivity;
 import com.ritvi.kaajneeti.adapter.HomeFeedAdapter;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
@@ -94,6 +95,13 @@ public class KaajFragment extends Fragment {
                     .error(R.drawable.ic_default_profile_pic)
                     .dontAnimate()
                     .into(cv_profile_pic);
+
+            cv_profile_pic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(getActivity(), ProfileDescriptionActivity.class).putExtra("userInfo",Constants.userInfoPOJO));
+                }
+            });
 
 //            StringRequest req = new StringRequest("https://demo8911870.mockable.io/getnewsfeeds",
 //                    new Response.Listener<String>() {
