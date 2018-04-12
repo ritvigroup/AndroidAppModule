@@ -1,4 +1,4 @@
-package com.ritvi.kaajneeti.pojo.user;
+package com.ritvi.kaajneeti.pojo.userdetail;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -37,6 +37,8 @@ public class ProfilePOJO implements Serializable{
     private String state;
     @SerializedName("ZipCode")
     private String zipCode;
+    @SerializedName("Country")
+    private String country;
     @SerializedName("Mobile")
     private String mobile;
     @SerializedName("AltMobile")
@@ -47,6 +49,14 @@ public class ProfilePOJO implements Serializable{
     private String addedBy;
     @SerializedName("UpdatedBy")
     private String updatedBy;
+    @SerializedName("WebsiteUrl")
+    private String websiteUrl;
+    @SerializedName("FacebookPageUrl")
+    private String facebookPageUrl;
+    @SerializedName("TwitterPageUrl")
+    private String twitterPageUrl;
+    @SerializedName("GooglePageUrl")
+    private String googlePageUrl;
     @SerializedName("AddedOn")
     private String addedOn;
     @SerializedName("AddedOnTime")
@@ -57,6 +67,10 @@ public class ProfilePOJO implements Serializable{
     private String updatedOnTime;
     @SerializedName("MyFriend")
     private Integer myFriend;
+    @SerializedName("Following")
+    private Integer following;
+    @SerializedName("Follower")
+    private Integer follower;
 
     public String getUserProfileId() {
         return userProfileId;
@@ -170,6 +184,14 @@ public class ProfilePOJO implements Serializable{
         this.zipCode = zipCode;
     }
 
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
     public String getMobile() {
         return mobile;
     }
@@ -210,6 +232,38 @@ public class ProfilePOJO implements Serializable{
         this.updatedBy = updatedBy;
     }
 
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
+
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl;
+    }
+
+    public String getFacebookPageUrl() {
+        return facebookPageUrl;
+    }
+
+    public void setFacebookPageUrl(String facebookPageUrl) {
+        this.facebookPageUrl = facebookPageUrl;
+    }
+
+    public String getTwitterPageUrl() {
+        return twitterPageUrl;
+    }
+
+    public void setTwitterPageUrl(String twitterPageUrl) {
+        this.twitterPageUrl = twitterPageUrl;
+    }
+
+    public String getGooglePageUrl() {
+        return googlePageUrl;
+    }
+
+    public void setGooglePageUrl(String googlePageUrl) {
+        this.googlePageUrl = googlePageUrl;
+    }
+
     public String getAddedOn() {
         return addedOn;
     }
@@ -248,5 +302,21 @@ public class ProfilePOJO implements Serializable{
 
     public void setMyFriend(Integer myFriend) {
         this.myFriend = myFriend;
+    }
+
+    public Integer getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Integer following) {
+        this.following = following;
+    }
+
+    public Integer getFollower() {
+        return follower;
+    }
+
+    public void setFollower(Integer follower) {
+        this.follower = follower;
     }
 }

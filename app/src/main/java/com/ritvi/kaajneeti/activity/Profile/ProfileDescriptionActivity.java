@@ -1,12 +1,15 @@
 package com.ritvi.kaajneeti.activity.Profile;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.transition.TransitionManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,11 +23,16 @@ import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.adapter.HomeFeedAdapter;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
+import com.ritvi.kaajneeti.pojo.ResponsePOJO;
 import com.ritvi.kaajneeti.pojo.home.FeedPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.pojo.userdetail.ProfilePOJO;
+import com.ritvi.kaajneeti.pojo.userdetail.ProfileResultPOJO;
+import com.ritvi.kaajneeti.webservice.ResponseCallBack;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
+import com.ritvi.kaajneeti.webservice.WebServiceBaseResponse;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -60,8 +68,21 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
     CircleImageView cv_profile_pic;
     @BindView(R.id.ll_more_info)
     LinearLayout ll_more_info;
+    @BindView(R.id.tv_email)
+    TextView tv_email;
+    @BindView(R.id.tv_mobile)
+    TextView tv_mobile;
+    @BindView(R.id.tv_address)
+    TextView tv_address;
+    @BindView(R.id.tv_work)
+    TextView tv_work;
+    @BindView(R.id.tv_education)
+    TextView tv_education;
+    @BindView(R.id.ll_transition)
+    LinearLayout ll_transition;
 
     UserInfoPOJO userInfoPOJO;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,11 +93,11 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        userInfoPOJO= (UserInfoPOJO) getIntent().getSerializableExtra("userInfo");
+        userInfoPOJO = (UserInfoPOJO) getIntent().getSerializableExtra("userInfo");
         attachAdapter();
-        if(userInfoPOJO!=null){
-            UserProfilePOJO userProfilePOJO= UtilityFunction.getUserProfilePOJO(userInfoPOJO);
-            tv_profile_name.setText(userProfilePOJO.getFirstName()+" "+userProfilePOJO.getLastName());
+        if (userInfoPOJO != null) {
+            UserProfilePOJO userProfilePOJO = UtilityFunction.getUserProfilePOJO(userInfoPOJO);
+            tv_profile_name.setText(userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName());
             getAnalysisData(userProfilePOJO);
             callAPI();
             Glide.with(getApplicationContext())
@@ -85,15 +106,66 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
         }
 
         tv_more.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
-                if(ll_more_info.getVisibility()==View.VISIBLE){
+                TransitionManager.beginDelayedTransition(ll_transition);
+                if (ll_more_info.getVisibility() == View.VISIBLE) {
+                    tv_more.setText("View more");
                     ll_more_info.setVisibility(View.GONE);
-                }else{
+                } else {
+                    tv_more.setText("View less");
                     ll_more_info.setVisibility(View.VISIBLE);
                 }
             }
         });
+
+        getAllProfileDetails();
+    }
+
+    ProfileResultPOJO profileResultPOJO;
+
+    public void getAllProfileDetails() {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        new WebServiceBaseResponse<ProfileResultPOJO>(nameValuePairs, this, new ResponseCallBack<ProfileResultPOJO>() {
+            @Override
+            public void onGetMsg(ResponsePOJO<ProfileResultPOJO> responsePOJO) {
+                try {
+                    if (responsePOJO.isSuccess()) {
+                        profileResultPOJO = responsePOJO.getResult();
+                        setValues();
+                    } else {
+                        ToastClass.showShortToast(getApplicationContext(), responsePOJO.getMessage());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, ProfileResultPOJO.class, "CALL_PROFILE_API", true).execute(WebServicesUrls.GET_MORE_PROFILE_DATA);
+    }
+
+    public void setValues() {
+        if (profileResultPOJO != null && profileResultPOJO.getProfilePOJO() != null) {
+            ProfilePOJO profilePOJO = profileResultPOJO.getProfilePOJO();
+            tv_profile_name.setText(profilePOJO.getFirstName() + " " + profilePOJO.getLastName());
+            tv_email.setText(profilePOJO.getEmail());
+            tv_mobile.setText(profilePOJO.getMobile());
+            String address = profilePOJO.getCity() + " " + profilePOJO.getState() + " " + profilePOJO.getCountry();
+            tv_address.setText(address);
+            String work = "";
+            if (profileResultPOJO.getWorkPOJOList().size() > 0) {
+                work = "Worked at " + profileResultPOJO.getWorkPOJOList().get(0).getWorkPosition();
+                tv_work.setText(work);
+            }
+
+            String education = "";
+            if (profileResultPOJO.getEducationPOJOS().size() > 0) {
+                education = "Studied " + profileResultPOJO.getEducationPOJOS().get(0).getQualification() + " at " + profileResultPOJO.getEducationPOJOS().get(0).getQualificationUniversity();
+                tv_education.setText(education);
+            }
+        }
     }
 
 
@@ -121,7 +193,8 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
 
 
     HomeFeedAdapter homeFeedAdapter;
-    List<FeedPOJO> feedPOJOS=new ArrayList<>();
+    List<FeedPOJO> feedPOJOS = new ArrayList<>();
+
     public void attachAdapter() {
         homeFeedAdapter = new HomeFeedAdapter(this, null, feedPOJOS);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -133,7 +206,7 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
     }
 
 
-    public void getAnalysisData(UserProfilePOJO userProfilePOJO){
+    public void getAnalysisData(UserProfilePOJO userProfilePOJO) {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_id", userProfilePOJO.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", userProfilePOJO.getUserProfileId()));
@@ -166,7 +239,7 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        if(userInfoPOJO.getUserId().equals(Constants.userInfoPOJO.getUserId())){
+        if (userInfoPOJO.getUserId().equals(Constants.userInfoPOJO.getUserId())) {
             getMenuInflater().inflate(R.menu.menu_edit, menu);//Menu Resource, Menu
         }
         return true;
@@ -176,7 +249,7 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add:
-                startActivity(new Intent(ProfileDescriptionActivity.this,ProfileEditPageActivity.class).putExtra("userInfo",userInfoPOJO));
+                startActivity(new Intent(ProfileDescriptionActivity.this, ProfileEditPageActivity.class).putExtra("userInfo", userInfoPOJO));
                 return true;
             case android.R.id.home:
                 finish();

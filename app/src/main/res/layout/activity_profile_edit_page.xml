@@ -5,8 +5,8 @@
     android:id="@+id/transition"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:animateLayoutChanges="true"
+    android:orientation="vertical"
     tools:context="com.ritvi.kaajneeti.activity.Profile.ProfileEditPageActivity">
 
     <android.support.v7.widget.Toolbar
@@ -44,14 +44,13 @@
                     app:civ_border_width="1dp" />
 
 
-
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:layout_margin="15dp"
                     android:background="@drawable/et_rect_border"
                     android:hint="Enter Bio"
-                    android:padding="5dp"/>
+                    android:padding="5dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -80,17 +79,17 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_marginLeft="20dp"
+                            android:layout_weight="1"
                             android:text="PERSONAL INFORMATION" />
 
                         <ImageView
                             android:id="@+id/iv_personal_view"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginRight="7dp"
                             android:src="@drawable/ic_plus_black"
-                            android:tint="@color/colorPrimary"
-                            android:layout_marginRight="7dp"/>
+                            android:tint="@color/colorPrimary" />
 
                     </LinearLayout>
 
@@ -104,9 +103,10 @@
                     android:id="@+id/ll_profile_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp">
+                    android:layout_marginRight="10dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -150,14 +150,14 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
                             android:layout_gravity="center"
-                            android:gravity="center">
+                            android:gravity="center"
+                            android:orientation="horizontal">
 
                             <android.support.design.widget.TextInputLayout
                                 android:layout_width="wrap_content"
-                                android:layout_weight="1"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
 
                                 <EditText
                                     android:id="@+id/et_dob"
@@ -170,22 +170,22 @@
                                 android:id="@+id/iv_calendar"
                                 android:layout_width="35dp"
                                 android:layout_height="35dp"
-                                android:src="@drawable/ic_calendar"/>
+                                android:src="@drawable/ic_calendar" />
 
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="10dp">
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="GENDER"
-                                android:textColor="#000000"/>
+                                android:textColor="#000000" />
 
 
                             <RadioGroup
@@ -198,19 +198,19 @@
                                     android:id="@+id/rb_male"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Male"/>
+                                    android:text="Male" />
 
                                 <RadioButton
                                     android:id="@+id/rb_female"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Female"/>
+                                    android:text="Female" />
 
                                 <RadioButton
                                     android:id="@+id/rb_other"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Other"/>
+                                    android:text="Other" />
 
                             </RadioGroup>
                         </LinearLayout>
@@ -272,17 +272,17 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_marginLeft="20dp"
+                            android:layout_weight="1"
                             android:text="RELATIONSHIP" />
 
                         <ImageView
                             android:id="@+id/iv_relation_view"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginRight="7dp"
                             android:src="@drawable/ic_plus_black"
-                            android:tint="@color/colorPrimary"
-                            android:layout_marginRight="7dp"/>
+                            android:tint="@color/colorPrimary" />
 
                     </LinearLayout>
 
@@ -317,8 +317,8 @@
                             <RadioButton
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Single"
-                                android:checked="true"/>
+                                android:checked="true"
+                                android:text="Single" />
 
                             <RadioButton
                                 android:layout_width="wrap_content"
@@ -358,17 +358,17 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_marginLeft="20dp"
+                            android:layout_weight="1"
                             android:text="Current Address" />
 
                         <ImageView
                             android:id="@+id/iv_address_view"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginRight="7dp"
                             android:src="@drawable/ic_plus_black"
-                            android:tint="@color/colorPrimary"
-                            android:layout_marginRight="7dp"/>
+                            android:tint="@color/colorPrimary" />
 
                     </LinearLayout>
 
@@ -382,14 +382,16 @@
                     android:id="@+id/ll_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
+                    android:orientation="vertical"
                     android:visibility="gone">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
                         android:orientation="vertical"
                         android:padding="7dp">
 
@@ -435,8 +437,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="Pincode"
-                                android:inputType="number"/>
+                                android:inputType="number" />
                         </android.support.design.widget.TextInputLayout>
+
 
                     </LinearLayout>
 
@@ -469,17 +472,17 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_marginLeft="20dp"
+                            android:layout_weight="1"
                             android:text="WORK" />
 
                         <ImageView
                             android:id="@+id/iv_work_view"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginRight="7dp"
                             android:src="@drawable/ic_plus_black"
-                            android:tint="@color/colorPrimary"
-                            android:layout_marginRight="7dp"/>
+                            android:tint="@color/colorPrimary" />
 
                     </LinearLayout>
 
@@ -493,23 +496,27 @@
                     android:id="@+id/ll_work"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_gravity="center"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
                     android:visibility="gone">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:padding="7dp">
+                        android:padding="7dp"
+                        android:layout_gravity="center"
+                        android:gravity="center">
 
                         <android.support.design.widget.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
                             <EditText
-                                android:id="@+id/et_work_place"
+                                android:id="@+id/et_work"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="Where did you work?" />
@@ -520,228 +527,19 @@
                             android:layout_height="wrap_content">
 
                             <EditText
-                                android:id="@+id/et_position"
+                                android:id="@+id/et_work_position"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="Position" />
                         </android.support.design.widget.TextInputLayout>
 
                         <android.support.design.widget.TextInputLayout
+                            android:id="@+id/til_work_location"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
                             <EditText
-                                android:id="@+id/et_place"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="Location"
-                                android:editable="false"/>
-                        </android.support.design.widget.TextInputLayout>
-
-                        <android.support.design.widget.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <EditText
-                                android:id="@+id/et_description"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="Description" />
-                        </android.support.design.widget.TextInputLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="40dp"
-                            android:layout_gravity="center_vertical"
-                            android:gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="20dp"
-                                android:layout_weight="1"
-                                android:text="From"
-                                android:textColor="@color/colorPrimary"
-                                android:textSize="18sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/tv_from"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginRight="10dp"
-                                android:text="select" />
-
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#000000" />
-
-                        <LinearLayout
-                            android:id="@+id/ll_to"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="40dp"
-                            android:layout_gravity="center_vertical"
-                            android:gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="20dp"
-                                android:layout_weight="1"
-                                android:text="To"
-                                android:textColor="@color/colorPrimary"
-                                android:textSize="18sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/tv_to"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginRight="10dp"
-                                android:text="select" />
-
-                        </LinearLayout>
-
-                        <View
-                            android:id="@+id/view_to"
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#000000" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center_vertical"
-                            android:gravity="center_vertical"
-                            android:minHeight="40dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="20dp"
-                                android:layout_weight="1"
-                                android:text="I currently work here"
-                                android:textColor="@color/colorPrimary"
-                                android:textSize="18sp"
-                                android:textStyle="bold" />
-
-                            <CheckBox
-                                android:id="@+id/check_currently"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginRight="10dp"
-                                android:text="" />
-
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#000000" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="vertical">
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#757575" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="#F5F5F5"
-                        android:gravity="center_vertical">
-
-                        <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_marginLeft="20dp"
-                            android:src="@drawable/ic_default_profile_pic" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginLeft="20dp"
-                            android:text="EDUCATION" />
-
-
-                        <ImageView
-                            android:id="@+id/iv_education_view"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_plus_black"
-                            android:tint="@color/colorPrimary"
-                            android:layout_marginRight="7dp"/>
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#757575" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_education"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:padding="7dp">
-
-                        <android.support.design.widget.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <EditText
-                                android:id="@+id/et_name"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="Enter your College/School" />
-                        </android.support.design.widget.TextInputLayout>
-
-                        <android.support.design.widget.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <EditText
-                                android:id="@+id/et_qualification"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="Qualification" />
-                        </android.support.design.widget.TextInputLayout>
-
-                        <android.support.design.widget.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <EditText
-                                android:id="@+id/et_place"
+                                android:id="@+id/et_work_location"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:editable="false"
@@ -767,7 +565,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/tv_from"
+                                android:id="@+id/tv_work_from"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="10dp"
@@ -781,7 +579,7 @@
                             android:background="#000000" />
 
                         <LinearLayout
-                            android:id="@+id/ll_to"
+                            android:id="@+id/ll_work_to"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -800,7 +598,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/tv_to"
+                                android:id="@+id/tv_work_to"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="10dp"
@@ -809,7 +607,211 @@
                         </LinearLayout>
 
                         <View
-                            android:id="@+id/view_to"
+                            android:id="@+id/view_work_to"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#000000" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:minHeight="40dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="20dp"
+                                android:layout_weight="1"
+                                android:text="I currently work here"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <CheckBox
+                                android:id="@+id/check_currently_work"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="10dp"
+                                android:text="" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#000000" />
+
+                        <Button
+                            android:id="@+id/btn_update_work"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="update" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#757575" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="#F5F5F5"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginLeft="20dp"
+                            android:src="@drawable/ic_default_profile_pic" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:layout_weight="1"
+                            android:text="EDUCATION" />
+
+
+                        <ImageView
+                            android:id="@+id/iv_education_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="7dp"
+                            android:src="@drawable/ic_plus_black"
+                            android:tint="@color/colorPrimary" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#757575" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_education"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="7dp">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <EditText
+                                android:id="@+id/et_college_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Enter your College/School" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <EditText
+                                android:id="@+id/et_qualification"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Qualification" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <EditText
+                                android:id="@+id/et_college_place"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:editable="false"
+                                android:hint="Location" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:minHeight="40dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="20dp"
+                                android:layout_weight="1"
+                                android:text="From"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_college_from"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="10dp"
+                                android:text="select" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#000000" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_college_to"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:minHeight="40dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="20dp"
+                                android:layout_weight="1"
+                                android:text="To"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_college_to"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="10dp"
+                                android:text="select" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/view_college_to"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="#000000" />
@@ -833,7 +835,7 @@
                                 android:textStyle="bold" />
 
                             <CheckBox
-                                android:id="@+id/check_currently"
+                                android:id="@+id/check_college_currently"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="10dp"
@@ -853,29 +855,30 @@
                             android:layout_gravity="center_vertical"
                             android:gravity="center_vertical"
                             android:minHeight="40dp"
+                            android:visibility="gone"
                             android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Privacy"
-                                android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/colorPrimary"
                                 android:layout_marginLeft="20dp"
-                                android:layout_weight="1"/>
+                                android:layout_weight="1"
+                                android:text="Privacy"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
                             <RadioGroup
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:layout_marginRight="10dp">
+                                android:layout_marginRight="10dp"
+                                android:orientation="horizontal">
 
                                 <RadioButton
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Public"
-                                    android:checked="true"/>
+                                    android:checked="true"
+                                    android:text="Public" />
 
                                 <RadioButton
                                     android:layout_width="wrap_content"
@@ -884,6 +887,12 @@
 
                             </RadioGroup>
                         </LinearLayout>
+
+                        <Button
+                            android:id="@+id/btn_save_college"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Save"/>
 
                     </LinearLayout>
 
@@ -900,9 +909,9 @@
         android:id="@+id/btn_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SAVE"
         android:background="@color/colorPrimary"
+        android:text="SAVE"
         android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:textStyle="bold" />
 </LinearLayout>

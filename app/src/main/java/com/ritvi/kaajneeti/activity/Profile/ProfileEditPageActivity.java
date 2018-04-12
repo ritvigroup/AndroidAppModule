@@ -15,30 +15,48 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.TransitionManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.FileUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
+import com.ritvi.kaajneeti.Util.ToastClass;
+import com.ritvi.kaajneeti.Util.UtilityFunction;
+import com.ritvi.kaajneeti.pojo.ResponsePOJO;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.userdetail.EducationPOJO;
+import com.ritvi.kaajneeti.pojo.userdetail.ProfileResultPOJO;
+import com.ritvi.kaajneeti.pojo.userdetail.WorkPOJO;
+import com.ritvi.kaajneeti.webservice.ResponseCallBack;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
+import com.ritvi.kaajneeti.webservice.WebServiceBaseResponse;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 import com.ritvi.kaajneeti.webservice.WebUploadService;
@@ -61,7 +79,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ProfileEditPageActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
+public class ProfileEditPageActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
 //    @BindView(R.id.ll_work)
 //    LinearLayout ll_work;
@@ -75,7 +93,8 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
 //    LinearLayout ll_profile_info;
 
     private static final int PICK_IMAGE_REQUEST = 101;
-    private static final int CAMERA_REQUEST = 103;
+    private static final int CAMERA_REQUEST = 102;
+    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 103;
 
     @BindView(R.id.cv_profile_pic)
     CircleImageView cv_profile_pic;
@@ -110,6 +129,46 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
     @BindView(R.id.et_pincode)
     EditText et_pincode;
 
+    @BindView(R.id.et_college_name)
+    EditText et_college_name;
+    @BindView(R.id.et_qualification)
+    EditText et_qualification;
+    @BindView(R.id.et_college_place)
+    EditText et_college_place;
+    @BindView(R.id.tv_college_from)
+    TextView tv_college_from;
+    @BindView(R.id.ll_college_to)
+    LinearLayout ll_college_to;
+    @BindView(R.id.tv_college_to)
+    TextView tv_college_to;
+    @BindView(R.id.view_college_to)
+    View view_college_to;
+    @BindView(R.id.check_college_currently)
+    CheckBox check_college_currently;
+    @BindView(R.id.btn_save_college)
+    Button btn_save_college;
+
+    @BindView(R.id.et_work)
+    EditText et_work;
+    @BindView(R.id.et_work_position)
+    EditText et_work_position;
+    @BindView(R.id.et_work_location)
+    EditText et_work_location;
+    @BindView(R.id.tv_work_to)
+    TextView tv_work_to;
+    @BindView(R.id.tv_work_from)
+    TextView tv_work_from;
+    @BindView(R.id.btn_update_work)
+    Button btn_update_work;
+    @BindView(R.id.check_currently_work)
+    CheckBox check_currently_work;
+    @BindView(R.id.view_work_to)
+    View view_work_to;
+    @BindView(R.id.ll_work_to)
+    LinearLayout ll_work_to;
+    @BindView(R.id.til_work_location)
+    TextInputLayout til_work_location;
+
 
     @BindView(R.id.iv_personal_view)
     ImageView iv_personal_view;
@@ -135,13 +194,25 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
     ImageView iv_education_view;
     @BindView(R.id.ll_education)
     LinearLayout ll_education;
-
     @BindView(R.id.transition)
     ViewGroup transition;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     UserInfoPOJO userInfoPOJO;
+
+    private static final String WORK_FROM = "work_from";
+    private static final String WORK_TO = "work_to";
+    private static final String EDUCATION_FROM = "education_from";
+    private static final String EDUCATION_TO = "education_to";
+
+    private static String CALENDAR_TYPE = WORK_FROM;
+
+
+    private static final String WORK_LOCATION = "work_location";
+    private static final String EDUCATION_LOCATION = "education_location";
+
+    private static String LOCATION_TYPE = WORK_LOCATION;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -297,6 +368,223 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
                 dpd.show(getFragmentManager(), "Select DOB");
             }
         });
+
+
+        tv_work_from.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CALENDAR_TYPE = WORK_FROM;
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        ProfileEditPageActivity.this,
+                        now.get(Calendar.YEAR),
+                        now.get(Calendar.MONTH),
+                        now.get(Calendar.DAY_OF_MONTH)
+                );
+                dpd.show(getFragmentManager(), "Select DOB");
+            }
+        });
+
+        tv_work_to.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CALENDAR_TYPE = WORK_TO;
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        ProfileEditPageActivity.this,
+                        now.get(Calendar.YEAR),
+                        now.get(Calendar.MONTH),
+                        now.get(Calendar.DAY_OF_MONTH)
+                );
+                dpd.show(getFragmentManager(), "Select DOB");
+            }
+        });
+
+        btn_update_work.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (UtilityFunction.checkEdits(et_work, et_work_location)) {
+                    callWorkUpdate();
+                } else {
+                    ToastClass.showShortToast(getApplicationContext(), "Please Enter Work Fields Properly");
+                }
+            }
+        });
+
+        et_work_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LOCATION_TYPE=WORK_LOCATION;
+                try {
+                    Intent intent =
+                            new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+                                    .build(ProfileEditPageActivity.this);
+                    startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+                } catch (GooglePlayServicesRepairableException e) {
+                    // TODO: Handle the error.
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    // TODO: Handle the error.
+                }
+            }
+        });
+        et_college_place.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LOCATION_TYPE=EDUCATION_LOCATION;
+                try {
+                    Intent intent =
+                            new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+                                    .build(ProfileEditPageActivity.this);
+                    startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+                } catch (GooglePlayServicesRepairableException e) {
+                    // TODO: Handle the error.
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    // TODO: Handle the error.
+                }
+            }
+        });
+        til_work_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LOCATION_TYPE = WORK_LOCATION;
+                try {
+                    Intent intent =
+                            new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+                                    .build(ProfileEditPageActivity.this);
+                    startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+                } catch (GooglePlayServicesRepairableException e) {
+                    // TODO: Handle the error.
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    // TODO: Handle the error.
+                }
+            }
+        });
+
+        check_currently_work.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                checkPresentWorking(b);
+            }
+        });
+
+        check_college_currently.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                checkCollegePursuing(b);
+            }
+        });
+
+        btn_save_college.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveCollege();
+            }
+        });
+
+
+        tv_college_from.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CALENDAR_TYPE = EDUCATION_FROM;
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        ProfileEditPageActivity.this,
+                        now.get(Calendar.YEAR),
+                        now.get(Calendar.MONTH),
+                        now.get(Calendar.DAY_OF_MONTH)
+                );
+                dpd.show(getFragmentManager(), "Select DOB");
+            }
+        });
+
+        tv_college_to.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CALENDAR_TYPE = EDUCATION_TO;
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        ProfileEditPageActivity.this,
+                        now.get(Calendar.YEAR),
+                        now.get(Calendar.MONTH),
+                        now.get(Calendar.DAY_OF_MONTH)
+                );
+                dpd.show(getFragmentManager(), "Select DOB");
+            }
+        });
+
+        getAllProfileDetails();
+    }
+
+    public void checkCollegePursuing(boolean b) {
+        if (b) {
+            ll_college_to.setVisibility(View.GONE);
+            view_college_to.setVisibility(View.GONE);
+        } else {
+            ll_college_to.setVisibility(View.VISIBLE);
+            view_college_to.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void checkPresentWorking(boolean is_currently) {
+        if (is_currently) {
+            ll_work_to.setVisibility(View.GONE);
+            view_work_to.setVisibility(View.GONE);
+        } else {
+            ll_work_to.setVisibility(View.VISIBLE);
+            view_work_to.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void saveCollege() {
+
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("education_id", ""));
+        nameValuePairs.add(new BasicNameValuePair("qualification", et_qualification.getText().toString()));
+        nameValuePairs.add(new BasicNameValuePair("location", et_college_place.getText().toString()));
+        nameValuePairs.add(new BasicNameValuePair("university", et_college_name.getText().toString()));
+        nameValuePairs.add(new BasicNameValuePair("from", tv_college_from.getText().toString()));
+        nameValuePairs.add(new BasicNameValuePair("to", tv_college_to.getText().toString()));
+        if(check_college_currently.isChecked()) {
+            nameValuePairs.add(new BasicNameValuePair("persuing", "1"));
+        }else{
+            nameValuePairs.add(new BasicNameValuePair("persuing", "0"));
+        }
+        nameValuePairs.add(new BasicNameValuePair("private_public", ""));
+
+        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+
+            }
+        }, "CALL_COLLEGE_SAVE", true).execute(WebServicesUrls.UPDATE_PROFILE_EDUCATION);
+    }
+
+    public void callWorkUpdate() {
+
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("work_id", "0"));
+        nameValuePairs.add(new BasicNameValuePair("work", et_work.getText().toString()));
+        nameValuePairs.add(new BasicNameValuePair("place", et_work_location.getText().toString()));
+        nameValuePairs.add(new BasicNameValuePair("location", et_work_location.getText().toString()));
+        nameValuePairs.add(new BasicNameValuePair("from", tv_work_from.getText().toString()));
+        nameValuePairs.add(new BasicNameValuePair("to", tv_work_to.getText().toString()));
+        if (check_currently_work.isChecked()) {
+            nameValuePairs.add(new BasicNameValuePair("currently", "1"));
+        } else {
+            nameValuePairs.add(new BasicNameValuePair("currently", "0"));
+        }
+        nameValuePairs.add(new BasicNameValuePair("private_public", "1"));
+
+        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+
+            }
+        }, "CALL_WORK_API", true).execute(WebServicesUrls.UPDATE_PROFILE_WORK);
     }
 
     String pictureImagePath = "";
@@ -319,17 +607,174 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
         }
         startActivityForResult(cameraIntent, CAMERA_REQUEST);
     }
-
-    public void getAllProfileDetails(){
-        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id",Constants.userInfoPOJO.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
-        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+    ProfileResultPOJO profileResultPOJO;
+    public void getAllProfileDetails() {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        new WebServiceBaseResponse<ProfileResultPOJO>(nameValuePairs, this, new ResponseCallBack<ProfileResultPOJO>() {
             @Override
-            public void onGetMsg(String apicall, String response) {
-
+            public void onGetMsg(ResponsePOJO<ProfileResultPOJO> responsePOJO) {
+                try {
+                    if (responsePOJO.isSuccess()) {
+                        profileResultPOJO=responsePOJO.getResult();
+                        setValues();
+                    }else{
+                        ToastClass.showShortToast(getApplicationContext(),responsePOJO.getMessage());
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
-        },"CALL_PROFILE_API",true).execute(WebServicesUrls.GET_MORE_PROFILE_DATA);
+        }, ProfileResultPOJO.class,"CALL_PROFILE_API", true).execute(WebServicesUrls.GET_MORE_PROFILE_DATA);
+    }
+
+    public void setValues(){
+        if(profileResultPOJO.getProfilePOJO()!=null) {
+            et_first_name.setText(profileResultPOJO.getProfilePOJO().getFirstName());
+            et_last_name.setText(profileResultPOJO.getProfilePOJO().getLastName());
+            et_email.setText(profileResultPOJO.getProfilePOJO().getEmail());
+            et_phone.setText(profileResultPOJO.getProfilePOJO().getMobile());
+            et_alt_phone.setText(profileResultPOJO.getProfilePOJO().getAltMobile());
+            et_city.setText(profileResultPOJO.getProfilePOJO().getCity());
+            et_state.setText(profileResultPOJO.getProfilePOJO().getState());
+            et_country.setText(profileResultPOJO.getProfilePOJO().getCountry());
+            et_pincode.setText(profileResultPOJO.getProfilePOJO().getZipCode());
+        }
+
+        if(profileResultPOJO.getWorkPOJOList()!=null&&profileResultPOJO.getWorkPOJOList().size()>0){
+            for(WorkPOJO workPOJO:profileResultPOJO.getWorkPOJOList()){
+                inflateWorkView(workPOJO);
+            }
+        }
+        if(profileResultPOJO.getEducationPOJOS()!=null&&profileResultPOJO.getEducationPOJOS().size()>0){
+            for(EducationPOJO educationPOJO:profileResultPOJO.getEducationPOJOS()){
+                inflateEducation(educationPOJO);
+            }
+        }
+
+
+    }
+
+    public void inflateEducation(EducationPOJO educationPOJO){
+        if(educationPOJO!=null) {
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View view = inflater.inflate(R.layout.inflate_education_preview, null);
+
+            EditText et_college_name=view.findViewById(R.id.et_college_name);
+            EditText et_qualification=view.findViewById(R.id.et_qualification);
+            EditText et_college_place=view.findViewById(R.id.et_college_place);
+            TextView tv_college_from=view.findViewById(R.id.tv_college_from);
+            final LinearLayout ll_college_to=view.findViewById(R.id.ll_college_to);
+            final View view_college_to=view.findViewById(R.id.view_college_to);
+            CheckBox check_college_currently=view.findViewById(R.id.check_college_currently);
+            Button btn_save_college=view.findViewById(R.id.btn_save_college);
+            TextView tv_name= view.findViewById(R.id.tv_name);
+            ImageView iv_delete = view.findViewById(R.id.iv_delete);
+            ImageView iv_plus = view.findViewById(R.id.iv_plus);
+            final LinearLayout ll_inflate_education = view.findViewById(R.id.ll_inflate_education);
+
+
+            tv_name.setText(educationPOJO.getQualification());
+            check_college_currently.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if(b){
+                        ll_college_to.setVisibility(View.GONE);
+                        view_college_to.setVisibility(View.GONE);
+                    }else{
+                        ll_college_to.setVisibility(View.VISIBLE);
+                        view_college_to.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
+            et_college_name.setText(educationPOJO.getQualificationUniversity());
+            et_college_place.setText(educationPOJO.getQualificationLocation());
+            et_qualification.setText(educationPOJO.getQualification());
+            tv_college_from.setText(educationPOJO.getQualificationFrom());
+            tv_college_to.setText(educationPOJO.getQualificationTo());
+
+            if(educationPOJO.getPersuing().equals("1")){
+                check_college_currently.setChecked(true);
+            }else{
+                check_college_currently.setChecked(false);
+            }
+
+            iv_plus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(ll_inflate_education.getVisibility()==View.VISIBLE){
+                        ll_inflate_education.setVisibility(View.GONE);
+                    }else{
+                        ll_inflate_education.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
+
+            ll_education.addView(view);
+        }
+    }
+
+    public void inflateWorkView(WorkPOJO workPOJO){
+        if(workPOJO!=null) {
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View view = inflater.inflate(R.layout.inflate_work_preview, null);
+            EditText et_work = view.findViewById(R.id.et_work);
+            EditText et_work_position = view.findViewById(R.id.et_work_position);
+            EditText et_work_location = view.findViewById(R.id.et_work_location);
+            TextView tv_work_from = view.findViewById(R.id.tv_work_from);
+            TextView tv_work_to = view.findViewById(R.id.tv_work_to);
+            CheckBox check_currently_work = view.findViewById(R.id.check_currently_work);
+            Button btn_update_work = view.findViewById(R.id.btn_update_work);
+            TextView tv_name= view.findViewById(R.id.tv_name);
+            ImageView iv_delete = view.findViewById(R.id.iv_delete);
+            ImageView iv_plus = view.findViewById(R.id.iv_plus);
+            final LinearLayout ll_work_layout = view.findViewById(R.id.ll_work_layout);
+            final LinearLayout ll_work_to = view.findViewById(R.id.ll_work_to);
+            final View view_work_to = view.findViewById(R.id.view_work_to);
+
+            et_work.setText(workPOJO.getWorkPosition());
+            tv_name.setText(workPOJO.getWorkPosition());
+            et_work_position.setText(workPOJO.getWorkPlace());
+            et_work_location.setText(workPOJO.getWorkLocation());
+
+            tv_work_from.setText(workPOJO.getWorkFrom());
+            tv_work_to.setText(workPOJO.getWorkTo());
+
+            check_currently_work.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if(b){
+                        ll_work_to.setVisibility(View.GONE);
+                        view_work_to.setVisibility(View.GONE);
+                    }else{
+                        ll_work_to.setVisibility(View.VISIBLE);
+                        view_work_to.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
+            tv_work_to.setText(workPOJO.getWorkTo());
+            if(workPOJO.getCurrentlyWorking().equals("1")){
+                check_currently_work.setChecked(true);
+            }else{
+                check_currently_work.setChecked(false);
+            }
+            iv_plus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(ll_work_layout.getVisibility()==View.VISIBLE){
+                        ll_work_layout.setVisibility(View.GONE);
+                    }else{
+                        ll_work_layout.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
+            ll_work.addView(view);
+        }
     }
 
     public void selectProfilePic() {
@@ -339,8 +784,9 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
 
-    String image_path_string="";
-    public void saveUserProfile(){
+    String image_path_string = "";
+
+    public void saveUserProfile() {
         try {
             MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
             if (image_path_string.length() > 0 && new File(image_path_string).exists()) {
@@ -350,22 +796,22 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
                 reqEntity.addPart("photo", new StringBody(""));
             }
 
-            String gender="";
-            switch (rg_gender.getCheckedRadioButtonId()){
+            String gender = "";
+            switch (rg_gender.getCheckedRadioButtonId()) {
                 case R.id.rb_male:
-                    gender="1";
+                    gender = "1";
                     break;
                 case R.id.rb_female:
-                    gender="2";
+                    gender = "2";
                     break;
                 case R.id.rb_other:
-                    gender="3";
+                    gender = "3";
                     break;
             }
 
             reqEntity.addPart("user_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
             reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
-            reqEntity.addPart("fullname", new StringBody(et_first_name.getText().toString()+" "+et_last_name.getText().toString()));
+            reqEntity.addPart("fullname", new StringBody(et_first_name.getText().toString() + " " + et_last_name.getText().toString()));
             reqEntity.addPart("gender", new StringBody(gender));
             reqEntity.addPart("date_of_birth", new StringBody(et_dob.getText().toString()));
             reqEntity.addPart("email", new StringBody(et_email.getText().toString()));
@@ -379,7 +825,7 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
             new WebUploadService(reqEntity, this, new WebServicesCallBack() {
                 @Override
                 public void onGetMsg(String apicall, String response) {
-                    Log.d(TagUtils.getTag(),apicall+":-"+response);
+                    Log.d(TagUtils.getTag(), apicall + ":-" + response);
                 }
             }, "CALL_SAVE_PROFILE_API", true).execute(WebServicesUrls.UPDATE_PROFILE);
         } catch (Exception e) {
@@ -437,7 +883,28 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
             }
             return;
         }
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                Log.i(TagUtils.getTag(), "Place: " + place.getName());
+                check_in_place = (String) place.getName();
+                if (LOCATION_TYPE.equals(WORK_LOCATION)) {
+                    et_work_location.setText(check_in_place);
+                } else if (LOCATION_TYPE.equals(EDUCATION_LOCATION)) {
+                    et_college_place.setText(check_in_place);
+                }
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                // TODO: Handle the error.
+                Log.i(TagUtils.getTag(), status.getStatusMessage());
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
     }
+
+    String check_in_place = "";
 
     public void setProfilePic() {
         Glide.with(getApplicationContext())
@@ -572,6 +1039,16 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
-        et_dob.setText(date);
+        if (CALENDAR_TYPE.equals(WORK_FROM)) {
+            tv_work_from.setText(date);
+        } else if (CALENDAR_TYPE.equals(WORK_TO)) {
+            tv_work_to.setText(date);
+        } else if (CALENDAR_TYPE.equals(EDUCATION_FROM)) {
+            tv_college_from.setText(date);
+        } else if (CALENDAR_TYPE.equals(EDUCATION_TO)) {
+            tv_college_to.setText(date);
+        } else {
+            et_dob.setText(date);
+        }
     }
 }

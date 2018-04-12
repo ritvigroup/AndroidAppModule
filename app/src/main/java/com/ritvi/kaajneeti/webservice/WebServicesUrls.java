@@ -61,4 +61,6 @@ public class WebServicesUrls {
     public static final String WALLET_DETAIL_API = BASE_URL+"payment/getMyTotalWalletAmount";
     public static final String DEBIT_TRANS_LOGS = BASE_URL+"payment/getMyAllPaymentDebitTransactionLog";
     public static final String CREDIT_TRANS_LOGS = BASE_URL+"payment/getMyAllPaymentCreditTransactionLog";
+    public static final String UPDATE_PROFILE_WORK = BASE_URL+"userprofile/updateProfileWork";
+    public static final String UPDATE_PROFILE_EDUCATION = BASE_URL+"userprofile/updateProfileEducation";
 }
