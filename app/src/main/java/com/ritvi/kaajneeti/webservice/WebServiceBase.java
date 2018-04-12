@@ -72,6 +72,9 @@ public class WebServiceBase extends AsyncTask<String, Void, String> {
         try {
             jResult = httpCall(params[0], nameValuePairs);
             Log.d(TagUtils.getTag(),msg+":-"+jResult);
+
+
+
         } catch (Exception e) {
             if (progressDialog != null) {
                 progressDialog.dismiss();

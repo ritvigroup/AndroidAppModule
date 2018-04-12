@@ -1,6 +1,6 @@
 package com.ritvi.kaajneeti.Util;
 
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class Constants {
     public static final int COMPLAINT_OTHER=3;
 
     public static final int USER_TYPE_NONE=0;
-    public static UserProfilePOJO userProfilePojo = null;
+    public static UserInfoPOJO userInfoPOJO = null;
 
     //event attachments
     public static final String EVENT_IMAGE_ATTACH="event_image_attach";

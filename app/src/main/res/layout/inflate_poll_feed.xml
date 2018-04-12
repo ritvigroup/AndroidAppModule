@@ -45,6 +45,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tv_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="18 February at 2:09 PM"
@@ -70,42 +71,11 @@
 
 
             <LinearLayout
-                android:id="@+id/ll_votes"
+                android:id="@+id/ll_ans"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/btn_ans1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:text="" />
-
-                <Button
-                    android:id="@+id/btn_ans2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:text="" />
-
-                <Button
-                    android:id="@+id/btn_ans3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:text="" />
-
-                <Button
-                    android:id="@+id/btn_ans4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:text="" />
 
             </LinearLayout>
 

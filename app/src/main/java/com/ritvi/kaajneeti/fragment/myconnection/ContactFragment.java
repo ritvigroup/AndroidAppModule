@@ -28,7 +28,7 @@ import butterknife.ButterKnife;
 public class ContactFragment extends Fragment{
     @BindView(R.id.rv_users)
     RecyclerView rv_users;
-    List<Contact> contacts = Contacts.getQuery().find();
+    boolean is_initialized;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -40,8 +40,17 @@ public class ContactFragment extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        attachAdapter();
+
     }
+    List<Contact> contacts;
+    public void initialize(){
+        if(!is_initialized) {
+            contacts = Contacts.getQuery().find();
+            attachAdapter();
+            is_initialized=true;
+        }
+    }
+
     ContactsAdapter searchVoterAdapter;
     public void attachAdapter(){
         searchVoterAdapter= new ContactsAdapter(getActivity(), this, contacts);

@@ -19,11 +19,12 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -180,21 +181,25 @@ public class LoginOtpConfirmActivity extends AppCompatActivity implements WebSer
     public void parseLoginOTPResponse(String response) {
         try{
             JSONObject jsonObject=new JSONObject(response);
-            if(jsonObject.optString("status").equals("success")){
-                String user_profile=jsonObject.optJSONObject("user_detail").optJSONObject("user_profile").toString();
-                Gson gson=new Gson();
-                UserProfilePOJO userProfilePOJO=gson.fromJson(user_profile,UserProfilePOJO.class);
+            if (jsonObject.optString(Constants.API_STATUS).equals(Constants.API_SUCCESS)) {
+                String user_profile = jsonObject.optJSONObject("result").toString();
+                Gson gson = new Gson();
+                UserInfoPOJO userProfilePOJO = gson.fromJson(user_profile, UserInfoPOJO.class);
+//                Pref.SaveUserProfile(LoginActivity.this, user_profile);
                 Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
-                Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN,true);
+                Pref.SetBooleanPref(this, StringUtils.IS_LOGIN, true);
+                Constants.userInfoPOJO =userProfilePOJO;
                 if(userProfilePOJO.getUserName().equals("")||userProfilePOJO.getUserEmail().equals("")||
                         userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("")){
                     Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,false);
-                    startActivity(new Intent(getApplicationContext(), ProfileInfoActivity.class));
+
+                    Pref.SetBooleanPref(this, StringUtils.IS_PROFILE_COMPLETED, false);
+                    startActivity(new Intent(this, ProfileInfoActivity.class));
                     finishAffinity();
 
-                }else{
-                    Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,true);
-                    startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                } else {
+                    Pref.SetBooleanPref(this, StringUtils.IS_PROFILE_COMPLETED, true);
+                    startActivity(new Intent(this, HomeActivity.class));
                     finishAffinity();
                 }
             }

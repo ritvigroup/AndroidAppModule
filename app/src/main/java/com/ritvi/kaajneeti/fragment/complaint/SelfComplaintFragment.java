@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.TagUtils;
+import com.ritvi.kaajneeti.activity.AddCommunication;
 import com.ritvi.kaajneeti.activity.AddComplaintDescriptionActivity;
 
 import butterknife.BindView;
@@ -46,12 +49,18 @@ public class SelfComplaintFragment extends Fragment{
             @Override
             public void onClick(View view) {
 
-                Intent intent=new Intent(getActivity(), AddComplaintDescriptionActivity.class);
-                intent.putExtra("applicant_name",et_name.getText().toString());
-                intent.putExtra("applicant_father_name",et_father_name.getText().toString());
-                intent.putExtra("applicant_mobile",et_mobile_number.getText().toString());
-                intent.putExtra("complaint_type_id","1");
-                startActivity(intent);
+                if(getActivity() instanceof AddCommunication){
+                    AddCommunication addCommunication= (AddCommunication) getActivity();
+                    Log.d(TagUtils.getTag(),"leader id:-"+addCommunication.leader_id);
+                    Intent intent=new Intent(getActivity(), AddComplaintDescriptionActivity.class);
+                    intent.putExtra("applicant_name",et_name.getText().toString());
+                    intent.putExtra("applicant_father_name",et_father_name.getText().toString());
+                    intent.putExtra("applicant_mobile",et_mobile_number.getText().toString());
+                    intent.putExtra("complaint_type_id","1");
+                    intent.putExtra("leader_id",addCommunication.leader_id);
+                    startActivity(intent);
+                }
+
             }
         });
     }

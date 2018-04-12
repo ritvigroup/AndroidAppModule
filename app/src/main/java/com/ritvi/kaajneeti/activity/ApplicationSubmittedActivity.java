@@ -24,10 +24,10 @@ public class ApplicationSubmittedActivity extends LocalizationActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_application_submitted);
         ButterKnife.bind(this);
-        Bundle bundle=getIntent().getExtras();
-        if(bundle!=null){
-            comp_type=bundle.getString("comp_type");
-            switch (comp_type){
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            comp_type = bundle.getString("comp_type");
+            switch (comp_type) {
                 case "complaint":
                     tv_complaint_id.setText("You complaint has been submitted successfully");
                     tv_comp_submitted.setText("Complaint Submitted");
@@ -40,6 +40,11 @@ public class ApplicationSubmittedActivity extends LocalizationActivity {
                     tv_complaint_id.setText("You Information has been submitted successfully");
                     tv_comp_submitted.setText("Information Submitted");
                     break;
+                case "issue":
+                    tv_complaint_id.setText("You Issue has been submitted successfully");
+                    tv_comp_submitted.setText("Issue Submitted");
+                    break;
+
             }
 //            tv_complaint_id.setText("Complaint ID : "+bundle.getString("complaint_id"));
         }
@@ -47,7 +52,7 @@ public class ApplicationSubmittedActivity extends LocalizationActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent=new Intent(ApplicationSubmittedActivity.this,HomeActivity.class);
+        Intent intent = new Intent(ApplicationSubmittedActivity.this, HomeActivity.class);
         startActivity(intent);
         finishAffinity();
     }

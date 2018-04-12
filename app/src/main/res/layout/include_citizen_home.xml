@@ -36,12 +36,24 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:gravity="center_vertical">
+                    0
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingLeft="10dp"
+                        android:text="Kaajneeti"
+                        android:textColor="#FFFFFF"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
 
                     <FrameLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:visibility="gone">
 
                         <ImageView
                             android:layout_width="30dp"
@@ -72,12 +84,14 @@
                     </FrameLayout>
 
                     <ImageView
+                        android:id="@+id/iv_notification"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_margin="3dp"
                         android:src="@drawable/ic_notification" />
 
                     <ImageView
+                        android:id="@+id/iv_settings"
                         android:layout_width="27dp"
                         android:layout_height="27dp"
                         android:layout_margin="3dp"
@@ -98,11 +112,17 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <com.ritvi.kaajneeti.views.CustomViewPager
-                    android:id="@+id/viewPager"
+                <FrameLayout
+                    android:id="@+id/frame_frag"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"></com.ritvi.kaajneeti.views.CustomViewPager>
+                    android:layout_weight="1">
+
+                    <com.ritvi.kaajneeti.views.CustomViewPager
+                        android:id="@+id/viewPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"></com.ritvi.kaajneeti.views.CustomViewPager>
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

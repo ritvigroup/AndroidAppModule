@@ -37,28 +37,35 @@
                     android:orientation="vertical">
 
                     <EditText
+                        android:id="@+id/et_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/et_rect_border"
-                        android:minHeight="100dp" />
+                        android:hint="title"
+                        android:minHeight="45dp" />
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rv_attachments"
+                    <EditText
+                        android:id="@+id/et_description"
                         android:layout_width="match_parent"
-                        android:layout_height="120dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/et_rect_border"
+                        android:hint="description"
                         android:layout_marginTop="7dp"
-                        android:background="@drawable/et_rect_border"></android.support.v7.widget.RecyclerView>
+                        android:minHeight="45dp"
+                        android:visibility="gone"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp">
 
-                        <EditText
+                        <TextView
+                            android:id="@+id/tv_tags"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/et_rect_border"
-                            android:hint="tag friends"/>
+                            android:hint="tag friends"
+                            android:minHeight="45dp"/>
 
                     </LinearLayout>
 
@@ -66,21 +73,21 @@
                         android:id="@+id/ll_feeling"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="10dp">
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
 
                         <Spinner
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:entries="@array/activity"></Spinner>
-
-                        <EditText
-                            android:layout_width="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/et_rect_border"/>
+                            android:id="@+id/spinner_feeling"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"></Spinner>
 
                     </LinearLayout>
+
+                    <Button
+                        android:id="@+id/btn_check_in"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Check IN"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -92,60 +99,31 @@
                             android:id="@+id/tv_profile_description"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Profile Description"/>
+                            android:text="Profile Description" />
 
                     </LinearLayout>
 
                 </LinearLayout>
-
-
-                <LinearLayout
+                <FrameLayout
+                    android:id="@+id/frame_attach"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <Button
-                            android:id="@+id/btn_photo"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Photo/Video" />
-
-                        <Button
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Tag Friends" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <Button
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Feeling/Activity" />
-
-                        <Button
-                            android:id="@+id/btn_check_in"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Check in" />
-
-                    </LinearLayout>
+                    android:layout_height="wrap_content"></FrameLayout>
 
 
-                </LinearLayout>
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal"
+                   android:layout_gravity="center"
+                   android:gravity="center">
+
+                   <Button
+                       android:id="@+id/btn_save"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Save"/>
+
+               </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>

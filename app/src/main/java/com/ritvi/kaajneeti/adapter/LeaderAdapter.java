@@ -19,7 +19,8 @@ import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.activity.AllLeaderActivity;
-import com.ritvi.kaajneeti.pojo.user.LeaderProfilePOJO;
+import com.ritvi.kaajneeti.fragment.homeactivity.ContributeFragment;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.webservice.AdapterWebService;
 import com.ritvi.kaajneeti.webservice.MsgPassInterface;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
@@ -39,12 +40,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class LeaderAdapter extends RecyclerView.Adapter<LeaderAdapter.ViewHolder> implements WebServicesCallBack {
-    private List<LeaderProfilePOJO> items;
+    private List<UserInfoPOJO> items;
     Activity activity;
     Fragment fragment;
     int device_height = 0;
 
-    public LeaderAdapter(Activity activity, Fragment fragment, List<LeaderProfilePOJO> items) {
+    public LeaderAdapter(Activity activity, Fragment fragment, List<UserInfoPOJO> items) {
         this.items = items;
         this.activity = activity;
         this.fragment = fragment;
@@ -83,17 +84,22 @@ public class LeaderAdapter extends RecyclerView.Adapter<LeaderAdapter.ViewHolder
         holder.ll_leader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLeaderProfile(items.get(position));
+                if(fragment!=null&&fragment instanceof ContributeFragment) {
+                    ContributeFragment contributeFragment= (ContributeFragment) fragment;
+//                    contributeFragment.showpaymentDialog(items.get(position),items.get(position).getUserProfileLeader().getUserProfileId());
+                }else{
+                    showLeaderProfile(items.get(position));
+                }
             }
         });
 
         holder.itemView.setTag(items.get(position));
     }
 
-    public void callFavoriteAPI(LeaderProfilePOJO leaderPOJO, final ImageView favorite_image) {
+    public void callFavoriteAPI(UserInfoPOJO leaderPOJO, final ImageView favorite_image) {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePojo.getCitizenProfilePOJO().getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id", leaderPOJO.getUserProfileLeader().getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("leader_profile_id", leaderPOJO.getUserProfileLeader().getUserProfileId()));
 
@@ -118,7 +124,7 @@ public class LeaderAdapter extends RecyclerView.Adapter<LeaderAdapter.ViewHolder
         }).executeApi(WebServicesUrls.SET_MY_FAVORITE_LEADER);
     }
 
-    public void showLeaderProfile(LeaderProfilePOJO leaderPOJO) {
+    public void showLeaderProfile(UserInfoPOJO leaderPOJO) {
         final Dialog dialog = new Dialog(activity, android.R.style.Theme_DeviceDefault_Light_Dialog);
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

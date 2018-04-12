@@ -43,10 +43,16 @@ public class AddPostActivity extends AppCompatActivity {
                     startActivity(new Intent(AddPostActivity.this, AddCommunication.class));
                 }else if(position==0){
                     startActivity(new Intent(AddPostActivity.this,CreatePostActivity.class));
-                }else if(position==5){
+                }else if(position==6){
                     startActivity(new Intent(AddPostActivity.this,CreatePollActivity.class));
-                }else if(position==4){
+                }else if(position==5){
                     startActivity(new Intent(AddPostActivity.this,CreateEventActivity.class));
+                }else if(position==3){
+                    startActivity(new Intent(AddPostActivity.this,CreateSuggestionActivity.class));
+                }else if(position==4){
+                    startActivity(new Intent(AddPostActivity.this,CreateInformationActivity.class));
+                }else if(position==1){
+                    startActivity(new Intent(AddPostActivity.this,CreateIssueActivity.class));
                 }
             }
         });
@@ -55,7 +61,8 @@ public class AddPostActivity extends AppCompatActivity {
                 "Post",
                 "Issue",
                 "Complaint",
-                "Feeling",
+                "Suggestion",
+                "Information",
                 "Event",
                 "Poll",
                 "RTI",

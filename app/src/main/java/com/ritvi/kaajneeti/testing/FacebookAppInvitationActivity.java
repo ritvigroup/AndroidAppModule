@@ -16,11 +16,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -376,21 +371,21 @@ public class FacebookAppInvitationActivity extends AppCompatActivity {
     }
 
     public void callNextUsersAPI(String next_url) {
-        StringRequest req = new StringRequest(next_url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d(TagUtils.getTag(), response.toString());
-//                        parseHomeNewsResponse(response);
-                        parseData(response.toString());
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TagUtils.getTag(), "api error:-" + error.toString());
-            }
-        });
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(req);
+//        StringRequest req = new StringRequest(next_url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.d(TagUtils.getTag(), response.toString());
+////                        parseHomeNewsResponse(response);
+//                        parseData(response.toString());
+//                    }
+//                }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.d(TagUtils.getTag(), "api error:-" + error.toString());
+//            }
+//        });
+//        RequestQueue queue = Volley.newRequestQueue(this);
+//        queue.add(req);
     }
 }

@@ -1,46 +1,56 @@
 package com.ritvi.kaajneeti.activity;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.PopupMenu;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.jmpergar.awesometext.AwesomeTextHandler;
 import com.ritvi.kaajneeti.R;
-import com.ritvi.kaajneeti.Util.FileUtils;
+import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
-import com.ritvi.kaajneeti.adapter.CreatePostImageAdapter;
+import com.ritvi.kaajneeti.Util.ToastClass;
+import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
+import com.ritvi.kaajneeti.pojo.communication.FeelingPOJO;
+import com.ritvi.kaajneeti.pojo.event.EventAttachment;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.testing.HashtagsSpanRenderer;
+import com.ritvi.kaajneeti.testing.MentionSpanRenderer;
+import com.ritvi.kaajneeti.webservice.ResponseListCallback;
+import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
+import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
+import com.ritvi.kaajneeti.webservice.WebServicesUrls;
+import com.ritvi.kaajneeti.webservice.WebUploadService;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +59,9 @@ import butterknife.ButterKnife;
 
 public class CreatePostActivity extends AppCompatActivity {
 
+    private static final String HASHTAG_PATTERN = "(#[\\p{L}0-9-_]+)";
+    private static final String MENTION_PATTERN = "(@[\\p{L}0-9-_]+)";
+    private static final int TAG_PEOPLE = 105;
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 101;
     private int PICK_IMAGE_REQUEST = 102;
     private static final int CAMERA_REQUEST = 103;
@@ -56,18 +69,24 @@ public class CreatePostActivity extends AppCompatActivity {
     @BindView(R.id.btn_check_in)
     Button btn_check_in;
     @BindView(R.id.toolbar)
-    android.support.v7.widget.Toolbar toolbar;
-
-    @BindView(R.id.btn_photo)
-    Button btn_photo;
-    @BindView(R.id.rv_attachments)
-    RecyclerView rv_attachments;
+    Toolbar toolbar;
     @BindView(R.id.tv_profile_description)
     TextView tv_profile_description;
+    @BindView(R.id.btn_save)
+    Button btn_save;
+    @BindView(R.id.spinner_feeling)
+    Spinner spinner_feeling;
+    @BindView(R.id.tv_tags)
+    TextView tv_tags;
+    @BindView(R.id.et_title)
+    EditText et_title;
+    @BindView(R.id.et_description)
+    EditText et_description;
 
     String tag_people="";
     String check_in_place="";
-
+    AwesomeTextHandler awesomeTextViewHandler;
+    List<UserInfoPOJO> taggedUserProfilePOJOS=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +97,8 @@ public class CreatePostActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        showAttachFragment();
+
         btn_check_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,31 +106,137 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         });
 
-        btn_photo.setOnClickListener(new View.OnClickListener() {
+        btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final PopupMenu menu = new PopupMenu(CreatePostActivity.this, view);
-
-                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuitem) {
-                        switch (menuitem.getItemId()) {
-                            case R.id.popup_camera:
-                                startCamera();
-                                break;
-                            case R.id.popup_gallery:
-                                selectProfilePic();
-                                break;
-                        }
-                        return false;
-                    }
-                });
-                menu.inflate(R.menu.menu_profile_pic_option);
-                menu.show();
+                savePost();
             }
         });
+        getAllFeelings();
 
-        attachAdapter();
+        awesomeTextViewHandler = new AwesomeTextHandler();
+        awesomeTextViewHandler
+                .addViewSpanRenderer(HASHTAG_PATTERN, new HashtagsSpanRenderer())
+                .addViewSpanRenderer(MENTION_PATTERN, new MentionSpanRenderer())
+                .setView(tv_tags);
+
+
+        tv_tags.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(new Intent(CreatePostActivity.this,TagPeopleActivity.class).putExtra("taggedpeople", (Serializable) taggedUserProfilePOJOS),TAG_PEOPLE);
+            }
+        });
+    }
+
+
+
+    public void savePost() {
+        try {
+
+            MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+            String activity="";
+            if(spinner_feeling.getSelectedItemPosition()!=0){
+                activity=feelingPOJOArrayList.get(spinner_feeling.getSelectedItemPosition()-1).getFeelingId();
+            }
+
+            ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+            nameValuePairs.add(new BasicNameValuePair("", ""));
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+            reqEntity.addPart("title", new StringBody(et_title.getText().toString()));
+            reqEntity.addPart("location", new StringBody(check_in_place));
+            reqEntity.addPart("description", new StringBody(et_description.getText().toString()));
+            reqEntity.addPart("url", new StringBody(""));
+            reqEntity.addPart("feeling", new StringBody(activity));
+
+            for(int i=0;i<taggedUserProfilePOJOS.size();i++) {
+                if(taggedUserProfilePOJOS.get(i).getUserProfileCitizen()!=null){
+                    reqEntity.addPart("post_tag["+i+"]", new StringBody(taggedUserProfilePOJOS.get(i).getUserProfileCitizen().getUserProfileId()));
+                }else{
+                    reqEntity.addPart("post_tag["+i+"]", new StringBody(taggedUserProfilePOJOS.get(i).getUserProfileLeader().getUserProfileId()));
+                }
+            }
+
+            int count = 0;
+
+            for (EventAttachment eventAttachment : attachFragment.getEventAttachments()) {
+                Log.d(TagUtils.getTag(), "attachment:-" + eventAttachment.toString());
+
+                if (eventAttachment.getType().equals(Constants.EVENT_IMAGE_ATTACH)) {
+                    reqEntity.addPart("file[" + (count) + "]", new FileBody(new File(eventAttachment.getFile_path())));
+                    reqEntity.addPart("thumb[" + (count) + "]", new StringBody(""));
+                } else if (eventAttachment.getType().equals(Constants.EVENT_VIDEO_ATTACH)) {
+                    reqEntity.addPart("file[" + (count) + "]", new FileBody(new File(eventAttachment.getFile_path())));
+                    reqEntity.addPart("thumb[" + (count) + "]", new FileBody(new File(eventAttachment.getThumb_path())));
+                }
+                count++;
+            }
+
+            new WebUploadService(reqEntity, this, new WebServicesCallBack() {
+                @Override
+                public void onGetMsg(String apicall, String response) {
+                    Log.d(TagUtils.getTag(), apicall + " :- " + response);
+                    try{
+                        JSONObject jsonObject=new JSONObject(response);
+                        ToastClass.showShortToast(getApplicationContext(),jsonObject.optString("message"));
+                        if(jsonObject.optString("status").equals("success")){
+//                            startActivity(new Intent(CreatePostActivity.this,ApplicationSubmittedActivity.class).putExtra("comp_type","information"));
+                            ToastClass.showShortToast(getApplicationContext(),"Posted Successfully");
+                            startActivity(new Intent(CreatePostActivity.this,HomeActivity.class));
+                            finishAffinity();
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }, "CREATE_POST", true).execute(WebServicesUrls.SAVE_POST);
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public void getAllFeelings(){
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        new WebServiceBaseResponseList<FeelingPOJO>(nameValuePairs, this, new ResponseListCallback<FeelingPOJO>() {
+            @Override
+            public void onGetMsg(ResponseListPOJO<FeelingPOJO> responseListPOJO) {
+                feelingPOJOArrayList.clear();
+                if (responseListPOJO.isSuccess()) {
+                    feelingPOJOArrayList.addAll(responseListPOJO.getResultList());
+
+                    List<String> feelingStringList = new ArrayList<>();
+                    feelingStringList.add("Select Activity");
+                    for (FeelingPOJO feelingPOJO : feelingPOJOArrayList) {
+                        feelingStringList.add(feelingPOJO.getFeelingName());
+                    }
+                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                            getApplicationContext(), R.layout.dropsimpledown, feelingStringList);
+                    spinner_feeling.setAdapter(spinnerArrayAdapter);
+
+                } else {
+                    ToastClass.showShortToast(getApplicationContext(), responseListPOJO.getMessage());
+                }
+            }
+        },FeelingPOJO.class,"CALL_GET_ALL_BRANCH", true).execute(WebServicesUrls.GET_FEELINGS);
+
+    }
+
+
+    List<FeelingPOJO> feelingPOJOArrayList= new ArrayList<>();
+
+    AttachFragment attachFragment;
+    public void showAttachFragment() {
+        attachFragment = new AttachFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_attach, attachFragment, "attachFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+//        fragmentList.add(rewardsFragment);
     }
 
     public void findPlace() {
@@ -126,27 +253,6 @@ public class CreatePostActivity extends AppCompatActivity {
     }
 
 
-    String pictureImagePath = "";
-
-    public void startCamera() {
-        String strMyImagePath = Environment.getExternalStorageDirectory() + File.separator + "temp.png";
-
-        pictureImagePath = strMyImagePath;
-        File file = new File(pictureImagePath);
-        Uri outputFileUri = Uri.fromFile(file);
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            cameraIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".fileProvider", file);
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
-
-        } else {
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-
-        }
-        startActivityForResult(cameraIntent, CAMERA_REQUEST);
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -155,21 +261,14 @@ public class CreatePostActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void selectProfilePic() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_PICK);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-    }
-
     public void checkProfileDescription(){
         String description="<b> - is at "+check_in_place;
         tv_profile_description.setText(Html.fromHtml(description));
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
@@ -184,186 +283,44 @@ public class CreatePostActivity extends AppCompatActivity {
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
             }
-        }
-        if (requestCode == PICK_IMAGE_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (null == data)
-                    return;
-                Uri selectedImageUri = data.getData();
-                System.out.println(selectedImageUri.toString());
-                // MEDIA GALLERY
-                String selectedImagePath = getPath(
-                        CreatePostActivity.this, selectedImageUri);
-                Log.d("sun", "" + selectedImagePath);
-                if (selectedImagePath != null && selectedImagePath != "") {
-                    image_path_string = selectedImagePath;
-                    Log.d(TagUtils.getTag(), "selected path:-" + selectedImagePath);
-                    setProfilePic();
-                } else {
-                    Toast.makeText(CreatePostActivity.this, "Selected File is Corrupted", Toast.LENGTH_LONG).show();
-                }
-                System.out.println("Image Path =" + selectedImagePath);
-            }
-            return;
-        }
-        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            File imgFile = new File(pictureImagePath);
-            if (imgFile.exists()) {
-                Bitmap bmp = BitmapFactory.decodeFile(pictureImagePath);
-                bmp = Bitmap.createScaledBitmap(bmp, bmp.getWidth() / 4, bmp.getHeight() / 4, false);
-                String strMyImagePath = FileUtils.getChatDir();
-                File file_name = new File(strMyImagePath + File.separator + System.currentTimeMillis() + ".png");
-                FileOutputStream fos = null;
-
-                try {
-                    fos = new FileOutputStream(file_name);
-                    Log.d(TagUtils.getTag(), "taking photos");
-                    bmp.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                    fos.flush();
-                    fos.close();
-                    image_path_string = file_name.toString();
-                    setProfilePic();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
+        }else if (requestCode == TAG_PEOPLE) {
+            if(resultCode == Activity.RESULT_OK){
+                taggedUserProfilePOJOS = (List<UserInfoPOJO>) data.getSerializableExtra("taggedpeople");
+                if(taggedUserProfilePOJOS!=null){
+                    awesomeTextViewHandler.setText(getStaggeredText());
                 }
             }
-            return;
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }else{
+            attachFragment.onActivityResult(requestCode,resultCode,data);
+            Log.d(TagUtils.getTag(),"on activity result:-"+requestCode);
         }
-
-    }
-    CreatePostImageAdapter createPostImageAdapter;
-    List<String> imagesPath=new ArrayList<>();
-    public void attachAdapter() {
-
-        createPostImageAdapter = new CreatePostImageAdapter(this, null, imagesPath);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
-        rv_attachments.setHasFixedSize(true);
-        rv_attachments.setAdapter(createPostImageAdapter);
-        rv_attachments.setLayoutManager(linearLayoutManager);
-        rv_attachments.setItemAnimator(new DefaultItemAnimator());
     }
 
+    public String getStaggeredText(){
+        String tagged_people="";
+        for(UserInfoPOJO userInfoPOJO:taggedUserProfilePOJOS){
+            UserProfilePOJO userProfilePOJO=null;
+            if(userInfoPOJO.getUserProfileCitizen()!=null){
+                userProfilePOJO=userInfoPOJO.getUserProfileCitizen();
+            }
+            if(userInfoPOJO.getUserProfileLeader()!=null){
+                userProfilePOJO=userInfoPOJO.getUserProfileLeader();
+            }
 
-    String image_path_string = "";
-
-    public void setProfilePic() {
-        imagesPath.add(image_path_string);
-        createPostImageAdapter.notifyDataSetChanged();
-    }
-
-
-
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static String getPath(final Context context, final Uri uri) {
-
-        // check here to KITKAT or new version
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-
-        // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
-
-            // ExternalStorageProvider
-            if (isExternalStorageDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                if ("primary".equalsIgnoreCase(type)) {
-                    return Environment.getExternalStorageDirectory() + "/"
-                            + split[1];
+            if(userProfilePOJO!=null){
+                if(userProfilePOJO.getFirstName()!=null||userProfilePOJO.getFirstName().equals("")
+                        ||userProfilePOJO.getLastName()!=null||userProfilePOJO.getLastName().equals("")){
+                    tagged_people+=" #"+userProfilePOJO.getFirstName()+""+userProfilePOJO.getLastName();
+                }else{
+                    tagged_people+=" #"+userInfoPOJO.getUserName();
                 }
             }
-            // DownloadsProvider
-            else if (isDownloadsDocument(uri)) {
 
-                final String id = DocumentsContract.getDocumentId(uri);
-                final Uri contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"),
-                        Long.valueOf(id));
-
-                return getDataColumn(context, contentUri, null, null);
-            }
-            // MediaProvider
-            else if (isMediaDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                Uri contentUri = null;
-                if ("image".equals(type)) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                } else if ("video".equals(type)) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                } else if ("audio".equals(type)) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                }
-
-                final String selection = "_id=?";
-                final String[] selectionArgs = new String[]{split[1]};
-
-                return getDataColumn(context, contentUri, selection,
-                        selectionArgs);
-            }
         }
-        // MediaStore (and general)
-        else if ("content".equalsIgnoreCase(uri.getScheme())) {
-
-            // Return the remote address
-            if (isGooglePhotosUri(uri))
-                return uri.getLastPathSegment();
-
-            return getDataColumn(context, uri, null, null);
-        }
-        // File
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-
-        return null;
+        return tagged_people;
     }
-
-    public static String getDataColumn(Context context, Uri uri,
-                                       String selection, String[] selectionArgs) {
-
-        Cursor cursor = null;
-        final String column = "_data";
-        final String[] projection = {column};
-
-        try {
-            cursor = context.getContentResolver().query(uri, projection,
-                    selection, selectionArgs, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                final int index = cursor.getColumnIndexOrThrow(column);
-                return cursor.getString(index);
-            }
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return null;
-    }
-
-    public static boolean isExternalStorageDocument(Uri uri) {
-        return "com.android.externalstorage.documents".equals(uri
-                .getAuthority());
-    }
-
-    public static boolean isDownloadsDocument(Uri uri) {
-        return "com.android.providers.downloads.documents".equals(uri
-                .getAuthority());
-    }
-
-    public static boolean isMediaDocument(Uri uri) {
-        return "com.android.providers.media.documents".equals(uri
-                .getAuthority());
-    }
-
-    public static boolean isGooglePhotosUri(Uri uri) {
-        return "com.google.android.apps.photos.content".equals(uri
-                .getAuthority());
-    }
-
 
 }

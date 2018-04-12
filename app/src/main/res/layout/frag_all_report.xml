@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <EditText
+        android:id="@+id/et_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
@@ -15,12 +16,13 @@
         android:paddingLeft="5dp"
         android:hint="Search complain"
         android:drawableRight="@drawable/places_ic_search"
-        android:drawablePadding="10dp"/>
+        android:drawablePadding="10dp"
+        android:visibility="gone"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_complaints"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="15dp"
         android:background="@drawable/et_search_border"
         android:padding="5dp"></android.support.v7.widget.RecyclerView>

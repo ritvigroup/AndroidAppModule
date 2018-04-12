@@ -40,7 +40,7 @@ import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.adapter.EventAttachAdapter;
 import com.ritvi.kaajneeti.pojo.event.EventAttachment;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 import com.ritvi.kaajneeti.webservice.WebUploadService;
@@ -126,7 +126,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     String attach_type = "";
 
     String cover_image_path = "";
-    List<UserProfilePOJO> taggedUserProfilePOJOS=new ArrayList<>();
+    List<UserInfoPOJO> taggedUserProfilePOJOS=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -247,7 +247,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
 
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("", ""));
-            reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
             reqEntity.addPart("event_name", new StringBody(et_event_name.getText().toString()));
             reqEntity.addPart("event_description", new StringBody(et_description.getText().toString()));
             reqEntity.addPart("event_location", new StringBody(et_location.getText().toString()));
@@ -289,7 +289,13 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
 
 
             for(int i=0;i<taggedUserProfilePOJOS.size();i++){
-                reqEntity.addPart("event_attendee["+i+"]",new StringBody(taggedUserProfilePOJOS.get(i).getCitizenProfilePOJO().getUserProfileId()));
+                String profile_id="";
+                if(taggedUserProfilePOJOS.get(i).getUserProfileLeader()!=null){
+                    profile_id=taggedUserProfilePOJOS.get(i).getUserProfileLeader().getUserProfileId();
+                }else{
+                    profile_id=taggedUserProfilePOJOS.get(i).getUserProfileCitizen().getUserProfileId();
+                }
+                reqEntity.addPart("event_attendee["+i+"]",new StringBody(profile_id));
             }
 
             new WebUploadService(reqEntity, this, new WebServicesCallBack() {
@@ -411,7 +417,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         Uri videoUri = Uri.fromFile(mediaFile);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.capri4physio.fileProvider", mediaFile);
+            Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName()+".fileProvider", mediaFile);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
 
         } else {
@@ -560,7 +566,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         }
         if (requestCode == TAG_PEOPLE) {
             if(resultCode == Activity.RESULT_OK){
-                taggedUserProfilePOJOS = (List<UserProfilePOJO>) data.getSerializableExtra("taggedpeople");
+                taggedUserProfilePOJOS = (List<UserInfoPOJO>) data.getSerializableExtra("taggedpeople");
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
@@ -611,6 +617,55 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         return "";
     }
 
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        String month = "";
+        String day = "";
+        if ((monthOfYear + 1) < 10) {
+            month = "0" + (monthOfYear + 1);
+        } else {
+            month = String.valueOf(monthOfYear + 1);
+        }
+
+        if (dayOfMonth < 10) {
+            day = "0" + dayOfMonth;
+        } else {
+            day = String.valueOf(dayOfMonth);
+        }
+
+        String date = day + "-" + month + "-" + year;
+        if (start_date) {
+            et_start_date.setText(date);
+        } else {
+            et_end_date.setText(date);
+        }
+    }
+
+
+    @Override
+    public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
+        String hour = "";
+        String minutes = "";
+        if (hourOfDay < 10) {
+            hour = "0" + hourOfDay;
+        } else {
+            hour = String.valueOf(hourOfDay);
+        }
+
+        if (minute < 10) {
+            minutes = "0" + minute;
+        } else {
+            minutes = String.valueOf(minute);
+        }
+
+        String time = hour + ":" + minutes;
+        if (start_time) {
+            et_start_time.setText(time);
+        } else {
+            et_end_time.setText(time);
+        }
+    }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static String getPath(final Context context, final Uri uri) {
@@ -720,54 +775,5 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     public static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri
                 .getAuthority());
-    }
-
-
-    @Override
-    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String month = "";
-        String day = "";
-        if ((monthOfYear + 1) < 10) {
-            month = "0" + (monthOfYear + 1);
-        } else {
-            month = String.valueOf(monthOfYear + 1);
-        }
-
-        if (dayOfMonth < 10) {
-            day = "0" + dayOfMonth;
-        } else {
-            day = String.valueOf(dayOfMonth);
-        }
-
-        String date = day + "-" + month + "-" + year;
-        if (start_date) {
-            et_start_date.setText(date);
-        } else {
-            et_end_date.setText(date);
-        }
-    }
-
-    @Override
-    public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-        String hour = "";
-        String minutes = "";
-        if (hourOfDay < 10) {
-            hour = "0" + hourOfDay;
-        } else {
-            hour = String.valueOf(hourOfDay);
-        }
-
-        if (minute < 10) {
-            minutes = "0" + minute;
-        } else {
-            minutes = String.valueOf(minute);
-        }
-
-        String time = hour + ":" + minutes;
-        if (start_time) {
-            et_start_time.setText(time);
-        } else {
-            et_end_time.setText(time);
-        }
     }
 }

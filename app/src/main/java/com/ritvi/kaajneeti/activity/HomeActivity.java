@@ -38,12 +38,12 @@ import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.adapter.ViewPagerAdapter;
 import com.ritvi.kaajneeti.fragment.RewardsFragment;
+import com.ritvi.kaajneeti.fragment.homeactivity.ContributeFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.InvestigateFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.KaajFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.MyConnectionFragment;
-import com.ritvi.kaajneeti.fragment.homeactivity.UniounFragment;
+import com.ritvi.kaajneeti.fragment.homeactivity.WalletFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.WithdrawalFragment;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.views.CustomViewPager;
 
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ import butterknife.ButterKnife;
 
 public class HomeActivity extends AppCompatActivity {
 
-    List<Fragment> fragmentList=new ArrayList<>();
+    List<Fragment> fragmentList = new ArrayList<>();
 
     private DrawerLayout mDrawer;
     private ActionBarDrawerToggle drawerToggle;
@@ -62,8 +62,7 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     @BindView(R.id.ic_ham)
     ImageView ic_ham;
-    public UserProfilePOJO userProfilePOJO=Constants.userProfilePojo;
-//    @BindView(R.id.iv_search)
+    //    @BindView(R.id.iv_search)
 //    ImageView iv_search;
     @BindView(R.id.et_search)
     EditText et_search;
@@ -84,6 +83,10 @@ public class HomeActivity extends AppCompatActivity {
     LinearLayout ll_withdrawal;
     @BindView(R.id.iv_speaker)
     ImageView iv_speaker;
+    @BindView(R.id.iv_notification)
+    ImageView iv_notification;
+    @BindView(R.id.iv_settings)
+    ImageView iv_settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,9 +128,9 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(et_search.getText().toString().length()>0){
+                if (et_search.getText().toString().length() > 0) {
                     iv_search_close.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     iv_search_close.setVisibility(View.GONE);
                 }
             }
@@ -162,36 +165,83 @@ public class HomeActivity extends AppCompatActivity {
         iv_speaker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this,AddPostActivity.class));
+                startActivity(new Intent(HomeActivity.this, AddPostActivity.class));
             }
         });
-
-        Log.d(TagUtils.getTag(),"user profile:-"+userProfilePOJO.toString());
+        iv_notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(HomeActivity.this,NotificationActivity.class));
+            }
+        });
+        iv_settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(HomeActivity.this,SettingsActivity.class));
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(getApplication() instanceof MainApplication) {
+        if (getApplication() instanceof MainApplication) {
             MainApplication application = (MainApplication) getApplication();
             Tracker mTracker = application.getDefaultTracker();
-            Log.d(TagUtils.getTag(),"local class name:-"+this.getLocalClassName());
+            Log.d(TagUtils.getTag(), "local class name:-" + this.getLocalClassName());
             mTracker.setScreenName(this.getLocalClassName());
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         }
     }
 
+    KaajFragment kaajFragment;
+    MyConnectionFragment myConnectionFragment;
+    InvestigateFragment investigateFragment;
+    WithdrawalFragment withdrawalFragment;
+
     private void setupViewPager(ViewPager viewPager) {
-        KaajFragment kaajFragment=new KaajFragment();
-        UniounFragment uniounFragment=new UniounFragment();
-        InvestigateFragment investigateFragment=new InvestigateFragment();
-        WithdrawalFragment withdrawalFragment=new WithdrawalFragment();
+
+        kaajFragment = new KaajFragment();
+        myConnectionFragment = new MyConnectionFragment();
+        investigateFragment = new InvestigateFragment();
+        withdrawalFragment = new WithdrawalFragment();
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(kaajFragment, "Rural");
-        adapter.addFrag(uniounFragment, "Urban");
+        adapter.addFrag(myConnectionFragment, "Urban");
         adapter.addFrag(investigateFragment, "Urban");
         adapter.addFrag(withdrawalFragment, "Urban");
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(adapter.getCount());
+
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        break;
+                    case 1:
+                        myConnectionFragment.initialize();
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private void settingNavDrawer() {
@@ -205,12 +255,12 @@ public class HomeActivity extends AppCompatActivity {
 
         View headerLayout = nvDrawer.inflateHeaderView(R.layout.home_nav_header);
         TextView tv_header_title = headerLayout.findViewById(R.id.tv_header_title);
-        tv_header_title.setText(userProfilePOJO.getUserName());
+        tv_header_title.setText(Constants.userInfoPOJO.getUserName());
 
         ImageView cv_profile_pic = headerLayout.findViewById(R.id.cv_profile_pic);
 
         Glide.with(getApplicationContext())
-                .load(userProfilePOJO.getProfilePhotoPath())
+                .load(Constants.userInfoPOJO.getProfilePhotoPath())
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .error(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
@@ -269,23 +319,32 @@ public class HomeActivity extends AppCompatActivity {
         switch (menuItem.getItemId()) {
 
             case R.id.nav_explore:
+                viewPager.setCurrentItem(0);
                 break;
             case R.id.nav_connect:
-                showMyConnectionFragment();
+//                showMyConnectionFragment();
+                viewPager.setCurrentItem(1);
                 break;
             case R.id.nav_act:
-                startActivity(new Intent(HomeActivity.this,AddPostActivity.class));
+                startActivity(new Intent(this, AddPostActivity.class));
                 break;
             case R.id.nav_analyze:
+                viewPager.setCurrentItem(2);
                 break;
             case R.id.nav_elect:
-                startActivity(new Intent(HomeActivity.this,FavoriteLeaderActivity.class));
+//                startActivity(new Intent(HomeActivity.this, FavoriteLeaderActivity.class));
+//                startActivity(new Intent(HomeActivity.this, PayUMoneyIntegration.class));
+                showContributeFragment();
                 break;
             case R.id.nav_setting:
-                startActivity(new Intent(HomeActivity.this,SettingActivity.class));
+                startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
                 break;
             case R.id.nav_earn:
-                showEarnFragment();
+//                showEarnFragment();
+                viewPager.setCurrentItem(3);
+                break;
+            case R.id.nav_wallet:
+                showWalletFragment();
                 break;
             case R.id.nav_logout:
                 Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, false);
@@ -299,11 +358,21 @@ public class HomeActivity extends AppCompatActivity {
         mDrawer.closeDrawers();
     }
 
+    private void showWalletFragment() {
+        WalletFragment walletFragment = new WalletFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_frag, walletFragment , "walletFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(myConnectionFragment);
+    }
+
     public void showMyConnectionFragment() {
         MyConnectionFragment myConnectionFragment = new MyConnectionFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.frame_main, myConnectionFragment, "myConnectionFragment");
+        transaction.add(R.id.frame_frag, myConnectionFragment, "myConnectionFragment");
         transaction.addToBackStack(null);
         transaction.commit();
         fragmentList.add(myConnectionFragment);
@@ -313,9 +382,20 @@ public class HomeActivity extends AppCompatActivity {
         RewardsFragment rewardsFragment = new RewardsFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.frame_main, rewardsFragment, "rewardsFragment");
+        transaction.add(R.id.frame_frag, rewardsFragment, "rewardsFragment");
         transaction.addToBackStack(null);
         transaction.commit();
         fragmentList.add(rewardsFragment);
+    }
+
+
+    public void showContributeFragment(){
+        ContributeFragment contributeFragment = new ContributeFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_frag, contributeFragment, "contributeFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(contributeFragment);
     }
 }

@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
-import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 
 import java.util.List;
 
@@ -23,11 +23,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class TagPeopleAdapter extends RecyclerView.Adapter<TagPeopleAdapter.ViewHolder>{
-    private List<UserProfilePOJO> items;
+    private List<UserInfoPOJO> items;
     Activity activity;
     Fragment fragment;
 
-    public TagPeopleAdapter(Activity activity, Fragment fragment, List<UserProfilePOJO> items) {
+    public TagPeopleAdapter(Activity activity, Fragment fragment, List<UserInfoPOJO> items) {
         this.items = items;
         this.activity = activity;
         this.fragment = fragment;

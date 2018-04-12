@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.activity.AddComplaintDescriptionActivity;
+import com.ritvi.kaajneeti.activity.AttachFragment;
 import com.ritvi.kaajneeti.activity.CreateEventActivity;
 import com.ritvi.kaajneeti.pojo.event.EventAttachment;
 
@@ -63,6 +64,11 @@ public class EventAttachAdapter extends RecyclerView.Adapter<EventAttachAdapter.
                     }else if(activity instanceof AddComplaintDescriptionActivity){
                         AddComplaintDescriptionActivity addComplaintDescriptionActivity= (AddComplaintDescriptionActivity) activity;
                         addComplaintDescriptionActivity.showAttachDialog();
+                    }else if(fragment!=null){
+                        if(fragment instanceof AttachFragment){
+                            AttachFragment attachFragment= (AttachFragment) fragment;
+                            attachFragment.showAttachDialog();
+                        }
                     }
                 }
             }

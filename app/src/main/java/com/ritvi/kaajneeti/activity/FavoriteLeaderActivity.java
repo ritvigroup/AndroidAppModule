@@ -6,24 +6,20 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.akexorcist.localizationactivity.ui.LocalizationActivity;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
-import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.adapter.FavoriteLeaderAdapter;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
-import com.ritvi.kaajneeti.pojo.user.favorite.FavoriteResultPOJO;
-import com.ritvi.kaajneeti.webservice.WebServiceBase;
-import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
+import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.webservice.ResponseListCallback;
+import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 
 import org.apache.http.NameValuePair;
@@ -35,7 +31,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FavoriteLeaderActivity extends LocalizationActivity implements WebServicesCallBack {
+public class FavoriteLeaderActivity extends LocalizationActivity{
 
     private static final String CALL_ALL_LEADER = "call_all_leader";
     @BindView(R.id.rv_leader)
@@ -43,7 +39,7 @@ public class FavoriteLeaderActivity extends LocalizationActivity implements WebS
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    List<FavoriteResultPOJO> leaderPOJOS = new ArrayList<>();
+    List<UserInfoPOJO> leaderPOJOS = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,10 +74,24 @@ public class FavoriteLeaderActivity extends LocalizationActivity implements WebS
     }
 
     public void callLeaderAPI() {
+
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePojo.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePojo.getCitizenProfilePOJO().getUserProfileId()));
-        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        new WebServiceBaseResponseList<UserInfoPOJO>(nameValuePairs, this, new ResponseListCallback<UserInfoPOJO>() {
+            @Override
+            public void onGetMsg(ResponseListPOJO<UserInfoPOJO> responseListPOJO) {
+                leaderPOJOS.clear();
+                if (responseListPOJO.isSuccess()) {
+                    leaderPOJOS.addAll(responseListPOJO.getResultList());
+                    rv_leader.setVisibility(View.VISIBLE);
+                } else {
+                    rv_leader.setVisibility(View.GONE);
+                    ToastClass.showShortToast(getApplicationContext(), "No Leader Found");
+                }
+                leaderAdapter.notifyDataSetChanged();
+            }
+        },UserInfoPOJO.class,CALL_ALL_LEADER,false).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
     }
 
 
@@ -105,36 +115,5 @@ public class FavoriteLeaderActivity extends LocalizationActivity implements WebS
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onGetMsg(String apicall, String response) {
-        Log.d(TagUtils.getTag(), apicall + ":-" + response);
-        switch (apicall) {
-            case CALL_ALL_LEADER:
-                parseALLLeaderResponse(response);
-                break;
-        }
-    }
 
-
-    public void parseALLLeaderResponse(String response) {
-        leaderPOJOS.clear();
-        try {
-            ResponseListPOJO<FavoriteResultPOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponseListPOJO<FavoriteResultPOJO>>() {
-            }.getType());
-            leaderPOJOS.clear();
-            if (responsePOJO.getStatus().equals("success")) {
-                leaderPOJOS.addAll(responsePOJO.getResultList());
-                rv_leader.setVisibility(View.VISIBLE);
-            } else {
-                rv_leader.setVisibility(View.GONE);
-                ToastClass.showShortToast(getApplicationContext(), "No Leader Found");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        leaderAdapter.notifyDataSetChanged();
-
-    }
 }

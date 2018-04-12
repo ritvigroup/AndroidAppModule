@@ -1,7 +1,5 @@
 package com.ritvi.kaajneeti.pojo;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 /**
@@ -10,13 +8,18 @@ import java.util.List;
 
 public class ResponseListPOJO<T> {
 
-    @SerializedName("status")
-    String status;
-    @SerializedName("message")
+    boolean success;
     String message;
-    @SerializedName("result")
     List<T> resultList;
 
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
 
     public String getMessage() {
         return message;
@@ -32,13 +35,5 @@ public class ResponseListPOJO<T> {
 
     public void setResultList(List<T> resultList) {
         this.resultList = resultList;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }
