@@ -18,13 +18,19 @@ import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.ToastClass;
-import com.ritvi.kaajneeti.activity.AddPostActivity;
+import com.ritvi.kaajneeti.activity.AddCommunication;
+import com.ritvi.kaajneeti.activity.CreateEventActivity;
+import com.ritvi.kaajneeti.activity.CreateInformationActivity;
+import com.ritvi.kaajneeti.activity.CreateIssueActivity;
+import com.ritvi.kaajneeti.activity.CreatePollActivity;
+import com.ritvi.kaajneeti.activity.CreateSuggestionActivity;
 import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.activity.Profile.ProfileDescriptionActivity;
 import com.ritvi.kaajneeti.activity.ProfilePageActivity;
 import com.ritvi.kaajneeti.adapter.HomeFeedAdapter;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.home.FeedPOJO;
+import com.ritvi.kaajneeti.testing.CreateExpressActivity;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -56,6 +62,21 @@ public class KaajFragment extends Fragment {
     TextView tv_profile_name;
     @BindView(R.id.rv_feeds)
     RecyclerView rv_feeds;
+    @BindView(R.id.tv_event)
+    TextView tv_event;
+    @BindView(R.id.tv_poll)
+    TextView tv_poll;
+    @BindView(R.id.tv_complaint)
+    TextView tv_complaint;
+    @BindView(R.id.tv_suggestion)
+    TextView tv_suggestion;
+    @BindView(R.id.tv_information)
+    TextView tv_information;
+    @BindView(R.id.tv_issue)
+    TextView tv_issue;
+
+    @BindView(R.id.ll_whats_mind)
+    LinearLayout ll_whats_mind;
 
     @Nullable
     @Override
@@ -76,13 +97,13 @@ public class KaajFragment extends Fragment {
             }
         });
 
-
+/*
         tv_whats_mind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getActivity(), AddPostActivity.class));
             }
-        });
+        });*/
 
         if (getActivity() instanceof HomeActivity) {
 
@@ -95,6 +116,54 @@ public class KaajFragment extends Fragment {
                     .error(R.drawable.ic_default_profile_pic)
                     .dontAnimate()
                     .into(cv_profile_pic);
+
+            ll_whats_mind.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    goTo(0);
+                }
+            });
+
+            tv_event.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    goTo(5);
+                }
+            });
+
+            tv_complaint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    goTo(2);
+                }
+            });
+
+            tv_information.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    goTo(4);
+                }
+            });
+
+            tv_poll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    goTo(6);
+                }
+            });
+
+            tv_suggestion.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    goTo(3);
+                }
+            });
+            tv_issue.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    goTo(1);
+                }
+            });
 
             cv_profile_pic.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -146,6 +215,25 @@ public class KaajFragment extends Fragment {
             }
         }, FeedPOJO.class, "CALL_FEED_DATA", true).execute(WebServicesUrls.HOME_PAGE_DATA);
 
+    }
+
+    public void goTo(int position){
+        if(position==0) {
+//            startActivity(new Intent(getActivity(),CreatePostActivity.class));
+            startActivity(new Intent(getActivity(), CreateExpressActivity.class));
+        }else if(position==1){
+            startActivity(new Intent(getActivity(),CreateIssueActivity.class));
+        }else if(position==2){
+            startActivity(new Intent(getActivity(), AddCommunication.class));
+        }else if(position==3){
+            startActivity(new Intent(getActivity(),CreateSuggestionActivity.class));
+        }else if(position==4){
+            startActivity(new Intent(getActivity(),CreateInformationActivity.class));
+        }else if(position==5){
+            startActivity(new Intent(getActivity(),CreateEventActivity.class));
+        }else if(position==6){
+            startActivity(new Intent(getActivity(),CreatePollActivity.class));
+        }
     }
 
     HomeFeedAdapter homeFeedAdapter;

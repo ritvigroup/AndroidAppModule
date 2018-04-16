@@ -41,6 +41,19 @@
         <item>Agrees with</item>
     </string-array>
 
+    <string-array name="publicprivate">
+        <item>Public</item>
+        <item>Private</item>
+    </string-array>
+
+    <string-array name="pollends">
+        <item>1 Day</item>
+        <item>1 Week</item>
+        <item>Never</item>
+        <item>Custom</item>
+        <item>Cancel</item>
+    </string-array>
+
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>

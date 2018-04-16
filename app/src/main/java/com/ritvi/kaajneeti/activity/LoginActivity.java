@@ -475,19 +475,19 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
                 Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
                 Pref.SetBooleanPref(LoginActivity.this, StringUtils.IS_LOGIN, true);
                 Constants.userInfoPOJO =userProfilePOJO;
-                if(userProfilePOJO.getUserName().equals("")||userProfilePOJO.getUserEmail().equals("")||
-                        userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("")){
-                    Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,false);
-
-                    Pref.SetBooleanPref(LoginActivity.this, StringUtils.IS_PROFILE_COMPLETED, false);
-                    startActivity(new Intent(LoginActivity.this, ProfileInfoActivity.class));
-                    finishAffinity();
-
-                } else {
+//                if(userProfilePOJO.getUserName().equals("")||userProfilePOJO.getUserEmail().equals("")||
+//                        userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("")){
+//                    Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,false);
+//
+//                    Pref.SetBooleanPref(LoginActivity.this, StringUtils.IS_PROFILE_COMPLETED, false);
+//                    startActivity(new Intent(LoginActivity.this, ProfileInfoActivity.class));
+//                    finishAffinity();
+//
+//                } else {
                     Pref.SetBooleanPref(LoginActivity.this, StringUtils.IS_PROFILE_COMPLETED, true);
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     finishAffinity();
-                }
+//                }
             }
         } catch (Exception e) {
             e.printStackTrace();

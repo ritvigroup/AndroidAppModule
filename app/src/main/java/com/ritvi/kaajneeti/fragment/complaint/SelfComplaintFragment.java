@@ -34,6 +34,7 @@ public class SelfComplaintFragment extends Fragment{
     EditText et_father_name;
     @BindView(R.id.et_mobile_number)
     EditText et_mobile_number;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

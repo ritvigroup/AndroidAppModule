@@ -124,19 +124,19 @@ public class MpinActivity extends LocalizationActivity implements WebServicesCal
                 Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
                 Pref.SetBooleanPref(this, StringUtils.IS_LOGIN, true);
                 Constants.userInfoPOJO =userProfilePOJO;
-                if(userProfilePOJO.getUserName().equals("")||userProfilePOJO.getUserEmail().equals("")||
-                        userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("")){
-                    Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,false);
-
-                    Pref.SetBooleanPref(this, StringUtils.IS_PROFILE_COMPLETED, false);
-                    startActivity(new Intent(this, ProfileInfoActivity.class));
-                    finishAffinity();
-
-                } else {
+//                if(userProfilePOJO.getUserName().equals("")||userProfilePOJO.getUserEmail().equals("")||
+//                        userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("")){
+//                    Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,false);
+//
+//                    Pref.SetBooleanPref(this, StringUtils.IS_PROFILE_COMPLETED, false);
+//                    startActivity(new Intent(this, ProfileInfoActivity.class));
+//                    finishAffinity();
+//
+//                } else {
                     Pref.SetBooleanPref(this, StringUtils.IS_PROFILE_COMPLETED, true);
                     startActivity(new Intent(this, HomeActivity.class));
                     finishAffinity();
-                }
+//                }
             }
         }catch (Exception e){
             e.printStackTrace();

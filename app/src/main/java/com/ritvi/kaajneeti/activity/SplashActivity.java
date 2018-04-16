@@ -228,7 +228,7 @@ public class SplashActivity extends LocalizationActivity {
 
     public void proceed(){
         getLocation();
-
+//
         if (Pref.GetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, false)) {
             Constants.userInfoPOJO =new Gson().fromJson(Pref.GetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,""), UserInfoPOJO.class);
             if (Pref.GetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED, false) ||
@@ -246,6 +246,8 @@ public class SplashActivity extends LocalizationActivity {
                 startActivity(new Intent(SplashActivity.this, SliderActivity.class));
             }
         }
+
+//        startActivity(new Intent(SplashActivity.this, CreateExpressActivity.class));
 
         finish();
     }
