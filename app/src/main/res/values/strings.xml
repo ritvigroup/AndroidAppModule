@@ -46,6 +46,12 @@
         <item>Private</item>
     </string-array>
 
+    <string-array name="comp_type">
+        <item>All</item>
+        <item>Other</item>
+        <item>Group</item>
+    </string-array>
+
     <string-array name="pollends">
         <item>1 Day</item>
         <item>1 Week</item>

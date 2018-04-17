@@ -1,6 +1,7 @@
 package com.ritvi.kaajneeti.testing;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,8 +17,12 @@ import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -38,6 +43,7 @@ import com.ritvi.kaajneeti.activity.TagPeopleActivity;
 import com.ritvi.kaajneeti.adapter.MediaListAdapter;
 import com.ritvi.kaajneeti.fragment.CreateComplaintFragment;
 import com.ritvi.kaajneeti.fragment.CreateEventFragment;
+import com.ritvi.kaajneeti.fragment.CreateGroupComplaintFragment;
 import com.ritvi.kaajneeti.fragment.CreateInformationFragment;
 import com.ritvi.kaajneeti.fragment.CreatePollFragment;
 import com.ritvi.kaajneeti.fragment.CreateSuggestionFragment;
@@ -182,7 +188,7 @@ public class CreateExpressActivity extends AppCompatActivity {
         ll_complaint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openComplaintFragment();
+                openComplaintDialog();
             }
         });
 
@@ -231,7 +237,56 @@ public class CreateExpressActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    public void openComplaintFragment() {
+    public void openComplaintDialog() {
+
+        final Dialog dialog1 = new Dialog(this, android.R.style.Theme_DeviceDefault_Light_Dialog);
+        dialog1.setCancelable(true);
+        dialog1.setContentView(R.layout.dialog_complaint_type);
+        dialog1.setTitle("Complaint Type");
+        dialog1.show();
+        dialog1.setCancelable(true);
+        Window window = dialog1.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        final RadioGroup rg_complaint_type = dialog1.findViewById(R.id.rg_complaint_type);
+        RadioButton rb_self = dialog1.findViewById(R.id.rb_self);
+        RadioButton rb_other = dialog1.findViewById(R.id.rb_other);
+        RadioButton rb_group = dialog1.findViewById(R.id.rb_group);
+
+        Button btn_cancel = (Button) dialog1.findViewById(R.id.btn_cancel);
+
+        rg_complaint_type.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                int id = rg_complaint_type.getCheckedRadioButtonId();
+                if (id != -1) {
+                    switch (id) {
+                        case R.id.rb_self:
+                            createSelfComplaint();
+                            dialog1.dismiss();
+                            break;
+                        case R.id.rb_other:
+                            createSelfComplaint();
+                            dialog1.dismiss();
+                            break;
+                        case R.id.rb_group:
+                            createGroupComplaint();
+                            dialog1.dismiss();
+                            break;
+                    }
+                }
+            }
+        });
+
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog1.dismiss();
+            }
+        });
+    }
+
+    public void createSelfComplaint() {
         CreateComplaintFragment createPollFragment = new CreateComplaintFragment(mediaList, spinner_privpub.getSelectedItem().toString(), et_whats.getText().toString());
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
@@ -240,8 +295,17 @@ public class CreateExpressActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    public void createGroupComplaint() {
+        CreateGroupComplaintFragment createGroupComplaint = new CreateGroupComplaintFragment(taggeduserInfoPOJOS,mediaList, spinner_privpub.getSelectedItem().toString(), et_whats.getText().toString());
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_main, createGroupComplaint, "createGroupComplaint");
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
     public void openEventFragment() {
-        CreateEventFragment createEventFragment = new CreateEventFragment(taggeduserInfoPOJOS, check_in_place, spinner_privpub.getSelectedItem().toString(), et_whats.getText().toString(),mediaList);
+        CreateEventFragment createEventFragment = new CreateEventFragment(taggeduserInfoPOJOS, check_in_place, spinner_privpub.getSelectedItem().toString(), et_whats.getText().toString(), mediaList);
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.frame_main, createEventFragment, "createEventFragment");
@@ -278,7 +342,7 @@ public class CreateExpressActivity extends AppCompatActivity {
 
             MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-            String activity="";
+            String activity = "";
 //            if(spinner_feeling.getSelectedItemPosition()!=0){
 //                activity=feelingPOJOArrayList.get(spinner_feeling.getSelectedItemPosition()-1).getFeelingId();
 //            }
@@ -292,19 +356,19 @@ public class CreateExpressActivity extends AppCompatActivity {
             reqEntity.addPart("url", new StringBody(""));
             reqEntity.addPart("feeling", new StringBody(activity));
 
-            for(int i=0;i<taggeduserInfoPOJOS.size();i++) {
-                reqEntity.addPart("post_tag["+i+"]", new StringBody(UtilityFunction.getUserProfilePOJO(taggeduserInfoPOJOS.get(i)).getUserProfileId()));
+            for (int i = 0; i < taggeduserInfoPOJOS.size(); i++) {
+                reqEntity.addPart("post_tag[" + i + "]", new StringBody(UtilityFunction.getUserProfilePOJO(taggeduserInfoPOJOS.get(i)).getUserProfileId()));
             }
 
             int count = 0;
 
 //            for (EventAttachment eventAttachment : attachFragment.getEventAttachments()) {
-            for(String file_path:mediaList){
+            for (String file_path : mediaList) {
 //                Log.d(TagUtils.getTag(), "attachment:-" + eventAttachment.toString());
 
 //                if (eventAttachment.getType().equals(Constants.EVENT_IMAGE_ATTACH)) {
-                    reqEntity.addPart("file[" + (count) + "]", new FileBody(new File(file_path)));
-                    reqEntity.addPart("thumb[" + (count) + "]", new StringBody(""));
+                reqEntity.addPart("file[" + (count) + "]", new FileBody(new File(file_path)));
+                reqEntity.addPart("thumb[" + (count) + "]", new StringBody(""));
 //                } else if (eventAttachment.getType().equals(Constants.EVENT_VIDEO_ATTACH)) {
 //                    reqEntity.addPart("file[" + (count) + "]", new FileBody(new File(eventAttachment.getFile_path())));
 //                    reqEntity.addPart("thumb[" + (count) + "]", new FileBody(new File(eventAttachment.getThumb_path())));
@@ -316,16 +380,16 @@ public class CreateExpressActivity extends AppCompatActivity {
                 @Override
                 public void onGetMsg(String apicall, String response) {
                     Log.d(TagUtils.getTag(), apicall + " :- " + response);
-                    try{
-                        JSONObject jsonObject=new JSONObject(response);
-                        ToastClass.showShortToast(getApplicationContext(),jsonObject.optString("message"));
-                        if(jsonObject.optString("status").equals("success")){
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        ToastClass.showShortToast(getApplicationContext(), jsonObject.optString("message"));
+                        if (jsonObject.optString("status").equals("success")) {
 //                            startActivity(new Intent(CreatePostActivity.this,ApplicationSubmittedActivity.class).putExtra("comp_type","information"));
-                            ToastClass.showShortToast(getApplicationContext(),"Posted Successfully");
-                            startActivity(new Intent(CreateExpressActivity.this,HomeActivity.class));
+                            ToastClass.showShortToast(getApplicationContext(), "Posted Successfully");
+                            startActivity(new Intent(CreateExpressActivity.this, HomeActivity.class));
                             finishAffinity();
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -342,13 +406,13 @@ public class CreateExpressActivity extends AppCompatActivity {
         cancelPost(this);
     }
 
-    public void cancelPost(final Activity activity){
+    public void cancelPost(final Activity activity) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
         alertDialog.setTitle("Warning");
         alertDialog.setMessage("Do you discard Post?");
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(activity,HomeActivity.class));
+                startActivity(new Intent(activity, HomeActivity.class));
                 finishAffinity();
             }
         });

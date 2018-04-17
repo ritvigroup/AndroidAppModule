@@ -1,14 +1,18 @@
 package com.ritvi.kaajneeti.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.widget.FrameLayout;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.adapter.NotificationAdapter;
+import com.ritvi.kaajneeti.fragment.analyze.ComplaintListFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +26,8 @@ public class NotificationActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.rv_notification)
     RecyclerView rv_notification;
+    @BindView(R.id.frame_main)
+    FrameLayout frame_main;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +40,17 @@ public class NotificationActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
 
         attachAdapter();
+
+        attachGroupComplaint();
+    }
+
+    public void attachGroupComplaint() {
+        ComplaintListFragment complaintListFragment = new ComplaintListFragment(true);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_main, complaintListFragment, "complaintListFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
 

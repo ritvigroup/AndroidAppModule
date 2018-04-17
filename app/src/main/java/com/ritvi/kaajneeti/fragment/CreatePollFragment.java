@@ -81,6 +81,8 @@ public class CreatePollFragment extends Fragment {
     RecyclerView rv_poll_media;
     @BindView(R.id.tv_remove_images)
     TextView tv_remove_images;
+    @BindView(R.id.tv_add_ans)
+    TextView tv_add_ans;
 
     List<UserInfoPOJO> taggeduserInfoPOJOS;
     String check_in;
@@ -117,7 +119,6 @@ public class CreatePollFragment extends Fragment {
         tagging_description = getTaggedDescription(taggeduserInfoPOJOS);
         updateProfileStatus();
         checkPlaceDescription(check_in);
-
 
         Glide.with(getActivity().getApplicationContext())
                 .load(Constants.userInfoPOJO.getProfilePhotoPath())
@@ -194,6 +195,14 @@ public class CreatePollFragment extends Fragment {
                 }else{
                     pollAnsAdapter.notifyDataSetChanged();
                 }
+            }
+        });
+
+        tv_add_ans.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pollMediaAnsList.add(new PollMediaAns());
+                pollAnsAdapter.notifyDataSetChanged();
             }
         });
     }

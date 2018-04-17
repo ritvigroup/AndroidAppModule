@@ -230,7 +230,20 @@
                     android:src="@drawable/ic_calendar" />
 
             </FrameLayout>
-            
+
+            <TextView
+                android:id="@+id/tv_tag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/et_border"
+                android:minHeight="40dp"
+                android:hint="Add Attendes"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dp"/>
+
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

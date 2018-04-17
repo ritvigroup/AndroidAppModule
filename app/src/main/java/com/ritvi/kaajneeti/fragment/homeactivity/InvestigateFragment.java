@@ -16,10 +16,10 @@ import android.view.ViewGroup;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.adapter.AnalyzeCategoryAdapter;
+import com.ritvi.kaajneeti.fragment.AllComplaintsFragment;
 import com.ritvi.kaajneeti.fragment.analyze.ALLPostListFragment;
 import com.ritvi.kaajneeti.fragment.analyze.AllEventFragment;
 import com.ritvi.kaajneeti.fragment.analyze.AllPollFragment;
-import com.ritvi.kaajneeti.fragment.analyze.ComplaintListFragment;
 import com.ritvi.kaajneeti.fragment.analyze.InformationListFragment;
 import com.ritvi.kaajneeti.fragment.analyze.SuggestionListFragment;
 import com.ritvi.kaajneeti.pojo.analyze.AnalyzeCategoryPOJO;
@@ -131,7 +131,7 @@ public class InvestigateFragment extends Fragment {
 
 
     public void showComplaintListFragment() {
-        ComplaintListFragment complaintListFragment = new ComplaintListFragment();
+        AllComplaintsFragment complaintListFragment = new AllComplaintsFragment();
         FragmentManager manager = getChildFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.frame_main, complaintListFragment, "complaintListFragment");

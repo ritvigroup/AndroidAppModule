@@ -73,6 +73,16 @@ public class PollAnsAdapter extends RecyclerView.Adapter<PollAnsAdapter.ViewHold
             }
         });
 
+        holder.iv_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(items.size()==2) {
+                    items.remove(position);
+                    notifyDataSetChanged();
+                }
+            }
+        });
+
         holder.et_poll_media_ans.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -104,6 +114,7 @@ public class PollAnsAdapter extends RecyclerView.Adapter<PollAnsAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView iv_poll_image;
         public ImageView iv_image_pick;
+        public ImageView iv_delete;
         public EditText et_poll_media_ans;
         public LinearLayout ll_poll_ans;
         public ViewHolder(View itemView) {
@@ -112,6 +123,7 @@ public class PollAnsAdapter extends RecyclerView.Adapter<PollAnsAdapter.ViewHold
             et_poll_media_ans=itemView.findViewById(R.id.et_poll_media_ans);
             iv_poll_image=itemView.findViewById(R.id.iv_poll_image);
             iv_image_pick=itemView.findViewById(R.id.iv_image_pick);
+            iv_delete=itemView.findViewById(R.id.iv_delete);
         }
     }
 

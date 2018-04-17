@@ -44,7 +44,7 @@ public class WebServicesUrls {
     public static final String OUTGOING_FRIEND_REQUEST = BASE_URL + "userconnect/getMyAllRequestToFriends";
     public static final String INCOMING_FRIEND_REQUEST = BASE_URL + "userconnect/getMyAllFriendRequest";
     public static final String MY_FRIENDS = BASE_URL + "userconnect/getMyAllFriends";
-    public static final String HOME_PAGE_DATA = BASE_URL + "leader/getAllHomePageData";
+    public static final String HOME_PAGE_DATA = BASE_URL + "citizen/getAllHomePageData";
     public static final String COMPLAINT_LIST = BASE_URL + "complaint/getMyAllComplaint";
     public static final String SUGGESTION_LIST = BASE_URL + "suggestion/getMyAllSuggestion";
     public static final String INFORMATION_LIST = BASE_URL + "information/getMyAllInformation";
@@ -65,4 +65,8 @@ public class WebServicesUrls {
     public static final String UPDATE_PROFILE_WORK = BASE_URL+"userprofile/updateProfileWork";
     public static final String UPDATE_PROFILE_EDUCATION = BASE_URL+"userprofile/updateProfileEducation";
     public static final String SEARCH_FOLLOWING_FOLLOWER_FRIENDS = BASE_URL+"userconnect/searchMyFriendFollowerAndFollowing";
+    public static final String DEPARTMENT_URL = BASE_URL+"complaint/getAllDepartment";
+    public static final String GET_MY_ALL_ASSOCIATED_COMPLAINT = BASE_URL+"complaint/getAllComplaintWhereMyselfAssociated";
+    public static final String UPDATE_COMPLAINT_INVITATION = BASE_URL+"complaint/updateComplaintInvitations";
+    public static final String DELETE_COMPLAINT_INVITATION = BASE_URL+"complaint/rejectComplaintInvitations";
 }

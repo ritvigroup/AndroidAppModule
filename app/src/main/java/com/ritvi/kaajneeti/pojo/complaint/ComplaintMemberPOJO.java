@@ -1,31 +1,27 @@
-package com.ritvi.kaajneeti.pojo.user;
+package com.ritvi.kaajneeti.pojo.complaint;
 
 import com.google.gson.annotations.SerializedName;
-
-import java.io.Serializable;
+import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
 
 /**
- * Created by sunil on 28-03-2018.
+ * Created by sunil on 17-04-2018.
  */
 
-public class OutGoingRequestPOJO implements Serializable{
+public class ComplaintMemberPOJO {
     @SerializedName("user_profile_detail")
-    UserProfileDetailPOJO userProfileDetailPOJO;
+    private OutGoingRequestPOJO outGoingRequestPOJO;
     @SerializedName("AcceptedYesNo")
     private String acceptedYesNo;
     @SerializedName("AcceptedOn")
     private String acceptedOn;
 
-
-
-    public UserProfileDetailPOJO getUserProfileDetailPOJO() {
-        return userProfileDetailPOJO;
+    public OutGoingRequestPOJO getOutGoingRequestPOJO() {
+        return outGoingRequestPOJO;
     }
 
-    public void setUserProfileDetailPOJO(UserProfileDetailPOJO userProfileDetailPOJO) {
-        this.userProfileDetailPOJO = userProfileDetailPOJO;
+    public void setOutGoingRequestPOJO(OutGoingRequestPOJO outGoingRequestPOJO) {
+        this.outGoingRequestPOJO = outGoingRequestPOJO;
     }
-
 
     public String getAcceptedYesNo() {
         return acceptedYesNo;

@@ -13,7 +13,6 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary">
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="7dp"
                 android:layout_weight="1"
-                android:text="Create Suggestion"
+                android:text="Create Complaint"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -109,6 +108,39 @@
 
             </LinearLayout>
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:layout_margin="10dp">
+
+
+                <AutoCompleteTextView
+                    android:id="@+id/auto_fav_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/et_border"
+                    android:drawableLeft="@drawable/places_ic_search"
+                    android:gravity="center_vertical"
+                    android:hint="Select a Leader from your favorite list"
+                    android:minHeight="35dp"
+                    android:paddingRight="30dp" />
+
+                <ImageView
+                    android:id="@+id/iv_favorite_leader_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/ic_plus_black" />
+
+
+            </FrameLayout>
+
             <EditText
                 android:id="@+id/et_subject"
                 android:layout_width="match_parent"
@@ -125,27 +157,101 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:background="@drawable/et_border"
-                android:hint="Description"
-                android:minHeight="150dp"
+                android:hint="Add Description"
+                android:minHeight="100dp"
                 android:paddingLeft="5dp" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_attachments"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+                android:layout_height="wrap_content"
+                android:background="@drawable/spinner_background"
+                android:orientation="horizontal"
+                android:layout_margin="10dp">
+
+                <Spinner
+                    android:id="@+id/spinner_department"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:spinnerMode="dropdown"></Spinner>
+
+            </RelativeLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/et_border"
+                android:minHeight="35dp"
+                android:layout_margin="10dp">
+
+                <EditText
+                    android:id="@+id/et_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter Location"
+                    android:background="@null"
+                    android:padding="5dp"
+                    android:paddingRight="32dp"/>
+
+                <ImageView
+                    android:id="@+id/iv_location"
+                    android:layout_width="27dp"
+                    android:layout_height="27dp"
+                    android:src="@drawable/ic_location"
+                    android:layout_gravity="right|center"
+                    android:layout_marginRight="7dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/et_border"
+                android:layout_margin="10dp">
+
+                <EditText
+                    android:id="@+id/et_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:editable="false"
+                    android:gravity="center_vertical"
+                    android:hint="Schedule Date"
+                    android:background="@null"
+                    android:minHeight="35dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp" />
+
+                <ImageView
+                    android:id="@+id/iv_calendar"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="right|center"
+                    android:src="@drawable/ic_calendar" />
+
+            </FrameLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <Button
-                    android:id="@+id/btn_attach"
+                <TextView
+                    android:id="@+id/tv_attach"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
                     android:text="Attach"
-                    android:layout_gravity="right"/>
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:layout_marginRight="7dp"/>
 
             </FrameLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_attachments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"></android.support.v7.widget.RecyclerView>
         </LinearLayout>
 
     </ScrollView>

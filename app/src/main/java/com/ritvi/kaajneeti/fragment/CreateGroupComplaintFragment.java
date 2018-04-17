@@ -37,6 +37,7 @@ import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.activity.ApplicationSubmittedActivity;
+import com.ritvi.kaajneeti.activity.TagPeopleActivity;
 import com.ritvi.kaajneeti.adapter.CustomAutoCompleteAdapter;
 import com.ritvi.kaajneeti.adapter.MediaListAdapter;
 import com.ritvi.kaajneeti.pojo.DepartmentPOJO;
@@ -59,6 +60,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,11 +71,13 @@ import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * Created by sunil on 16-04-2018.
+ * Created by sunil on 15-04-2018.
  */
 
 @SuppressLint("ValidFragment")
-public class CreateSuggestionFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
+public class CreateGroupComplaintFragment extends Fragment implements DatePickerDialog.OnDateSetListener{
+
+    List<UserInfoPOJO> taggeduserInfoPOJOS = new ArrayList<>();
 
     static final int OPEN_MEDIA_PICKER = 1;
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 101;
@@ -89,6 +93,8 @@ public class CreateSuggestionFragment extends Fragment implements DatePickerDial
     CircleImageView cv_profile_pic;
     @BindView(R.id.spinner_privpub)
     Spinner spinner_privpub;
+    @BindView(R.id.tv_tag)
+    TextView tv_tag;
     @BindView(R.id.et_location)
     EditText et_location;
     @BindView(R.id.iv_location)
@@ -110,23 +116,24 @@ public class CreateSuggestionFragment extends Fragment implements DatePickerDial
     @BindView(R.id.iv_favorite_leader_add)
     ImageView iv_favorite_leader_add;
 
-    String suggestion_subject = "";
-    String privPublic = "";
-    List<String> mediaFiles=new ArrayList<>();
-
-    public CreateSuggestionFragment(List<String> mediaFiles, String privPublic, String suggestion_subject) {
-        this.suggestion_subject = suggestion_subject;
-        this.privPublic = privPublic;
-        this.mediaFiles.addAll(mediaFiles);
-    }
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frag_suggestion_create, container, false);
+        View view = inflater.inflate(R.layout.frag_group_complaint_create, container, false);
         ButterKnife.bind(this, view);
         return view;
+    }
+
+    String privPublic;
+    String complaint_name;
+    List<String> mediaFiles = new ArrayList<>();
+
+    public CreateGroupComplaintFragment(List<UserInfoPOJO> userInfoPOJOS,List<String> mediaFiles, String privPublic, String complaint_name) {
+        this.taggeduserInfoPOJOS=userInfoPOJOS;
+        this.complaint_name = complaint_name;
+        this.privPublic = privPublic;
+        this.mediaFiles=mediaFiles;
     }
 
     @Override
@@ -152,11 +159,23 @@ public class CreateSuggestionFragment extends Fragment implements DatePickerDial
             }
         }
         tv_profile_description.setText(Html.fromHtml(profile_description));
-        et_subject.setText(suggestion_subject);
+        et_subject.setText(complaint_name);
+
+
+        if(taggeduserInfoPOJOS.size()>0){
+            updateTaggingDesc();
+        }
 
         tv_profile_description.setText(Html.fromHtml(profile_description));
 
-        et_subject.setText(suggestion_subject);
+        et_subject.setText(complaint_name);
+
+        tv_tag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(new Intent(getActivity(), TagPeopleActivity.class).putExtra("taggedpeople", (Serializable) taggeduserInfoPOJOS), TAG_PEOPLE);
+            }
+        });
 
         iv_location.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,7 +204,7 @@ public class CreateSuggestionFragment extends Fragment implements DatePickerDial
             public void onClick(View view) {
                 Calendar now = Calendar.getInstance();
                 DatePickerDialog dpd = DatePickerDialog.newInstance(
-                        CreateSuggestionFragment.this,
+                        CreateGroupComplaintFragment.this,
                         now.get(Calendar.YEAR),
                         now.get(Calendar.MONTH),
                         now.get(Calendar.DAY_OF_MONTH)
@@ -229,20 +248,20 @@ public class CreateSuggestionFragment extends Fragment implements DatePickerDial
         }, UserInfoPOJO.class, "CALL_LEADER_API", true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
     }
 
-    List<DepartmentPOJO> departmentPOJOS = new ArrayList<>();
+    List<DepartmentPOJO> departmentPOJOS=new ArrayList<>();
 
-    public void getAllDepartment() {
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", UtilityFunction.getProfileID(Constants.userInfoPOJO)));
+    public void getAllDepartment(){
+        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id",UtilityFunction.getProfileID(Constants.userInfoPOJO)));
         new WebServiceBaseResponseList<DepartmentPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<DepartmentPOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<DepartmentPOJO> responseListPOJO) {
-                try {
-                    if (responseListPOJO.getResultList().size() > 0) {
+                try{
+                    if(responseListPOJO.getResultList().size()>0){
                         departmentPOJOS.addAll(responseListPOJO.getResultList());
 
-                        List<String> departmentStringList = new ArrayList<>();
-                        for (DepartmentPOJO departmentPOJO : departmentPOJOS) {
+                        List<String> departmentStringList=new ArrayList<>();
+                        for(DepartmentPOJO departmentPOJO:departmentPOJOS){
                             departmentStringList.add(departmentPOJO.getDepartmentName());
                         }
 
@@ -251,11 +270,11 @@ public class CreateSuggestionFragment extends Fragment implements DatePickerDial
                                 getActivity(), R.layout.dropsimpledown, departmentStringList);
                         spinner_department.setAdapter(spinnerArrayAdapter);
                     }
-                } catch (Exception e) {
+                }catch (Exception e){
                     e.printStackTrace();
                 }
             }
-        }, DepartmentPOJO.class, "CALL_DEPARTMENT_GET_API", true).execute(WebServicesUrls.DEPARTMENT_URL);
+        },DepartmentPOJO.class,"CALL_DEPARTMENT_GET_API",true).execute(WebServicesUrls.DEPARTMENT_URL);
     }
 
     public void findPlace() {
@@ -277,23 +296,27 @@ public class CreateSuggestionFragment extends Fragment implements DatePickerDial
         intent.putExtra("title", "Select media");
         // Mode 1 for both images and videos selection, 2 for images only and 3 for videos!
         intent.putExtra("mode", 1);
-        intent.putExtra("maxSelection", 5 - mediaFiles.size()); // Optional
+        intent.putExtra("maxSelection", 5-mediaFiles.size()); // Optional
         startActivityForResult(intent, OPEN_MEDIA_PICKER);
     }
 
     LatLng latLong;
-    String address = "";
-
+    String address="";
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+        if(requestCode==TAG_PEOPLE) {
+            if (resultCode == Activity.RESULT_OK) {
+                taggeduserInfoPOJOS = (List<UserInfoPOJO>) data.getSerializableExtra("taggedpeople");
+                updateTaggingDesc();
+            }
+        }else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(getActivity(), data);
                 Log.i(TagUtils.getTag(), "Place: " + place.getName());
                 place.getAddress();
-                latLong = place.getLatLng();
-                address = place.getAddress().toString();
+                latLong=place.getLatLng();
+                address=place.getAddress().toString();
                 et_location.setText((String) place.getName());
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
@@ -303,7 +326,7 @@ public class CreateSuggestionFragment extends Fragment implements DatePickerDial
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 // The user canceled the operation.
             }
-        } else if (requestCode == OPEN_MEDIA_PICKER) {
+        }else if (requestCode == OPEN_MEDIA_PICKER) {
             // Make sure the request was successful
             if (resultCode == Activity.RESULT_OK && data != null) {
                 ArrayList<String> selectionResult = data.getStringArrayListExtra("result");
@@ -324,16 +347,29 @@ public class CreateSuggestionFragment extends Fragment implements DatePickerDial
         rv_attachments.setItemAnimator(new DefaultItemAnimator());
     }
 
-    public void saveComplaint() {
+    public void updateTaggingDesc(){
+        String users="";
+        for(int i=0;i<taggeduserInfoPOJOS.size();i++){
+            UserProfilePOJO userProfilePOJO=UtilityFunction.getUserProfilePOJO(taggeduserInfoPOJOS.get(i));
+            if(i==(taggeduserInfoPOJOS.size()-1)){
+                users+=userProfilePOJO.getFirstName()+" "+userProfilePOJO.getLastName();
+            }else{
+                users+=userProfilePOJO.getFirstName()+" "+userProfilePOJO.getLastName()+",";
+            }
+        }
+
+        tv_tag.setText(users);
+    }
+    public void saveComplaint(){
         try {
-            if (leader_id.length() > 0) {
+            if(leader_id.length()>0) {
                 MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-
+                nameValuePairs.add(new BasicNameValuePair("", ""));
                 reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
-                reqEntity.addPart("suggestion_subject", new StringBody(et_subject.getText().toString()));
-                reqEntity.addPart("suggestion_description", new StringBody(et_description.getText().toString()));
+                reqEntity.addPart("complaint_subject", new StringBody(et_subject.getText().toString()));
+                reqEntity.addPart("complaint_description", new StringBody(et_description.getText().toString()));
                 UserProfilePOJO userProfilePOJO = UtilityFunction.getUserProfilePOJO(Constants.userInfoPOJO);
                 reqEntity.addPart("applicant_name", new StringBody(userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName()));
                 reqEntity.addPart("applicant_father_name", new StringBody(""));
@@ -363,6 +399,11 @@ public class CreateSuggestionFragment extends Fragment implements DatePickerDial
                     reqEntity.addPart("department", new StringBody(""));
                 }
 
+                for (int i = 0; i < taggeduserInfoPOJOS.size(); i++) {
+                    UserProfilePOJO userProfilePOJO1 = UtilityFunction.getUserProfilePOJO(taggeduserInfoPOJOS.get(i));
+                    reqEntity.addPart("complaint_member[" + i + "]", new StringBody(userProfilePOJO1.getUserProfileId()));
+                }
+
                 int count = 0;
 
                 for (String file_path : mediaFiles) {
@@ -374,6 +415,7 @@ public class CreateSuggestionFragment extends Fragment implements DatePickerDial
                     reqEntity.addPart("file[" + (i) + "]", new FileBody(new File(mediaFiles.get(i))));
                     reqEntity.addPart("thumb[" + (i) + "]", new StringBody(""));
                 }
+
 
                 new WebUploadService(reqEntity, getActivity(), new WebServicesCallBack() {
                     @Override
@@ -389,9 +431,9 @@ public class CreateSuggestionFragment extends Fragment implements DatePickerDial
                             e.printStackTrace();
                         }
                     }
-                }, "CREATE_SUGGESTION", true).execute(WebServicesUrls.SAVE_SUGGESTION);
-            } else {
-                ToastClass.showShortToast(getActivity().getApplicationContext(), "Please Select Leader First");
+                }, "CREATE_EVENT", true).execute(WebServicesUrls.POST_COMPLAINT);
+            }else{
+                ToastClass.showShortToast(getActivity().getApplicationContext(),"Please Select Leader First");
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

@@ -20,24 +20,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_marginTop="5dp">
+
+        <ImageView
+            android:id="@+id/iv_image_pick"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/ic_default_pic"/>
 
         <EditText
             android:id="@+id/et_poll_media_ans"
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:background="@drawable/et_border"
             android:minHeight="35dp" />
 
         <ImageView
-            android:id="@+id/iv_image_pick"
+            android:id="@+id/iv_delete"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/ic_default_pic"/>
+            android:src="@drawable/ic_action_delete"/>
 
     </LinearLayout>
 </LinearLayout>
