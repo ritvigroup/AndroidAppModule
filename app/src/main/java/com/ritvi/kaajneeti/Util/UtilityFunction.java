@@ -1,8 +1,10 @@
 package com.ritvi.kaajneeti.Util;
 
 import android.content.Context;
+import android.widget.EditText;
 
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -55,11 +57,32 @@ public class UtilityFunction {
         return "";
     }
 
+    public static String getServerConvertedDate(String date){
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date d = sdf.parse(date);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            String formatted_date = simpleDateFormat.format(d);
+            return formatted_date;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     public static String getProfileID(UserInfoPOJO userInfoPOJO){
         if(userInfoPOJO.getUserProfileCitizen()!=null){
             return userInfoPOJO.getUserProfileCitizen().getUserProfileId();
         }else{
             return userInfoPOJO.getUserProfileLeader().getUserProfileId();
+        }
+    }
+
+    public static UserProfilePOJO getUserProfilePOJO(UserInfoPOJO userInfoPOJO) {
+        if(userInfoPOJO.getUserProfileCitizen()!=null){
+            return userInfoPOJO.getUserProfileCitizen();
+        }else{
+            return userInfoPOJO.getUserProfileLeader();
         }
     }
 
@@ -81,6 +104,15 @@ public class UtilityFunction {
         } catch (NoSuchAlgorithmException NSAE) {
         }
         return hexString.toString();
+    }
+
+    public static boolean checkEdits(EditText... editTexts){
+        for(EditText editText:editTexts){
+            if(editText.getText().toString().length()==0){
+                return false;
+            }
+        }
+        return true;
     }
 
 

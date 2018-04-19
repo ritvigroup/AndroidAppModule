@@ -37,6 +37,7 @@ import com.ritvi.kaajneeti.Util.FileUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
+import com.ritvi.kaajneeti.activity.Profile.ProfileEditPageActivity;
 import com.ritvi.kaajneeti.pojo.ResponsePOJO;
 import com.ritvi.kaajneeti.pojo.payment.WalletDetailPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
@@ -138,6 +139,10 @@ public class ProfilePageActivity extends AppCompatActivity {
                     menu.show();
                 }
             });
+
+
+
+
         }else{
             iv_edit.setVisibility(View.GONE);
         }
@@ -163,7 +168,8 @@ public class ProfilePageActivity extends AppCompatActivity {
         iv_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(ProfilePageActivity.this,ProfileInfoActivity.class));
+//                startActivity(new Intent(ProfilePageActivity.this,ProfileInfoActivity.class));
+                startActivity(new Intent(ProfilePageActivity.this, ProfileEditPageActivity.class));
             }
         });
 

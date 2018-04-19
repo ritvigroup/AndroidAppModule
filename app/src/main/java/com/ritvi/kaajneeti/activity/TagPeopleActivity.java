@@ -23,11 +23,11 @@ import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.adapter.CustomAutoCompleteAdapter;
 import com.ritvi.kaajneeti.adapter.TagPeopleAdapter;
-import com.ritvi.kaajneeti.pojo.ResponsePOJO;
-import com.ritvi.kaajneeti.pojo.user.SearchUserResultPOJO;
+import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
+import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
-import com.ritvi.kaajneeti.webservice.ResponseCallBack;
-import com.ritvi.kaajneeti.webservice.WebServiceBaseResponse;
+import com.ritvi.kaajneeti.webservice.ResponseListCallback;
+import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 
 import org.apache.http.NameValuePair;
@@ -151,24 +151,25 @@ public class TagPeopleActivity extends AppCompatActivity {
 
     public void searchUser() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("search", act_search.getText().toString()));
-        new WebServiceBaseResponse<SearchUserResultPOJO>(nameValuePairs, this, new ResponseCallBack<SearchUserResultPOJO>() {
+        new WebServiceBaseResponseList<OutGoingRequestPOJO>(nameValuePairs, this, new ResponseListCallback<OutGoingRequestPOJO>() {
             @Override
-            public void onGetMsg(ResponsePOJO<SearchUserResultPOJO> responsePOJO) {
+            public void onGetMsg(ResponseListPOJO<OutGoingRequestPOJO> responseListPOJO) {
                 userProfilePOJOS.clear();
-                if (responsePOJO.isSuccess()) {
-                    userProfilePOJOS.addAll(responsePOJO.getResult().getCitizenUserInfoPOJOS());
-                    userProfilePOJOS.addAll(responsePOJO.getResult().getLeaderUserInfoPOJOS());
+                if (responseListPOJO.isSuccess()) {
+                    for(OutGoingRequestPOJO outGoingRequestPOJO:responseListPOJO.getResultList()) {
+                        userProfilePOJOS.add(outGoingRequestPOJO.getUserProfileDetailPOJO().getUserInfoPOJO());
+                    }
                     Log.d(TagUtils.getTag(),"user size:-"+userProfilePOJOS.size());
                     tagSearchPeopleAdapter = new CustomAutoCompleteAdapter(TagPeopleActivity.this, userProfilePOJOS);
                     act_search.setAdapter(tagSearchPeopleAdapter);
                 } else {
-                    ToastClass.showShortToast(getApplicationContext(), responsePOJO.getMessage());
+                    ToastClass.showShortToast(getApplicationContext(), responseListPOJO.getMessage());
                 }
             }
-
-        },SearchUserResultPOJO.class,"CALL_SEARCH_PEOPLE_API", false).execute(WebServicesUrls.SEARCH_USER_PROFILE);
+        },OutGoingRequestPOJO.class,"CALL_SEARCH_PEOPLE_API", false).execute(WebServicesUrls.SEARCH_FOLLOWING_FOLLOWER_FRIENDS);
 //        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
 //            @Override
 //            public void onGetMsg(String apicall, String response) {

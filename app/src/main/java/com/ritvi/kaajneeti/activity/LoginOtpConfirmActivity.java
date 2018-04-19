@@ -116,7 +116,7 @@ public class LoginOtpConfirmActivity extends AppCompatActivity implements WebSer
 
             @Override
             public void onTick(long l) {
-                Log.d(TagUtils.getTag(), "time:-" + l);
+//                Log.d(TagUtils.getTag(), "time:-" + l);
                 pb_otp.setProgress((int) l);
                 is_timer = true;
             }
@@ -137,10 +137,9 @@ public class LoginOtpConfirmActivity extends AppCompatActivity implements WebSer
 
     public void callOTPAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("request_action", "VALIDATE_MOBILE_OTP"));
         nameValuePairs.add(new BasicNameValuePair("mobile", mobile_number));
         nameValuePairs.add(new BasicNameValuePair("otp", et_otp.getText().toString()));
-        new WebServiceBase(nameValuePairs, this, this, CALL_LOGIN_OTP_VERIFY, true).execute(WebServicesUrls.LOGIN_URL);
+        new WebServiceBase(nameValuePairs, this, this, CALL_LOGIN_OTP_VERIFY, true).execute(WebServicesUrls.VERIFY_LOGIN_OTP);
     }
 
 
@@ -189,19 +188,19 @@ public class LoginOtpConfirmActivity extends AppCompatActivity implements WebSer
                 Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
                 Pref.SetBooleanPref(this, StringUtils.IS_LOGIN, true);
                 Constants.userInfoPOJO =userProfilePOJO;
-                if(userProfilePOJO.getUserName().equals("")||userProfilePOJO.getUserEmail().equals("")||
-                        userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("")){
-                    Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,false);
-
-                    Pref.SetBooleanPref(this, StringUtils.IS_PROFILE_COMPLETED, false);
-                    startActivity(new Intent(this, ProfileInfoActivity.class));
-                    finishAffinity();
-
-                } else {
+//                if(userProfilePOJO.getUserName().equals("")||userProfilePOJO.getUserEmail().equals("")||
+//                        userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("")){
+//                    Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,false);
+//
+//                    Pref.SetBooleanPref(this, StringUtils.IS_PROFILE_COMPLETED, false);
+//                    startActivity(new Intent(this, ProfileInfoActivity.class));
+//                    finishAffinity();
+//
+//                } else {
                     Pref.SetBooleanPref(this, StringUtils.IS_PROFILE_COMPLETED, true);
                     startActivity(new Intent(this, HomeActivity.class));
                     finishAffinity();
-                }
+//                }
             }
         }catch (Exception e){
             e.printStackTrace();

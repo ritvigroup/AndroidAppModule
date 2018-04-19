@@ -16,13 +16,16 @@ public class WebServicesUrls {
     public static final String REGISTER_VALIDATE_MOBILE_OTP = BASE_URL + "userregister/validateMobileOtp";
     public static final String REGISTER_SET_MPIN = BASE_URL + "userregister/setMobileMpin";
     public static final String LOGIN_URL = BASE_URL + "userlogin/loginMobile";
+    public static final String VERIFY_LOGIN_OTP = BASE_URL + "userlogin/validateMobileOtp";
     public static final String LOGIN_MPIN = BASE_URL + "userlogin/loginMobileMpin";
     public static final String LOGIN_WITH_SOCIAL = BASE_URL + "userlogin/loginWithSocial";
     public static final String SAVE_EVENT = BASE_URL + "event/saveMyEvent";
     public static final String POST_COMPLAINT = BASE_URL + "complaint/postMyComplaint";
     public static final String UPDATE_PROFILE_AFTER_LOGIN = BASE_URL + "userprofile/updateProfileAfterLogin";
-    public static final String GET_MY_FAVORITE_LEADER = BASE_URL + "userprofile/getMyAllFavouriteLeader";
-    public static final String SET_MY_FAVORITE_LEADER = BASE_URL + "userprofile/setLeaderAsFavourite";
+    public static final String GET_MY_FAVORITE_LEADER = BASE_URL + "userconnect/getMyAllFavouriteLeader";
+    public static final String SET_MY_FAVORITE_LEADER = BASE_URL + "userconnect/setLeaderAsFavourite";
+    public static final String UPDATE_PROFILE = BASE_URL + "userprofile/updateProfile";
+    public static final String GET_MORE_PROFILE_DATA = BASE_URL + "userprofile/getMoreDetailAboutUserProfile";
 
     public static final String COMPLAINT = BASE_URL + "complaint.php";
 
@@ -41,7 +44,7 @@ public class WebServicesUrls {
     public static final String OUTGOING_FRIEND_REQUEST = BASE_URL + "userconnect/getMyAllRequestToFriends";
     public static final String INCOMING_FRIEND_REQUEST = BASE_URL + "userconnect/getMyAllFriendRequest";
     public static final String MY_FRIENDS = BASE_URL + "userconnect/getMyAllFriends";
-    public static final String HOME_PAGE_DATA = BASE_URL + "leader/getAllHomePageData";
+    public static final String HOME_PAGE_DATA = BASE_URL + "citizen/getAllHomePageData";
     public static final String COMPLAINT_LIST = BASE_URL + "complaint/getMyAllComplaint";
     public static final String SUGGESTION_LIST = BASE_URL + "suggestion/getMyAllSuggestion";
     public static final String INFORMATION_LIST = BASE_URL + "information/getMyAllInformation";
@@ -59,4 +62,11 @@ public class WebServicesUrls {
     public static final String WALLET_DETAIL_API = BASE_URL+"payment/getMyTotalWalletAmount";
     public static final String DEBIT_TRANS_LOGS = BASE_URL+"payment/getMyAllPaymentDebitTransactionLog";
     public static final String CREDIT_TRANS_LOGS = BASE_URL+"payment/getMyAllPaymentCreditTransactionLog";
+    public static final String UPDATE_PROFILE_WORK = BASE_URL+"userprofile/updateProfileWork";
+    public static final String UPDATE_PROFILE_EDUCATION = BASE_URL+"userprofile/updateProfileEducation";
+    public static final String SEARCH_FOLLOWING_FOLLOWER_FRIENDS = BASE_URL+"userconnect/searchMyFriendFollowerAndFollowing";
+    public static final String DEPARTMENT_URL = BASE_URL+"complaint/getAllDepartment";
+    public static final String GET_MY_ALL_ASSOCIATED_COMPLAINT = BASE_URL+"complaint/getAllComplaintWhereMyselfAssociated";
+    public static final String UPDATE_COMPLAINT_INVITATION = BASE_URL+"complaint/updateComplaintInvitations";
+    public static final String DELETE_COMPLAINT_INVITATION = BASE_URL+"complaint/rejectComplaintInvitations";
 }

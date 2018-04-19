@@ -36,6 +36,7 @@ import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
+import com.ritvi.kaajneeti.activity.Profile.ProfileDescriptionActivity;
 import com.ritvi.kaajneeti.adapter.ViewPagerAdapter;
 import com.ritvi.kaajneeti.fragment.RewardsFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.ContributeFragment;
@@ -269,7 +270,8 @@ public class HomeActivity extends AppCompatActivity {
         cv_profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this, ProfilePageActivity.class));
+//                startActivity(new Intent(HomeActivity.this, ProfilePageActivity.class));
+                startActivity(new Intent(HomeActivity.this, ProfileDescriptionActivity.class).putExtra("userInfo",Constants.userInfoPOJO));
             }
         });
 

@@ -134,7 +134,14 @@
         <activity android:name=".testing.PayUMoneyIntegration" />
         <activity android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.AadharIntegrationActivity" />
-        <activity android:name=".activity.ViewSuggestionActivity"></activity>
+        <activity android:name=".activity.ViewSuggestionActivity" />
+        <activity android:name=".activity.Profile.ProfileEditPageActivity" />
+        <activity android:name=".activity.Profile.AddWorkActivity" />
+        <activity android:name=".activity.Profile.AddEducationActivity" />
+        <activity android:name=".activity.Profile.AddAddressActivity" />
+        <activity android:name=".activity.Profile.AddPersonalInfoActivity" />
+        <activity android:name=".activity.Profile.ProfileDescriptionActivity" />
+        <activity android:name=".testing.CreateExpressActivity"></activity>
     </application>
 
 </manifest>

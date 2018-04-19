@@ -62,7 +62,7 @@ public class ComplaintDetailActivity extends AppCompatActivity {
             tv_complaint_name.setText(complaintPOJO.getComplaintSubject());
             tv_complaint_description.setText(complaintPOJO.getComplaintDescription());
             eventAttachments.clear();
-            for (ComplaintAttachmentPOJO complaintAttachmentPOJO : complaintPOJO.getComplaintAttachmentPOJOS()) {
+            for (ComplaintAttachmentPOJO complaintAttachmentPOJO : complaintPOJO.getComplaintAttachments()) {
                 String type = "";
                 if (complaintAttachmentPOJO.getAttachmentType().equals("photo")) {
                     type = Constants.EVENT_IMAGE_ATTACH;

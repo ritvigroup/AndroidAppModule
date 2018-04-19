@@ -82,6 +82,8 @@ public class CreatePostActivity extends AppCompatActivity {
     EditText et_title;
     @BindView(R.id.et_description)
     EditText et_description;
+    @BindView(R.id.spinner_public)
+    Spinner spinner_public;
 
     String tag_people="";
     String check_in_place="";
