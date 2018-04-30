@@ -45,9 +45,9 @@ public class InformationFragment extends Fragment{
             public void onClick(View view) {
                 Intent intent=new Intent(getActivity(), InformationSubmittedActivity.class);
 
-                intent.putExtra("applicant_name", Constants.userInfoPOJO.getUserName());
+                intent.putExtra("applicant_name", Constants.userProfilePOJO.getFirstName());
                 intent.putExtra("applicant_father_name","");
-                intent.putExtra("applicant_mobile",Constants.userInfoPOJO.getUserMobile());
+                intent.putExtra("applicant_mobile",Constants.userProfilePOJO.getMobile());
                 startActivity(intent);
             }
         });

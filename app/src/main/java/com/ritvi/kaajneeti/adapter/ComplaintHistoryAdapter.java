@@ -3,6 +3,7 @@ package com.ritvi.kaajneeti.adapter;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,16 @@ public class ComplaintHistoryAdapter extends RecyclerView.Adapter<ComplaintHisto
         holder.tv_description.setText(items.get(position).getHistoryDescription());
         holder.tv_title.setText(items.get(position).getHistoryTitle());
 
+        String profile_name = "By - <b>" + items.get(position).getComplaintHistoryProfile().getFirstName()+" "+items.get(position).getComplaintHistoryProfile().getLastName() + "</b>";
+        holder.tv_profile_user.setText(Html.fromHtml(profile_name));
+
+        if(items.get(position).getComplaintHistoryAttachment().size()>0){
+            holder.tv_attachments.setText(items.get(position).getComplaintHistoryAttachment().size()+" Attachments");
+        }else{
+            holder.tv_attachments.setVisibility(View.GONE);
+        }
+
+
         holder.itemView.setTag(items.get(position));
     }
 
@@ -50,12 +61,15 @@ public class ComplaintHistoryAdapter extends RecyclerView.Adapter<ComplaintHisto
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView tv_title,tv_description,tv_date;
+        public TextView tv_title, tv_description, tv_date, tv_profile_user,tv_attachments;
+
         public ViewHolder(View itemView) {
             super(itemView);
-            tv_title=itemView.findViewById(R.id.tv_title);
-            tv_description=itemView.findViewById(R.id.tv_description);
-            tv_date=itemView.findViewById(R.id.tv_date);
+            tv_title = itemView.findViewById(R.id.tv_title);
+            tv_description = itemView.findViewById(R.id.tv_description);
+            tv_date = itemView.findViewById(R.id.tv_date);
+            tv_profile_user = itemView.findViewById(R.id.tv_profile_user);
+            tv_attachments = itemView.findViewById(R.id.tv_attachments);
         }
     }
 }

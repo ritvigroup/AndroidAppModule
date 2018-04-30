@@ -9,12 +9,15 @@ import java.io.Serializable;
  */
 
 public class PollAnsPOJO implements Serializable{
+
     @SerializedName("PollAnswerId")
     private String pollAnswerId;
     @SerializedName("PollId")
     private String pollId;
     @SerializedName("PollAnswer")
     private String pollAnswer;
+    @SerializedName("PollAnswerImage")
+    private String pollAnswerImage;
     @SerializedName("PollAnswerStatus")
     private String pollAnswerStatus;
     @SerializedName("TotalAnswerdMe")
@@ -42,6 +45,14 @@ public class PollAnsPOJO implements Serializable{
 
     public void setPollAnswer(String pollAnswer) {
         this.pollAnswer = pollAnswer;
+    }
+
+    public String getPollAnswerImage() {
+        return pollAnswerImage;
+    }
+
+    public void setPollAnswerImage(String pollAnswerImage) {
+        this.pollAnswerImage = pollAnswerImage;
     }
 
     public String getPollAnswerStatus() {

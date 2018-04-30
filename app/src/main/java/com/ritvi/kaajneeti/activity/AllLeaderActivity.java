@@ -19,7 +19,7 @@ import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.adapter.LeaderAdapter;
 import com.ritvi.kaajneeti.pojo.ResponsePOJO;
 import com.ritvi.kaajneeti.pojo.user.SearchUserResultPOJO;
-import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.ResponseCallBack;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponse;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -40,7 +40,7 @@ public class AllLeaderActivity extends LocalizationActivity{
     RecyclerView rv_leader;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    List<UserInfoPOJO> leaderPOJOS = new ArrayList<>();
+    List<UserProfilePOJO> leaderPOJOS = new ArrayList<>();
     @BindView(R.id.et_search)
     EditText et_search;
     @BindView(R.id.iv_search_close)
@@ -105,7 +105,7 @@ public class AllLeaderActivity extends LocalizationActivity{
 
     public void callLeaderAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("search", et_search.getText().toString()));
 //        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
 //            @Override

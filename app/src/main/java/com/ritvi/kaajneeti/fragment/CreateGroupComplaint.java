@@ -139,12 +139,12 @@ public class CreateGroupComplaint extends Fragment implements DatePickerDialog.O
         super.onViewCreated(view, savedInstanceState);
 
         attachMediaAdapter();
-        UserProfilePOJO userProfilePOJO = UtilityFunction.getUserProfilePOJO(Constants.userInfoPOJO);
+        UserProfilePOJO userProfilePOJO = Constants.userProfilePOJO;
         String profile_description = "<b>" + userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName() + "</b> ";
 
 
         Glide.with(getActivity().getApplicationContext())
-                .load(Constants.userInfoPOJO.getProfilePhotoPath())
+                .load(Constants.userProfilePOJO.getProfilePhotoPath())
                 .error(R.drawable.ic_default_profile_pic)
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
@@ -227,8 +227,8 @@ public class CreateGroupComplaint extends Fragment implements DatePickerDialog.O
 
     public void callLeaderAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
 //        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
         new WebServiceBaseResponseList<UserInfoPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<UserInfoPOJO>() {
             @Override
@@ -247,7 +247,7 @@ public class CreateGroupComplaint extends Fragment implements DatePickerDialog.O
 
     public void getAllDepartment(){
         ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id",UtilityFunction.getProfileID(Constants.userInfoPOJO)));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userProfilePOJO.getUserProfileId()));
         new WebServiceBaseResponseList<DepartmentPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<DepartmentPOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<DepartmentPOJO> responseListPOJO) {
@@ -363,10 +363,10 @@ public class CreateGroupComplaint extends Fragment implements DatePickerDialog.O
 
                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
                 nameValuePairs.add(new BasicNameValuePair("", ""));
-                reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+                reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePOJO.getUserProfileId()));
                 reqEntity.addPart("complaint_subject", new StringBody(et_subject.getText().toString()));
                 reqEntity.addPart("complaint_description", new StringBody(et_description.getText().toString()));
-                UserProfilePOJO userProfilePOJO = UtilityFunction.getUserProfilePOJO(Constants.userInfoPOJO);
+                UserProfilePOJO userProfilePOJO = Constants.userProfilePOJO;
                 reqEntity.addPart("applicant_name", new StringBody(userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName()));
                 reqEntity.addPart("applicant_father_name", new StringBody(""));
                 reqEntity.addPart("applicant_mobile", new StringBody(userProfilePOJO.getMobile()));

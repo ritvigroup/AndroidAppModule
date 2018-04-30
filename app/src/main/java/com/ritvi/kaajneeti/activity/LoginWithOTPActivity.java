@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
-import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
@@ -32,7 +30,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class LoginWithOTPActivity extends AppCompatActivity implements WebServicesCallBack{
+public class LoginWithOTPActivity extends AppCompatActivity{
 
     @BindView(R.id.btn_next)
     Button btn_next;
@@ -82,7 +80,12 @@ public class LoginWithOTPActivity extends AppCompatActivity implements WebServic
         ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("request_action","LOGIN_MOBILE"));
         nameValuePairs.add(new BasicNameValuePair("mobile","+91"+et_login_otp.getText().toString()));
-        new WebServiceBase(nameValuePairs,this,this, Constants.CALL_LOGIN_OTP,true).execute(WebServicesUrls.LOGIN_URL);
+        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                parseLoginResponse(response);
+            }
+        }, Constants.CALL_LOGIN_OTP, true).execute(WebServicesUrls.LOGIN_URL);
     }
 
     @Override
@@ -92,15 +95,6 @@ public class LoginWithOTPActivity extends AppCompatActivity implements WebServic
         }
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onGetMsg(String apicall, String response) {
-        Log.d(TagUtils.getTag(),apicall+":-"+response);
-//        if(apicall.equals(Constants.CALL_LOGIN_API)){
-            parseLoginResponse(response);
-//        }
-    }
-
     public void parseLoginResponse(String response){
         try{
             JSONObject jsonObject=new JSONObject(response);

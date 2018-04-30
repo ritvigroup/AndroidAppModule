@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -35,6 +36,7 @@ import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
+import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.activity.TagPeopleActivity;
@@ -42,7 +44,17 @@ import com.ritvi.kaajneeti.adapter.PollAnsAdapter;
 import com.ritvi.kaajneeti.pojo.PollMediaAns;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
+import com.ritvi.kaajneeti.webservice.WebServicesUrls;
+import com.ritvi.kaajneeti.webservice.WebUploadService;
 
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.json.JSONObject;
+
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +95,16 @@ public class CreatePollFragment extends Fragment {
     TextView tv_remove_images;
     @BindView(R.id.tv_add_ans)
     TextView tv_add_ans;
+    @BindView(R.id.tv_post)
+    TextView tv_post;
+    @BindView(R.id.iv_poll_question)
+    ImageView iv_poll_question;
+    @BindView(R.id.iv_question_image)
+    ImageView iv_question_image;
+    @BindView(R.id.iv_remove_question_image)
+    ImageView iv_remove_question_image;
+    @BindView(R.id.frame_question_image)
+    FrameLayout frame_question_image;
 
     List<UserInfoPOJO> taggeduserInfoPOJOS;
     String check_in;
@@ -94,6 +116,9 @@ public class CreatePollFragment extends Fragment {
     String place_description = "";
 
     boolean is_text_ans = true;
+    String selected_question_image_path="";
+
+    boolean is_question=true;
 
     public CreatePollFragment(List<UserInfoPOJO> userInfoPOJOS, String check_in, String privPublic, String question) {
         this.taggeduserInfoPOJOS = userInfoPOJOS;
@@ -114,14 +139,14 @@ public class CreatePollFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        UserProfilePOJO userProfilePOJO = UtilityFunction.getUserProfilePOJO(Constants.userInfoPOJO);
+        UserProfilePOJO userProfilePOJO = Constants.userProfilePOJO;
         profile_description = "<b>" + userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName() + "</b> ";
         tagging_description = getTaggedDescription(taggeduserInfoPOJOS);
         updateProfileStatus();
         checkPlaceDescription(check_in);
 
         Glide.with(getActivity().getApplicationContext())
-                .load(Constants.userInfoPOJO.getProfilePhotoPath())
+                .load(Constants.userProfilePOJO.getProfilePhotoPath())
                 .error(R.drawable.ic_default_profile_pic)
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
@@ -190,9 +215,9 @@ public class CreatePollFragment extends Fragment {
                 for (PollMediaAns pollMediaAns : pollMediaAnsList) {
                     pollMediaAns.setFile_path("");
                 }
-                if(is_media_adapter){
+                if (is_media_adapter) {
                     attachAdapter(false);
-                }else{
+                } else {
                     pollAnsAdapter.notifyDataSetChanged();
                 }
             }
@@ -205,7 +230,140 @@ public class CreatePollFragment extends Fragment {
                 pollAnsAdapter.notifyDataSetChanged();
             }
         });
+
+        tv_post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                createPoll();'
+                checkData();
+            }
+        });
+
+        iv_poll_question.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                is_question=true;
+                selectMedia();
+            }
+        });
+
+        iv_remove_question_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selected_question_image_path="";
+                frame_question_image.setVisibility(View.GONE);
+            }
+        });
     }
+
+    public void checkData() {
+        Log.d(TagUtils.getTag(), "poll ans:-" + pollMediaAnsList.toString());
+        boolean is_images_present = false;
+
+        for (PollMediaAns pollMediaAns : pollMediaAnsList) {
+            if(pollMediaAns.getFile_path().length()>0){
+                is_images_present=true;
+            }
+        }
+
+        if(is_images_present){
+            boolean all_images_present=true;
+
+            for(PollMediaAns pollMediaAns:pollMediaAnsList){
+                if(pollMediaAns.getFile_path().length()==0){
+                    all_images_present=false;
+                }
+            }
+
+            if(all_images_present){
+                createPoll();
+            }else{
+                ToastClass.showShortToast(getActivity().getApplicationContext(),"Please select all images");
+            }
+        }else{
+            int ans_count=0;
+            for(PollMediaAns pollMediaAns:pollMediaAnsList){
+                if(pollMediaAns.getAns().length()!=0){
+                    ans_count++;
+                }
+            }
+
+            if(ans_count<2){
+                ToastClass.showShortToast(getActivity().getApplicationContext(),"Please Enter atleast 2 ans");
+            }else{
+                createPoll();
+            }
+        }
+
+    }
+
+    public void createPoll() {
+        try {
+            MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePOJO.getUserProfileId()));
+            reqEntity.addPart("poll_question", new StringBody(et_whats.getText().toString()));
+            if (spinner_privpub.getSelectedItemPosition() == 1) {
+                reqEntity.addPart("poll_privacy", new StringBody("1"));
+            } else {
+                reqEntity.addPart("poll_privacy", new StringBody("0"));
+            }
+            reqEntity.addPart("valid_from_date", new StringBody(UtilityFunction.getCurrentDate()));
+            reqEntity.addPart("valid_end_date", new StringBody("2018-05-30"));
+
+            int count=0;
+            for(PollMediaAns pollMediaAns:pollMediaAnsList){
+                if(pollMediaAns.getFile_path().length()>0&&new File(pollMediaAns.getFile_path()).exists()){
+                    reqEntity.addPart("file["+count+"]", new FileBody(new File(pollMediaAns.getFile_path())));
+                }else{
+                    reqEntity.addPart("file["+count+"]", new StringBody(""));
+                }
+                reqEntity.addPart("poll_answer["+count+"]", new StringBody(pollMediaAns.getAns()));
+                count++;
+            }
+
+            if (selected_question_image_path.length() > 0&&new File(selected_question_image_path).exists()) {
+                reqEntity.addPart("question", new FileBody(new File(selected_question_image_path)));
+            }else{
+                reqEntity.addPart("question", new StringBody(""));
+            }
+
+            new WebUploadService(reqEntity, getActivity(), new WebServicesCallBack() {
+                @Override
+                public void onGetMsg(String apicall, String response) {
+                    Log.d(TagUtils.getTag(), apicall + " :- " + response);
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
+                        if (jsonObject.optString("status").equals("success")) {
+                            startActivity(new Intent(getActivity(), HomeActivity.class));
+                            getActivity().finishAffinity();
+                        } else {
+                            ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString(jsonObject.optString("message")));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, "CREATE_POLL", true).execute(WebServicesUrls.SAVE_MY_POLL);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> getAllAns() {
+        List<String> pollAnsList = new ArrayList<>();
+        try {
+            for (int i = 0; i < pollMediaAnsList.size(); i++) {
+                if (pollMediaAnsList.get(i).getAns().length() > 0) {
+                    pollAnsList.add(pollMediaAnsList.get(i).getAns());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return pollAnsList;
+    }
+
 
     public void cancelPoll() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
@@ -225,20 +383,15 @@ public class CreatePollFragment extends Fragment {
         alertDialog.show();
     }
 
-    public void selectMedia() {
-        Intent intent = new Intent(getActivity(), Gallery.class);
-        // Set the title
-        intent.putExtra("title", "Select media");
-        // Mode 1 for both images and videos selection, 2 for images only and 3 for videos!
-        intent.putExtra("mode", 2);
-        intent.putExtra("maxSelection", 1); // Optional
-        startActivityForResult(intent, OPEN_MEDIA_PICKER);
-    }
-
     int adapterPosition = -1;
 
-    public void selectMedia(int position) {
-        this.adapterPosition = position;
+    public void selectMediaMethod(int position){
+        this.is_question=false;
+        this.adapterPosition=position;
+        selectMedia();
+    }
+
+    public void selectMedia() {
         Intent intent = new Intent(getActivity(), Gallery.class);
         // Set the title
         intent.putExtra("title", "Select media");
@@ -313,7 +466,7 @@ public class CreatePollFragment extends Fragment {
             rv_poll_media.setItemAnimator(new DefaultItemAnimator());
         } else {
 
-            Log.d(TagUtils.getTag(),"poll media list:-"+pollMediaAnsList.toString());
+            Log.d(TagUtils.getTag(), "poll media list:-" + pollMediaAnsList.toString());
             pollAnsAdapter = new PollAnsAdapter(getActivity(), this, pollMediaAnsList);
             GridLayoutManager layoutManager
                     = new GridLayoutManager(getActivity().getApplicationContext(), 2);
@@ -348,7 +501,17 @@ public class CreatePollFragment extends Fragment {
             if (resultCode == Activity.RESULT_OK && data != null) {
                 ArrayList<String> selectionResult = data.getStringArrayListExtra("result");
                 if (selectionResult.size() > 0) {
-                    setAnsImage(selectionResult.get(0));
+                    if(is_question){
+                        frame_question_image.setVisibility(View.VISIBLE);
+                        selected_question_image_path=selectionResult.get(0);
+                        Glide.with(getActivity().getApplicationContext())
+                                .load(selectionResult.get(0))
+                                .placeholder(R.drawable.ic_default_pic)
+                                .error(R.drawable.ic_default_pic)
+                                .into(iv_question_image);
+                    }else {
+                        setAnsImage(selectionResult.get(0));
+                    }
                 }
             }
         } else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {

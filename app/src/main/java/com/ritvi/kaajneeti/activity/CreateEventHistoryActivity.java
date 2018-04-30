@@ -68,7 +68,7 @@ public class CreateEventHistoryActivity extends AppCompatActivity {
         try {
             MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-            reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePOJO.getUserProfileId()));
             reqEntity.addPart("complaint_id", new StringBody(complaintPOJO.getComplaintId()));
             reqEntity.addPart("history_id", new StringBody("0"));
             reqEntity.addPart("title", new StringBody(et_title.getText().toString()));

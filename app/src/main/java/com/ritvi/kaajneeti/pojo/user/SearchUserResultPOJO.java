@@ -10,23 +10,23 @@ import java.util.List;
 
 public class SearchUserResultPOJO {
     @SerializedName("UserProfileCitizen")
-    List<UserInfoPOJO> citizenUserInfoPOJOS;
+    List<UserProfilePOJO> citizenUserInfoPOJOS;
     @SerializedName("UserProfileLeader")
-    List<UserInfoPOJO> leaderUserInfoPOJOS;
+    List<UserProfilePOJO> leaderUserInfoPOJOS;
 
-    public List<UserInfoPOJO> getCitizenUserInfoPOJOS() {
+    public List<UserProfilePOJO> getCitizenUserInfoPOJOS() {
         return citizenUserInfoPOJOS;
     }
 
-    public void setCitizenUserInfoPOJOS(List<UserInfoPOJO> citizenUserInfoPOJOS) {
+    public void setCitizenUserInfoPOJOS(List<UserProfilePOJO> citizenUserInfoPOJOS) {
         this.citizenUserInfoPOJOS = citizenUserInfoPOJOS;
     }
 
-    public List<UserInfoPOJO> getLeaderUserInfoPOJOS() {
+    public List<UserProfilePOJO> getLeaderUserInfoPOJOS() {
         return leaderUserInfoPOJOS;
     }
 
-    public void setLeaderUserInfoPOJOS(List<UserInfoPOJO> leaderUserInfoPOJOS) {
+    public void setLeaderUserInfoPOJOS(List<UserProfilePOJO> leaderUserInfoPOJOS) {
         this.leaderUserInfoPOJOS = leaderUserInfoPOJOS;
     }
 }

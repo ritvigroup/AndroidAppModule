@@ -151,8 +151,8 @@ public class TagPeopleActivity extends AppCompatActivity {
 
     public void searchUser() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("search", act_search.getText().toString()));
         new WebServiceBaseResponseList<OutGoingRequestPOJO>(nameValuePairs, this, new ResponseListCallback<OutGoingRequestPOJO>() {
             @Override

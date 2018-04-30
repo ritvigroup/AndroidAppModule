@@ -1,10 +1,11 @@
 package com.ritvi.kaajneeti.activity;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +22,7 @@ import android.widget.LinearLayout;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.adapter.ComplaintHistoryAdapter;
+import com.ritvi.kaajneeti.fragment.CreateComplaintReplyFragment;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.analyze.ComplaintPOJO;
 import com.ritvi.kaajneeti.pojo.complaint.ComplaintHistoryPOJO;
@@ -47,8 +49,6 @@ public class ViewComplaintActivity extends AppCompatActivity {
     String complaint_name = "";
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.btn_close)
-    Button btn_close;
     @BindView(R.id.rv_complaints)
     RecyclerView rv_complaints;
 
@@ -70,28 +70,22 @@ public class ViewComplaintActivity extends AppCompatActivity {
         }
         attachAdapter();
 
-        btn_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showFeedbackDialog("Send Feedback");
-            }
-        });
-
-
-        if(complaintPOJO.getComplaintStatus().equals("4")||complaintPOJO.getComplaintStatus().equals("5")){
-            btn_close.setVisibility(View.GONE);
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         callAPI();
+
+        if (complaintPOJO.getComplaintStatus().equals("4") || complaintPOJO.getComplaintStatus().equals("5")) {
+            menu_reply.setVisible(false);
+        }
+
     }
 
     public void callAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("complaint_id", complaintPOJO.getComplaintId()));
         new WebServiceBaseResponseList<ComplaintHistoryPOJO>(nameValuePairs, this, new ResponseListCallback<ComplaintHistoryPOJO>() {
             @Override
@@ -99,15 +93,6 @@ public class ViewComplaintActivity extends AppCompatActivity {
                 try {
                     complaintHistoryPOJOS.clear();
                     if (responseListPOJO.isSuccess()) {
-//                        ArrayList<TimelineRow> timelineRowsList = new ArrayList<>();
-//                        for (ComplaintHistoryPOJO complaintHistoryPOJO:responseListPOJO.getResultList()) {
-//                            timelineRowsList.add(getTimeLineRow(complaintHistoryPOJO));
-//                        }
-//
-//                        ArrayAdapter<TimelineRow> myAdapter = new TimelineViewAdapter(ViewComplaintActivity.this, 0, timelineRowsList, true);
-//
-//                        ListView myListView = (ListView) findViewById(R.id.timeline_listView);
-//                        myListView.setAdapter(myAdapter);
 
                         complaintHistoryPOJOS.addAll(responseListPOJO.getResultList());
 
@@ -157,7 +142,7 @@ public class ViewComplaintActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+                nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
                 nameValuePairs.add(new BasicNameValuePair("complaint_id", complaintPOJO.getComplaintId()));
                 nameValuePairs.add(new BasicNameValuePair("history_id", "0"));
                 nameValuePairs.add(new BasicNameValuePair("title", et_title.getText().toString()));
@@ -213,23 +198,32 @@ public class ViewComplaintActivity extends AppCompatActivity {
         }
         return null;
     }
-
+    MenuItem menu_reply;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add, menu);//Menu Resource, Menu
+        getMenuInflater().inflate(R.menu.menu_complaint_reply, menu);//Menu Resource, Menu
+        menu_reply=menu.findItem(R.id.menu_reply);
         return true;
+    }
+
+    public void attachReplyFragment(){
+        CreateComplaintReplyFragment createComplaintReplyFragment = new CreateComplaintReplyFragment(complaintPOJO);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_main, createComplaintReplyFragment, "createComplaintReplyFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_add:
-//                startActivity(new Intent(TreatmentListActivity.this,AddTreatmentPackagerActivity.class));
-//                showFeedbackDialog("Add Description");
-                Intent intent = new Intent(this, CreateEventHistoryActivity.class);
-                intent.putExtra("complaintPOJO", complaintPOJO);
-                startActivity(intent);
+            case R.id.menu_reply:
+//                Intent intent = new Intent(this, CreateEventHistoryActivity.class);
+//                intent.putExtra("complaintPOJO", complaintPOJO);
+//                startActivity(intent);
+                attachReplyFragment();
                 return true;
             case android.R.id.home:
                 finish();

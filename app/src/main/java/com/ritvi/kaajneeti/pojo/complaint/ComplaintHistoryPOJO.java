@@ -1,7 +1,7 @@
 package com.ritvi.kaajneeti.pojo.complaint;
 
 import com.google.gson.annotations.SerializedName;
-import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class ComplaintHistoryPOJO {
     @SerializedName("AddedOnTime")
     private String addedOnTime;
     @SerializedName("ComplaintHistoryProfile")
-    private OutGoingRequestPOJO complaintHistoryProfile;
+    private UserProfilePOJO complaintHistoryProfile;
     @SerializedName("ComplaintHistoryAttachment")
     private List<Object> complaintHistoryAttachment = null;
     @SerializedName("ComplaintHistoryHistory")
@@ -97,11 +97,11 @@ public class ComplaintHistoryPOJO {
         this.addedOnTime = addedOnTime;
     }
 
-    public OutGoingRequestPOJO getComplaintHistoryProfile() {
+    public UserProfilePOJO getComplaintHistoryProfile() {
         return complaintHistoryProfile;
     }
 
-    public void setComplaintHistoryProfile(OutGoingRequestPOJO complaintHistoryProfile) {
+    public void setComplaintHistoryProfile(UserProfilePOJO complaintHistoryProfile) {
         this.complaintHistoryProfile = complaintHistoryProfile;
     }
 

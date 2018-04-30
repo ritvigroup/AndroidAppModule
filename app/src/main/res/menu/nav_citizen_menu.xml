@@ -12,36 +12,30 @@
 
         <item
             android:id="@+id/nav_connect"
-            android:checked="true"
             android:icon="@drawable/ic_connection"
             android:title="Connect" />
 
         <item
             android:id="@+id/nav_act"
-            android:checked="true"
             android:icon="@drawable/ic_communication"
             android:title="Express" />
 
         <item
             android:id="@+id/nav_analyze"
-            android:checked="true"
             android:icon="@drawable/ic_report"
             android:title="Analyze" />
 
         <item
             android:id="@+id/nav_elect"
-            android:checked="true"
             android:icon="@drawable/ic_elect"
             android:title="Contribute" />
         <item
             android:id="@+id/nav_contribute"
-            android:checked="true"
             android:icon="@drawable/ic_contribute"
             android:title="Contribute"
             android:visible="false"/>
         <item
             android:id="@+id/nav_earn"
-            android:checked="true"
             android:icon="@drawable/ic_dashboard"
             android:title="Rewards" />
     </group>
@@ -50,31 +44,27 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_rti"
-            android:checked="true"
             android:icon="@drawable/ic_rti"
             android:title="RTI"
             android:visible="false"/>
 
         <item
             android:id="@+id/nav_wallet"
-            android:checked="true"
+            android:icon="@drawable/wallet"
             android:title="Wallet"/>
 
         <item
             android:id="@+id/nav_setting"
-            android:checked="true"
             android:icon="@drawable/ic_setting"
             android:title="Settings" />
 
         <item
             android:id="@+id/nav_help"
-            android:checked="true"
             android:icon="@drawable/ic_help"
             android:title="Help &amp; Support" />
 
         <item
             android:id="@+id/nav_logout"
-            android:checked="true"
             android:icon="@drawable/ic_logout"
             android:title="Logout" />
     </group>

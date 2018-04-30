@@ -1,7 +1,7 @@
 package com.ritvi.kaajneeti.pojo.home;
 
 import com.google.gson.annotations.SerializedName;
-import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  * Created by sunil on 30-03-2018.
  */
 
-public class EventPOJO implements Serializable{
+public class EventPOJO implements Serializable {
     @SerializedName("EventId")
     private String eventId;
     @SerializedName("EventUniqueId")
@@ -40,7 +40,7 @@ public class EventPOJO implements Serializable{
     @SerializedName("UpdatedOnTime")
     private String updatedOnTime;
     @SerializedName("EventProfile")
-    private OutGoingRequestPOJO eventProfile;
+    private UserProfilePOJO eventProfile;
     @SerializedName("EventAttendee")
     private List<Object> eventAttendee;
     @SerializedName("EventAttachment")
@@ -158,11 +158,11 @@ public class EventPOJO implements Serializable{
         this.updatedOnTime = updatedOnTime;
     }
 
-    public OutGoingRequestPOJO getEventProfile() {
+    public UserProfilePOJO getEventProfile() {
         return eventProfile;
     }
 
-    public void setEventProfile(OutGoingRequestPOJO eventProfile) {
+    public void setEventProfile(UserProfilePOJO eventProfile) {
         this.eventProfile = eventProfile;
     }
 

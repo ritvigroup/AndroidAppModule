@@ -11,7 +11,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
         <LinearLayout
             android:id="@+id/ll_main"
             android:layout_width="match_parent"
@@ -20,181 +19,204 @@
             android:orientation="vertical">
 
 
-            <ScrollView
+            <!--<ScrollView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:fillViewport="true">-->
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fillViewport="true">
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingBottom="5dp">
 
-                    <LinearLayout
+                    <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:paddingBottom="5dp">
+                        android:layout_height="wrap_content"
+                        android:minHeight="50dp"
+                        app:cardElevation="2dp"
+                        app:cardUseCompatPadding="true">
 
-                        <android.support.v7.widget.CardView
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:minHeight="50dp"
-                            app:cardElevation="2dp"
-                            app:cardUseCompatPadding="true">
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:orientation="vertical"
-                                android:padding="5dp">
+                                android:layout_gravity="center_vertical"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <de.hdodenhof.circleimageview.CircleImageView
+                                    android:id="@+id/cv_profile_pic"
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp"
+                                    android:src="@drawable/ic_default_profile_pic"
+                                    app:civ_border_color="#000000"
+                                    app:civ_border_width="1dp" />
 
 
                                 <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_gravity="center_vertical"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal">
-
-                                    <de.hdodenhof.circleimageview.CircleImageView
-                                        android:id="@+id/cv_profile_pic"
-                                        android:layout_width="40dp"
-                                        android:layout_height="40dp"
-                                        android:src="@drawable/ic_default_profile_pic"
-                                        app:civ_border_color="#000000"
-                                        app:civ_border_width="1dp" />
-
-
-                                    <LinearLayout
-                                        android:id="@+id/ll_whats_mind"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginLeft="7dp"
-                                        android:orientation="vertical">
-
-                                        <TextView
-                                            android:id="@+id/tv_profile_name"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:text="Profile Name "
-                                            android:textSize="14sp" />
-
-                                        <LinearLayout
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:layout_gravity="center_vertical"
-                                            android:gravity="center_vertical"
-                                            android:orientation="horizontal">
-
-                                            <TextView
-                                                android:id="@+id/tv_whats_mind"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:background="@null"
-                                                android:text="What's on your mind?"
-                                                android:textSize="18sp" />
-
-                                            <ImageView
-                                                android:layout_width="20dp"
-                                                android:layout_height="20dp"
-                                                android:layout_marginLeft="5dp"
-                                                android:src="@drawable/ic_pencil" />
-
-                                        </LinearLayout>
-
-
-                                    </LinearLayout>
-
-                                </LinearLayout>
-
-                                <LinearLayout
+                                    android:id="@+id/ll_whats_mind"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="10dp"
-                                    android:orientation="horizontal">
+                                    android:layout_marginLeft="7dp"
+                                    android:orientation="vertical">
 
                                     <TextView
-                                        android:id="@+id/tv_event"
+                                        android:id="@+id/tv_profile_name"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="EVENT"
-                                        android:layout_weight="1"
-                                        android:textColor="#000000"
+                                        android:text="Profile Name "
+                                        android:textSize="16sp"
                                         android:textStyle="bold" />
 
-                                    <TextView
-                                        android:id="@+id/tv_poll"
-                                        android:layout_width="wrap_content"
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:text="POLL"
-                                        android:layout_weight="1"
-                                        android:textColor="#000000"
-                                        android:textStyle="bold" />
+                                        android:layout_gravity="center_vertical"
+                                        android:gravity="center_vertical"
+                                        android:orientation="horizontal">
 
-                                    <TextView
-                                        android:id="@+id/tv_complaint"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="COMPLAINT"
-                                        android:layout_weight="1"
-                                        android:textColor="#000000"
-                                        android:textStyle="bold" />
+                                        <TextView
+                                            android:id="@+id/tv_whats_mind"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:background="@null"
+                                            android:text="What's on your mind?"
+                                            android:textSize="18sp" />
 
-                                    <TextView
-                                        android:id="@+id/tv_suggestion"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="SUGGESTION"
-                                        android:layout_weight="1"
-                                        android:textColor="#000000"
-                                        android:textStyle="bold" />
+                                        <ImageView
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:layout_marginLeft="5dp"
+                                            android:src="@drawable/ic_pencil" />
 
-                                    <TextView
-                                        android:id="@+id/tv_information"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="INFO"
-                                        android:layout_weight="1"
-                                        android:textColor="#000000"
-                                        android:textStyle="bold" />
-
-                                    <TextView
-                                        android:id="@+id/tv_issue"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="ISSUE"
-                                        android:layout_weight="1"
-                                        android:textColor="#000000"
-                                        android:textStyle="bold" />
+                                    </LinearLayout>
 
 
                                 </LinearLayout>
 
                             </LinearLayout>
 
-                        </android.support.v7.widget.CardView>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:id="@+id/ll_scroll"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:visibility="gone">
+                                <TextView
+                                    android:id="@+id/tv_event"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="EVENT"
+                                    android:textColor="#000000"
+                                    android:textStyle="bold" />
 
+                                <TextView
+                                    android:id="@+id/tv_poll"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="POLL"
+                                    android:textColor="#000000"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tv_complaint"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="COMPLAINT"
+                                    android:textColor="#000000"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tv_suggestion"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="SUGGESTION"
+                                    android:textColor="#000000"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tv_information"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="INFO"
+                                    android:textColor="#000000"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tv_issue"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="ISSUE"
+                                    android:textColor="#000000"
+                                    android:textStyle="bold" />
+
+
+                            </LinearLayout>
 
                         </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                    <LinearLayout
+                        android:id="@+id/ll_scroll"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+
+                    </LinearLayout>
+
+                    <ScrollView
+                        android:id="@+id/scroll_home"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fillViewport="true"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:id="@+id/ll_post"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"></LinearLayout>
+
+                    </ScrollView>
+
+                    <android.support.v4.widget.SwipeRefreshLayout
+                        android:id="@+id/swipeRefreshLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/rv_feeds"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
-
-                    </LinearLayout>
-
+                            android:layout_height="match_parent"
+                            android:visibility="visible"></android.support.v7.widget.RecyclerView>
+                    </android.support.v4.widget.SwipeRefreshLayout>
                 </LinearLayout>
 
-            </ScrollView>
+            </LinearLayout>
+
+            <!--</ScrollView>-->
 
 
         </LinearLayout>

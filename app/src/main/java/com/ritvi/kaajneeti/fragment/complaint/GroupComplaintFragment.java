@@ -95,7 +95,7 @@ public class GroupComplaintFragment extends Fragment implements DatePickerDialog
                     AddCommunication addCommunication = (AddCommunication) getActivity();
                     Log.d(TagUtils.getTag(), "leader id:-" + addCommunication.leader_id);
                     Intent intent = new Intent(getActivity(), AddComplaintDescriptionActivity.class);
-                    intent.putExtra("applicant_name", Constants.userInfoPOJO.getUserProfileCitizen().getFirstName() + " " + Constants.userInfoPOJO.getUserProfileCitizen().getLastName());
+                    intent.putExtra("applicant_name", Constants.userProfilePOJO.getFirstName() + " " + Constants.userProfilePOJO.getLastName());
                     intent.putExtra("applicant_father_name", "");
                     intent.putExtra("applicant_mobile", "");
                     intent.putExtra("complaint_type_id", "3");

@@ -46,7 +46,7 @@ public class AllEventFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frag_complaint_list, container, false);
+        View view = inflater.inflate(R.layout.frag_all_events, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -75,7 +75,7 @@ public class AllEventFragment extends Fragment {
 
     public void callAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
 
         new WebServiceBaseResponseList<FeedPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<FeedPOJO>() {
             @Override
@@ -99,7 +99,7 @@ public class AllEventFragment extends Fragment {
     HomeFeedAdapter homeFeedAdapter;
     List<FeedPOJO> feedPOJOS=new ArrayList<>();
     public void attachAdapter() {
-        homeFeedAdapter = new HomeFeedAdapter(getActivity(), this, feedPOJOS);
+        homeFeedAdapter = new HomeFeedAdapter(getActivity(), this, feedPOJOS,getChildFragmentManager());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rv_complaints.setHasFixedSize(true);
         rv_complaints.setAdapter(homeFeedAdapter);

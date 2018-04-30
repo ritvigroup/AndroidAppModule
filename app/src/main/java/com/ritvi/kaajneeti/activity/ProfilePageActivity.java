@@ -40,7 +40,7 @@ import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.activity.Profile.ProfileEditPageActivity;
 import com.ritvi.kaajneeti.pojo.ResponsePOJO;
 import com.ritvi.kaajneeti.pojo.payment.WalletDetailPOJO;
-import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.ResponseCallBack;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponse;
@@ -89,7 +89,7 @@ public class ProfilePageActivity extends AppCompatActivity {
     @BindView(R.id.tv_contribute)
     TextView tv_contribute;
 
-    UserInfoPOJO userInfoPOJO;
+    UserProfilePOJO userProfilePOJO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,22 +99,22 @@ public class ProfilePageActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        userInfoPOJO= (UserInfoPOJO) getIntent().getSerializableExtra("userInfo");
+        userProfilePOJO = (UserProfilePOJO) getIntent().getSerializableExtra("userProfilePOJO");
 
-        tv_user_name.setText(userInfoPOJO.getUserName());
-        tv_mobile_number.setText(userInfoPOJO.getUserMobile());
-        tv_email.setText(userInfoPOJO.getUserEmail());
+        tv_user_name.setText(userProfilePOJO.getFirstName()+" "+userProfilePOJO.getLastName());
+        tv_mobile_number.setText(userProfilePOJO.getMobile());
+        tv_email.setText(userProfilePOJO.getEmail());
 
 
         Glide.with(getApplicationContext())
-                .load(userInfoPOJO.getProfilePhotoPath())
+                .load(userProfilePOJO.getProfilePhotoPath())
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .error(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
                 .into(cv_profile);
 
 
-        if(userInfoPOJO.getUserId().equals(Constants.userInfoPOJO.getUserId())){
+        if (userProfilePOJO.getUserId().equals(Constants.userProfilePOJO.getUserId())) {
             iv_edit.setVisibility(View.VISIBLE);
             cv_profile.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -141,22 +141,20 @@ public class ProfilePageActivity extends AppCompatActivity {
             });
 
 
-
-
-        }else{
+        } else {
             iv_edit.setVisibility(View.GONE);
         }
 
-        if(userInfoPOJO.getUserProfileCitizen()!=null){
-            tv_user_type.setText("Citizen");
-            iv_unfavorite.setVisibility(View.GONE);
-            tv_location.setText(userInfoPOJO.getUserProfileCitizen().getCity());
-            tv_contribute.setVisibility(View.GONE);
-        }else{
-            tv_user_type.setText("Leader");
-            iv_unfavorite.setVisibility(View.VISIBLE);
-            tv_location.setText(userInfoPOJO.getUserProfileLeader().getCity());
-        }
+//        if (userProfilePOJO.getUserProfileCitizen() != null) {
+//            tv_user_type.setText("Citizen");
+//            iv_unfavorite.setVisibility(View.GONE);
+//            tv_location.setText(userInfoPOJO.getUserProfileCitizen().getCity());
+//            tv_contribute.setVisibility(View.GONE);
+//        } else {
+//            tv_user_type.setText("Leader");
+//            iv_unfavorite.setVisibility(View.VISIBLE);
+//            tv_location.setText(userInfoPOJO.getUserProfileLeader().getCity());
+//        }
 
         tv_contribute.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,7 +173,7 @@ public class ProfilePageActivity extends AppCompatActivity {
 
     }
 
-    public void showAmountDialog(final String amount){
+    public void showAmountDialog(final String amount) {
         final Dialog dialog1 = new Dialog(this, android.R.style.Theme_DeviceDefault_Light_Dialog);
         dialog1.setCancelable(true);
         dialog1.setContentView(R.layout.dialog_enter_amount);
@@ -185,29 +183,29 @@ public class ProfilePageActivity extends AppCompatActivity {
         Window window = dialog1.getWindow();
         window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        final EditText et_amount=dialog1.findViewById(R.id.et_amount);
-        final EditText et_remark=dialog1.findViewById(R.id.et_remark);
-        TextView tv_amount=dialog1.findViewById(R.id.tv_amount);
-        final Button btn_cancel=dialog1.findViewById(R.id.btn_cancel);
-        Button btn_send=dialog1.findViewById(R.id.btn_send);
+        final EditText et_amount = dialog1.findViewById(R.id.et_amount);
+        final EditText et_remark = dialog1.findViewById(R.id.et_remark);
+        TextView tv_amount = dialog1.findViewById(R.id.tv_amount);
+        final Button btn_cancel = dialog1.findViewById(R.id.btn_cancel);
+        Button btn_send = dialog1.findViewById(R.id.btn_send);
 
-        tv_amount.setText("Rs "+amount);
+        tv_amount.setText("Rs " + amount);
 
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try{
-                    double balance_amount=Double.parseDouble(amount);
-                    double transfer_amount=Double.parseDouble(et_amount.getText().toString());
-                    if(transfer_amount<=balance_amount){
-                        callTransferAPI(et_remark.getText().toString(),transfer_amount);
+                try {
+                    double balance_amount = Double.parseDouble(amount);
+                    double transfer_amount = Double.parseDouble(et_amount.getText().toString());
+                    if (transfer_amount <= balance_amount) {
+                        callTransferAPI(et_remark.getText().toString(), transfer_amount);
                         dialog1.dismiss();
-                    }else{
-                        ToastClass.showShortToast(getApplicationContext(),"You don't have sufficient balance");
+                    } else {
+                        ToastClass.showShortToast(getApplicationContext(), "You don't have sufficient balance");
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
-                    ToastClass.showShortToast(getApplicationContext(),"Enter valid amount");
+                    ToastClass.showShortToast(getApplicationContext(), "Enter valid amount");
                 }
             }
         });
@@ -220,55 +218,55 @@ public class ProfilePageActivity extends AppCompatActivity {
         });
     }
 
-    public void getWalletDetailAPI(){
-        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+    public void getWalletDetailAPI() {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         new WebServiceBaseResponse<WalletDetailPOJO>(nameValuePairs, this, new ResponseCallBack<WalletDetailPOJO>() {
             @Override
             public void onGetMsg(ResponsePOJO<WalletDetailPOJO> responsePOJO) {
                 try {
                     if (responsePOJO.isSuccess()) {
-                        WalletDetailPOJO walletDetailPOJO=responsePOJO.getResult();
+                        WalletDetailPOJO walletDetailPOJO = responsePOJO.getResult();
                         showAmountDialog(walletDetailPOJO.getMyWalletBalance());
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        },WalletDetailPOJO.class,"GET_WALLET_DETAIL",true).execute(WebServicesUrls.WALLET_DETAIL_API);
+        }, WalletDetailPOJO.class, "GET_WALLET_DETAIL", true).execute(WebServicesUrls.WALLET_DETAIL_API);
 
     }
 
-    public void callTransferAPI(String comment,double transfer_amount){
+    public void callTransferAPI(String comment, double transfer_amount) {
         Random rand = new Random();
         String randomString = Integer.toString(rand.nextInt()) + (System.currentTimeMillis() / 1000L);
 
-        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
 
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
-        nameValuePairs.add(new BasicNameValuePair("payment_gateway_id","4"));
-        nameValuePairs.add(new BasicNameValuePair("transaction_id",UtilityFunction.hashCal("SHA-256", randomString).substring(0, 20)));
-        nameValuePairs.add(new BasicNameValuePair("payment_to_user_profile_id",UtilityFunction.getProfileID(userInfoPOJO)));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("payment_gateway_id", "4"));
+        nameValuePairs.add(new BasicNameValuePair("transaction_id", UtilityFunction.hashCal("SHA-256", randomString).substring(0, 20)));
+        nameValuePairs.add(new BasicNameValuePair("payment_to_user_profile_id", userProfilePOJO.getProfilePhotoId()));
         nameValuePairs.add(new BasicNameValuePair("transaction_date", UtilityFunction.getCurrentDate()));
-        nameValuePairs.add(new BasicNameValuePair("transaction_amount",String.valueOf(transfer_amount)));
-        nameValuePairs.add(new BasicNameValuePair("transaction_shipping_amount",String.valueOf(transfer_amount)));
-        nameValuePairs.add(new BasicNameValuePair("transaction_status","1"));
-        nameValuePairs.add(new BasicNameValuePair("debit_or_credit","0"));
-        nameValuePairs.add(new BasicNameValuePair("comments",comment));
+        nameValuePairs.add(new BasicNameValuePair("transaction_amount", String.valueOf(transfer_amount)));
+        nameValuePairs.add(new BasicNameValuePair("transaction_shipping_amount", String.valueOf(transfer_amount)));
+        nameValuePairs.add(new BasicNameValuePair("transaction_status", "1"));
+        nameValuePairs.add(new BasicNameValuePair("debit_or_credit", "0"));
+        nameValuePairs.add(new BasicNameValuePair("comments", comment));
         new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
             @Override
             public void onGetMsg(String apicall, String response) {
-                Log.d(TagUtils.getTag(),"trans response:-"+response);
-                try{
-                    JSONObject jsonObject=new JSONObject(response);
-                    if(jsonObject.optString("status").equals("success")){
-                        ToastClass.showShortToast(getApplicationContext(),"Thanks for your contribution.");
+                Log.d(TagUtils.getTag(), "trans response:-" + response);
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.optString("status").equals("success")) {
+                        ToastClass.showShortToast(getApplicationContext(), "Thanks for your contribution.");
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        },"CALL_TRANS_API",true).execute(WebServicesUrls.SAVE_PAYMENT_TRANSACTIONS);
+        }, "CALL_TRANS_API", true).execute(WebServicesUrls.SAVE_PAYMENT_TRANSACTIONS);
     }
 
 
@@ -365,7 +363,7 @@ public class ProfilePageActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);

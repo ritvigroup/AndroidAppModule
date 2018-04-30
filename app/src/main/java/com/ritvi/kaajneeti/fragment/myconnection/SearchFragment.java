@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
+import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.adapter.ViewPagerWithTitleAdapter;
 import com.ritvi.kaajneeti.fragment.search.LeaderSearchFragment;
@@ -88,13 +90,15 @@ public class SearchFragment extends Fragment {
 
     public void searchUser() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("search", et_search.getText().toString()));
 
         new WebServiceBaseResponse<SearchUserResultPOJO>(nameValuePairs, getActivity(), new ResponseCallBack<SearchUserResultPOJO>() {
             @Override
             public void onGetMsg(ResponsePOJO<SearchUserResultPOJO> responsePOJO) {
                 if (responsePOJO.isSuccess()) {
+                    Log.d(TagUtils.getTag(),"citizen list:-"+responsePOJO.getResult().getCitizenUserInfoPOJOS().size());
+                    Log.d(TagUtils.getTag(),"leader list:-"+responsePOJO.getResult().getLeaderUserInfoPOJOS().size());
                     citizenSearchFragment.setRv_users(responsePOJO.getResult().getCitizenUserInfoPOJOS());
                     leaderSearchFragment.setRv_users(responsePOJO.getResult().getLeaderUserInfoPOJOS());
                 } else {

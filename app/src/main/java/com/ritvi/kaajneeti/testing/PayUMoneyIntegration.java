@@ -274,10 +274,10 @@ public class PayUMoneyIntegration extends AppCompatActivity {
     public void callpaymentSuccessfullAPI(){
         ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
 
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("payment_gateway_id",paymentPOJO.getPaymentGatewayId()));
         nameValuePairs.add(new BasicNameValuePair("transaction_id",mTXNId));
-        nameValuePairs.add(new BasicNameValuePair("payment_to_user_profile_id",Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("payment_to_user_profile_id",Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("transaction_date", UtilityFunction.getCurrentDate()));
         nameValuePairs.add(new BasicNameValuePair("transaction_amount","10"));
         nameValuePairs.add(new BasicNameValuePair("transaction_shipping_amount","10"));

@@ -41,7 +41,7 @@ import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
-import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -84,7 +84,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 
-public class LoginActivity extends LocalizationActivity implements GoogleApiClient.OnConnectionFailedListener, WebServicesCallBack {
+public class LoginActivity extends LocalizationActivity implements GoogleApiClient.OnConnectionFailedListener {
 
 
     @BindView(R.id.iv_facebook_login)
@@ -147,7 +147,6 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
         ButterKnife.bind(this);
 
         initializeGoogleSignIn();
-
 
         tw_login_button.setCallback(new Callback<TwitterSession>() {
             @Override
@@ -268,7 +267,12 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
             nameValuePairs.add(new BasicNameValuePair("request_action", "LOGIN_WITH_MPIN"));
             nameValuePairs.add(new BasicNameValuePair("mobile", "+91" + et_mobile_number.getText().toString()));
             nameValuePairs.add(new BasicNameValuePair("mpin", et_mpin.getText().toString()));
-            new WebServiceBase(nameValuePairs, this, this, Constants.CALL_LOGIN_API, true).execute(WebServicesUrls.LOGIN_MPIN);
+            new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+                @Override
+                public void onGetMsg(String apicall, String response) {
+                    parseLoginResponse(response);
+                }
+            }, Constants.CALL_LOGIN_API, true).execute(WebServicesUrls.LOGIN_MPIN);
         } else {
             ToastClass.showShortToast(getApplicationContext(), "Please Enter required fields properly");
         }
@@ -453,41 +457,18 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
 
     }
 
-
-    @Override
-    public void onGetMsg(String apicall, String response) {
-        Log.d(TagUtils.getTag(), apicall + ":-" + response);
-        if(apicall.equals(Constants.CALL_LOGIN_API)){
-            parseLoginResponse(response);
-        }else if(apicall.equals(Constants.CALL_UPLOAD_SOCIAL_DATA)){
-            parseLoginResponse(response);
-        }
-    }
-
     public void parseLoginResponse(String response) {
         try {
             JSONObject jsonObject = new JSONObject(response);
             if (jsonObject.optString(Constants.API_STATUS).equals(Constants.API_SUCCESS)) {
                 String user_profile = jsonObject.optJSONObject("result").toString();
                 Gson gson = new Gson();
-                UserInfoPOJO userProfilePOJO = gson.fromJson(user_profile, UserInfoPOJO.class);
-//                Pref.SaveUserProfile(LoginActivity.this, user_profile);
-                Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
-                Pref.SetBooleanPref(LoginActivity.this, StringUtils.IS_LOGIN, true);
-                Constants.userInfoPOJO =userProfilePOJO;
-//                if(userProfilePOJO.getUserName().equals("")||userProfilePOJO.getUserEmail().equals("")||
-//                        userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("")){
-//                    Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,false);
-//
-//                    Pref.SetBooleanPref(LoginActivity.this, StringUtils.IS_PROFILE_COMPLETED, false);
-//                    startActivity(new Intent(LoginActivity.this, ProfileInfoActivity.class));
-//                    finishAffinity();
-//
-//                } else {
-                    Pref.SetBooleanPref(LoginActivity.this, StringUtils.IS_PROFILE_COMPLETED, true);
-                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                    finishAffinity();
-//                }
+                UserProfilePOJO userProfilePOJO = gson.fromJson(user_profile, UserProfilePOJO.class);
+                Constants.userProfilePOJO = userProfilePOJO;
+                Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, true);
+                Pref.SetStringPref(getApplicationContext(), StringUtils.USER_PROFILE, user_profile);
+                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                finishAffinity();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -504,7 +485,7 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
             @Override
             protected Void doInBackground(Void... voids) {
                 InputStream input = null;
-                OutputStream output=null;
+                OutputStream output = null;
                 try {
 
                     URL url = new URL(picture);
@@ -517,15 +498,15 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                }finally {
-                    if(input!=null){
+                } finally {
+                    if (input != null) {
                         try {
                             input.close();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
-                    if(output!=null){
+                    if (output != null) {
                         try {
                             output.close();
                         } catch (IOException e) {
@@ -563,7 +544,13 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
             reqEntity.addPart("name", new StringBody(name, Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("email", new StringBody(email, Charset.forName(HTTP.UTF_8)));
             reqEntity.addPart("mobile", new StringBody(mobile, Charset.forName(HTTP.UTF_8)));
-            new WebUploadService(reqEntity, this, this, Constants.CALL_UPLOAD_SOCIAL_DATA, false).execute(WebServicesUrls.LOGIN_WITH_SOCIAL);
+            reqEntity.addPart("login_type", new StringBody(Constants.LOGIN_TYPE, Charset.forName(HTTP.UTF_8)));
+            new WebUploadService(reqEntity, this, new WebServicesCallBack() {
+                @Override
+                public void onGetMsg(String apicall, String response) {
+                    parseLoginResponse(response);
+                }
+            }, Constants.CALL_UPLOAD_SOCIAL_DATA, false).execute(WebServicesUrls.LOGIN_WITH_SOCIAL);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

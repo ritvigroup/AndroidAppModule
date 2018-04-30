@@ -247,7 +247,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
 
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("", ""));
-            reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePOJO.getUserProfileId()));
             reqEntity.addPart("event_name", new StringBody(et_event_name.getText().toString()));
             reqEntity.addPart("event_description", new StringBody(et_description.getText().toString()));
             reqEntity.addPart("event_location", new StringBody(et_location.getText().toString()));

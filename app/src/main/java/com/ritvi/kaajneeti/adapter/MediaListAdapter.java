@@ -10,7 +10,9 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.UtilityFunction;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -37,8 +39,16 @@ public class MediaListAdapter extends RecyclerView.Adapter<MediaListAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
+        String file_path = "";
+        if (items.get(position).contains(".mp4")
+                || items.get(position).contains(".MP4")) {
+            file_path = UtilityFunction.saveThumbFile(new File(items.get(position)));
+        } else {
+            file_path = items.get(position);
+        }
+
         Glide.with(activity.getApplicationContext())
-                .load(items.get(position))
+                .load(file_path)
                 .placeholder(R.drawable.ic_default_pic)
                 .error(R.drawable.ic_default_pic)
                 .dontAnimate()
@@ -61,11 +71,12 @@ public class MediaListAdapter extends RecyclerView.Adapter<MediaListAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView iv_media,iv_close;
+        public ImageView iv_media, iv_close;
+
         public ViewHolder(View itemView) {
             super(itemView);
-            iv_media=itemView.findViewById(R.id.iv_media);
-            iv_close=itemView.findViewById(R.id.iv_close);
+            iv_media = itemView.findViewById(R.id.iv_media);
+            iv_close = itemView.findViewById(R.id.iv_close);
         }
     }
 }

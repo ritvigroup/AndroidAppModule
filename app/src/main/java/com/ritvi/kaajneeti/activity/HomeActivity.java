@@ -12,12 +12,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,13 +35,46 @@ import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.activity.Profile.ProfileDescriptionActivity;
 import com.ritvi.kaajneeti.adapter.ViewPagerAdapter;
+import com.ritvi.kaajneeti.fragment.AllComplaintsFragment;
+import com.ritvi.kaajneeti.fragment.CreateComplaintReplyFragment;
 import com.ritvi.kaajneeti.fragment.RewardsFragment;
+import com.ritvi.kaajneeti.fragment.analyze.ALLPostListFragment;
+import com.ritvi.kaajneeti.fragment.analyze.AllEventFragment;
+import com.ritvi.kaajneeti.fragment.analyze.AllPollFragment;
+import com.ritvi.kaajneeti.fragment.analyze.InformationListFragment;
+import com.ritvi.kaajneeti.fragment.analyze.SuggestionListFragment;
+import com.ritvi.kaajneeti.fragment.complaint.ComplaintDetailFragment;
+import com.ritvi.kaajneeti.fragment.complaint.ComplaintTrackFragment;
+import com.ritvi.kaajneeti.fragment.group.CreateGroupFragment;
+import com.ritvi.kaajneeti.fragment.group.SearchParticipantsFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.ContributeFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.InvestigateFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.KaajFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.MyConnectionFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.WalletFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.WithdrawalFragment;
+import com.ritvi.kaajneeti.fragment.post.EventViewFragment;
+import com.ritvi.kaajneeti.fragment.post.PostViewFragment;
+import com.ritvi.kaajneeti.fragment.profile.UpdateAddressFragment;
+import com.ritvi.kaajneeti.fragment.profile.UpdateEducationFragment;
+import com.ritvi.kaajneeti.fragment.profile.UpdateUserProfileFragment;
+import com.ritvi.kaajneeti.fragment.profile.UpdateWorkFragment;
+import com.ritvi.kaajneeti.fragment.profile.UserProfileFragment;
+import com.ritvi.kaajneeti.fragment.profile.friends.FriendsListFragment;
+import com.ritvi.kaajneeti.fragment.promotion.AudienceFragment;
+import com.ritvi.kaajneeti.fragment.promotion.EngagementFragment;
+import com.ritvi.kaajneeti.fragment.promotion.PromotionAccountFragment;
+import com.ritvi.kaajneeti.fragment.promotion.TitleAttachmentFragment;
+import com.ritvi.kaajneeti.fragment.search.SearchFragment;
+import com.ritvi.kaajneeti.fragment.setting.SettingFragment;
+import com.ritvi.kaajneeti.pojo.analyze.ComplaintPOJO;
+import com.ritvi.kaajneeti.pojo.home.EventPOJO;
+import com.ritvi.kaajneeti.pojo.home.PostPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.pojo.userdetail.AddressPOJO;
+import com.ritvi.kaajneeti.pojo.userdetail.EducationPOJO;
+import com.ritvi.kaajneeti.pojo.userdetail.WorkPOJO;
+import com.ritvi.kaajneeti.testing.CreateExpressActivity;
 import com.ritvi.kaajneeti.views.CustomViewPager;
 
 import java.util.ArrayList;
@@ -65,10 +95,7 @@ public class HomeActivity extends AppCompatActivity {
     ImageView ic_ham;
     //    @BindView(R.id.iv_search)
 //    ImageView iv_search;
-    @BindView(R.id.et_search)
-    EditText et_search;
-    @BindView(R.id.iv_search_close)
-    ImageView iv_search_close;
+
     @BindView(R.id.frame_main)
     FrameLayout frame_main;
     @BindView(R.id.viewPager)
@@ -88,6 +115,8 @@ public class HomeActivity extends AppCompatActivity {
     ImageView iv_notification;
     @BindView(R.id.iv_settings)
     ImageView iv_settings;
+    @BindView(R.id.frame_search)
+    FrameLayout frame_search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,41 +130,6 @@ public class HomeActivity extends AppCompatActivity {
         settingNavDrawer();
         setupViewPager(viewPager);
         viewPager.setPagingEnabled(false);
-
-//        iv_search.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startActivity(new Intent(HomeActivity.this, SearchActivity.class));
-//                overridePendingTransition(R.anim.enter, R.anim.exit);
-//            }
-//        });
-
-        iv_search_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                et_search.setText("");
-            }
-        });
-        et_search.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (et_search.getText().toString().length() > 0) {
-                    iv_search_close.setVisibility(View.VISIBLE);
-                } else {
-                    iv_search_close.setVisibility(View.GONE);
-                }
-            }
-        });
 
         ll_kaaj.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,19 +160,26 @@ public class HomeActivity extends AppCompatActivity {
         iv_speaker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this, AddPostActivity.class));
+                startActivity(new Intent(HomeActivity.this, CreateExpressActivity.class));
             }
         });
         iv_notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this,NotificationActivity.class));
+                startActivity(new Intent(HomeActivity.this, NotificationActivity.class));
             }
         });
         iv_settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this,SettingsActivity.class));
+                startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
+            }
+        });
+
+        frame_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showSearchFragment();
             }
         });
     }
@@ -256,12 +257,21 @@ public class HomeActivity extends AppCompatActivity {
 
         View headerLayout = nvDrawer.inflateHeaderView(R.layout.home_nav_header);
         TextView tv_header_title = headerLayout.findViewById(R.id.tv_header_title);
-        tv_header_title.setText(Constants.userInfoPOJO.getUserName());
+
+        headerLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawer.closeDrawers();
+                showUserProfileFragment(Constants.userProfilePOJO.getUserId(), Constants.userProfilePOJO.getUserProfileId());
+            }
+        });
+
+        tv_header_title.setText(Constants.userProfilePOJO.getFirstName());
 
         ImageView cv_profile_pic = headerLayout.findViewById(R.id.cv_profile_pic);
 
         Glide.with(getApplicationContext())
-                .load(Constants.userInfoPOJO.getProfilePhotoPath())
+                .load(Constants.userProfilePOJO.getProfilePhotoPath())
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .error(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
@@ -271,7 +281,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 //                startActivity(new Intent(HomeActivity.this, ProfilePageActivity.class));
-                startActivity(new Intent(HomeActivity.this, ProfileDescriptionActivity.class).putExtra("userInfo",Constants.userInfoPOJO));
+                startActivity(new Intent(HomeActivity.this, ProfileDescriptionActivity.class).putExtra("userProfilePOJO", Constants.userProfilePOJO));
             }
         });
 
@@ -328,7 +338,7 @@ public class HomeActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(1);
                 break;
             case R.id.nav_act:
-                startActivity(new Intent(this, AddPostActivity.class));
+                startActivity(new Intent(this, CreateExpressActivity.class));
                 break;
             case R.id.nav_analyze:
                 viewPager.setCurrentItem(2);
@@ -339,7 +349,8 @@ public class HomeActivity extends AppCompatActivity {
                 showContributeFragment();
                 break;
             case R.id.nav_setting:
-                startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
+//                startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
+                showSettingFragment();
                 break;
             case R.id.nav_earn:
 //                showEarnFragment();
@@ -364,7 +375,7 @@ public class HomeActivity extends AppCompatActivity {
         WalletFragment walletFragment = new WalletFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.frame_frag, walletFragment , "walletFragment");
+        transaction.add(R.id.frame_frag, walletFragment, "walletFragment");
         transaction.addToBackStack(null);
         transaction.commit();
         fragmentList.add(myConnectionFragment);
@@ -391,7 +402,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-    public void showContributeFragment(){
+    public void showContributeFragment() {
         ContributeFragment contributeFragment = new ContributeFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
@@ -399,5 +410,276 @@ public class HomeActivity extends AppCompatActivity {
         transaction.addToBackStack(null);
         transaction.commit();
         fragmentList.add(contributeFragment);
+    }
+
+    public void showPostViewFragment(PostPOJO postPOJO) {
+        PostViewFragment postViewFragment = new PostViewFragment(postPOJO);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, postViewFragment, "postViewFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(postViewFragment);
+    }
+
+    public void showEventViewFragment(EventPOJO eventPOJO) {
+        EventViewFragment eventViewFragment = new EventViewFragment(eventPOJO);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, eventViewFragment, "eventViewFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(eventViewFragment);
+    }
+
+    UserProfileFragment userProfileFragment;
+
+    public void showUserProfileFragment(String user_id, String user_profile_id) {
+        userProfileFragment = new UserProfileFragment(user_id, user_profile_id);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, userProfileFragment, "userProfileFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(userProfileFragment);
+    }
+
+    UpdateUserProfileFragment updateUserProfileFragment;
+
+    public void showProfileEditFragment(String user_id, String user_profile_id) {
+        updateUserProfileFragment = new UpdateUserProfileFragment(user_id, user_profile_id);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, updateUserProfileFragment, "updateUserProfileFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(updateUserProfileFragment);
+    }
+
+    public void showUpdateAddressFragment(String user_id, String user_profile_id, AddressPOJO addressPOJO) {
+        UpdateAddressFragment updateAddressFragment = new UpdateAddressFragment(user_id, user_profile_id, addressPOJO);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, updateAddressFragment, "updateAddressFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(updateAddressFragment);
+    }
+
+    public void showEducationUpdateFragment(String user_id, String user_profile_id, EducationPOJO educationPOJO) {
+        UpdateEducationFragment updateEducation = new UpdateEducationFragment(user_id, user_profile_id, educationPOJO);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, updateEducation, "updateEducation");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(updateEducation);
+    }
+
+    public void showUpdateWorkFragment(String user_id, String user_profile_id, WorkPOJO workPOJO) {
+        UpdateWorkFragment updateWorkFragment = new UpdateWorkFragment(user_id, user_profile_id, workPOJO);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, updateWorkFragment, "updateWorkFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(updateWorkFragment);
+    }
+
+    public void refreshUserProfileEditFragment() {
+        if (updateUserProfileFragment != null) {
+            updateUserProfileFragment.getAllProfileData();
+        }
+    }
+
+    public void refreshUserProfileFragment() {
+        if (userProfileFragment != null) {
+            userProfileFragment.getAllProfileData();
+        }
+    }
+
+    public void showSearchFragment() {
+        SearchFragment searchFragment = new SearchFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, searchFragment, "searchFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(searchFragment);
+    }
+
+    public void showSettingFragment() {
+        SettingFragment settingFragment = new SettingFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, settingFragment, "settingFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(settingFragment);
+    }
+
+    public void showComplaintDescription(ComplaintPOJO complaintPOJO) {
+        ComplaintDetailFragment complaintDetailFragment = new ComplaintDetailFragment(complaintPOJO);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, complaintDetailFragment, "complaintDetailFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(complaintDetailFragment);
+    }
+
+    ComplaintTrackFragment complaintTrackFragment;
+
+    public void showComplaintTrackFragment(ComplaintPOJO complaintPOJO) {
+        complaintTrackFragment = new ComplaintTrackFragment(complaintPOJO);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, complaintTrackFragment, "complaintTrackFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(complaintTrackFragment);
+    }
+
+    public void refreshComplaintTrack() {
+        if (complaintTrackFragment != null) {
+            complaintTrackFragment.callAPI();
+        }
+    }
+
+    public void showComplaintReplyFragment(ComplaintPOJO complaintPOJO) {
+        CreateComplaintReplyFragment complaintReplyFragment = new CreateComplaintReplyFragment(complaintPOJO);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, complaintReplyFragment, "complaintReplyFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(complaintReplyFragment);
+    }
+
+    public void showEngagementFragment() {
+        EngagementFragment engagementFragment = new EngagementFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, engagementFragment, "engagementFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(engagementFragment);
+    }
+
+    public void showPromotionAccountFragment() {
+        PromotionAccountFragment promotionAccountFragment = new PromotionAccountFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, promotionAccountFragment, "promotionAccountFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(promotionAccountFragment);
+    }
+
+    public void showAudienceFragment() {
+        AudienceFragment audienceFragment = new AudienceFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, audienceFragment, "audienceFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(audienceFragment);
+    }
+
+    public void showTitleAttachmentFragment() {
+        TitleAttachmentFragment titleAttachmentFragment = new TitleAttachmentFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, titleAttachmentFragment, "titleAttachmentFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(titleAttachmentFragment);
+    }
+
+    public SearchParticipantsFragment searchParticipantsFragment;
+
+    public void showSearchParticipantFragment() {
+        searchParticipantsFragment = new SearchParticipantsFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, searchParticipantsFragment, "searchParticipantsFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(searchParticipantsFragment);
+    }
+
+    public void showCreateGroupFragment(List<UserProfilePOJO> userProfilePOJOS) {
+        CreateGroupFragment createGroupFragment = new CreateGroupFragment(userProfilePOJOS);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, createGroupFragment, "createGroupFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(createGroupFragment);
+    }
+
+    public void showFriendListFragment() {
+        FriendsListFragment friendsListFragment = new FriendsListFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, friendsListFragment, "friendsListFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+        fragmentList.add(friendsListFragment);
+    }
+
+
+    public void showComplaintListFragment() {
+        AllComplaintsFragment complaintListFragment = new AllComplaintsFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, complaintListFragment, "complaintListFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void showSuggestionListFragment() {
+        SuggestionListFragment suggestionListFragment = new SuggestionListFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, suggestionListFragment, "suggestionListFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void showInformationFragment() {
+        InformationListFragment informationListFragment = new InformationListFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, informationListFragment, "informationListFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void showAllPostFragment() {
+        ALLPostListFragment allPostListFragment = new ALLPostListFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, allPostListFragment, "allPostListFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void showALLEventFragment() {
+        AllEventFragment allEventFragment = new AllEventFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, allEventFragment, "allEventFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void shoAllPollFragment() {
+        AllPollFragment allPollFragment = new AllPollFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_home, allPollFragment, "allPollFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

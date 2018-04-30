@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class OtpVerificationActivity extends LocalizationActivity implements WebServicesCallBack {
+public class OtpVerificationActivity extends LocalizationActivity{
 
 
     @BindView(R.id.btn_accept)
@@ -91,7 +91,12 @@ public class OtpVerificationActivity extends LocalizationActivity implements Web
             nameValuePairs.add(new BasicNameValuePair("device_token", ""));
             nameValuePairs.add(new BasicNameValuePair("mobile", mobile_number));
             nameValuePairs.add(new BasicNameValuePair("otp", et_otp.getText().toString()));
-            new WebServiceBase(nameValuePairs, this, this, Constants.CALL_OTP_VERIFIED, true).execute(WebServicesUrls.REGISTER_VALIDATE_MOBILE_OTP);
+            new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+                @Override
+                public void onGetMsg(String apicall, String response) {
+                    parseOTPVerifiedResponse(response);
+                }
+            }, Constants.CALL_OTP_VERIFIED, true).execute(WebServicesUrls.REGISTER_VALIDATE_MOBILE_OTP);
         } else {
             ToastClass.showShortToast(getApplicationContext(),"Please Enter Correct OTP");
         }
@@ -113,13 +118,6 @@ public class OtpVerificationActivity extends LocalizationActivity implements Web
                 progress_timer.setProgress(0);
             }
         }.start();
-    }
-
-    @Override
-    public void onGetMsg(String apicall, String response) {
-        if(apicall.equals(Constants.CALL_OTP_VERIFIED)){
-            parseOTPVerifiedResponse(response);
-        }
     }
 
     public void parseOTPVerifiedResponse(String response) {

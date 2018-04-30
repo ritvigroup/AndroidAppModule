@@ -40,6 +40,12 @@
             android:text="TOP UP"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/tv_convert_to_point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Convert to points"/>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

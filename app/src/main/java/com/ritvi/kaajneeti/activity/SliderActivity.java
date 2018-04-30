@@ -65,7 +65,7 @@ public class SliderActivity extends LocalizationActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Pref.setPermanentBoolean(getApplicationContext(), StringUtils.INTO_COMPLETED,true);
+                Pref.setPermanentBoolean(getApplicationContext(), StringUtils.INTRO_COMPLETED,true);
                 startActivity(new Intent(SliderActivity.this,LoginActivity.class));
             }
         });
@@ -74,7 +74,7 @@ public class SliderActivity extends LocalizationActivity {
         btn_panjikaran.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Pref.setPermanentBoolean(getApplicationContext(), StringUtils.INTO_COMPLETED,true);
+                Pref.setPermanentBoolean(getApplicationContext(), StringUtils.INTRO_COMPLETED,true);
                 startActivity(new Intent(SliderActivity.this,RegistrationActivity.class));
             }
         });

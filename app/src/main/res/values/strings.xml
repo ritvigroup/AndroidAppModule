@@ -9,6 +9,8 @@
     <string name="com.twitter.sdk.android.CONSUMER_KEY">odTUxR2y7jhDIb1ImhiGE4VDY</string>
     <string name="com.twitter.sdk.android.CONSUMER_SECRET">FFKtAo7BeyDoEoUeRXZUq1FwHAjCHutOXZc4gcimEmG4cOMWKV</string>
 
+    <string name="google_map_key">AIzaSyBgNV2K7mwwsUqwF_tsjYHyGRBu7_rAZmM</string>
+
     <string-array name="langauage">
         <item>English</item>
         <item>Hindi</item>
@@ -58,6 +60,11 @@
         <item>Never</item>
         <item>Custom</item>
         <item>Cancel</item>
+    </string-array>
+
+    <string-array name="complaint_progress">
+        <item>Pending</item>
+        <item>Close</item>
     </string-array>
 
 
@@ -165,6 +172,107 @@
     <string name="hs_menu_settings">Setting</string>
     <string name="hs_menu_help">Help &amp; Support</string>
     <string name="hs_menu_logout">Logout</string>
+
+
+    <!--countries array-->
+    <string-array name="countries">
+        <item>India</item>
+        <item>China</item>
+        <item>Australia</item>
+        <item>Japan</item>
+    </string-array>
+
+    <!--currencies array-->
+    <string-array name="currency">
+        <item>India Rupees</item>
+        <item>Pakistan Rupees</item>
+        <item>Nepal Rupees</item>
+        <item>Dollar</item>
+    </string-array>
+
+    <!--time zone-->
+    <string-array name="timezone">
+        <item>Asia/Kolkata</item>
+    </string-array>
+
+    <!--age-->
+    <string-array name="age">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
+        <item>33</item>
+        <item>34</item>
+        <item>35</item>
+        <item>36</item>
+        <item>37</item>
+        <item>38</item>
+        <item>39</item>
+        <item>40</item>
+        <item>41</item>
+        <item>42</item>
+        <item>43</item>
+        <item>45</item>
+        <item>46</item>
+        <item>47</item>
+        <item>48</item>
+        <item>49</item>
+        <item>50</item>
+        <item>51</item>
+        <item>52</item>
+        <item>53</item>
+        <item>54</item>
+        <item>55</item>
+        <item>56</item>
+        <item>57</item>
+        <item>58</item>
+        <item>59</item>
+        <item>60</item>
+        <item>61</item>
+        <item>62</item>
+        <item>63</item>
+        <item>64</item>
+        <item>65</item>
+        <item>66</item>
+        <item>67</item>
+        <item>68</item>
+        <item>69</item>
+        <item>70</item>
+    </string-array>
+
+    <!--time zone-->
+    <string-array name="budget">
+        <item>Daily Budget</item>
+        <item>Lifetime Budget</item>
+    </string-array>
 
 </resources>
 

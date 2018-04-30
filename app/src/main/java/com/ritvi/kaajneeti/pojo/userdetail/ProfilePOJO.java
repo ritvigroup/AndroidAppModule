@@ -9,6 +9,7 @@ import java.io.Serializable;
  */
 
 public class ProfilePOJO implements Serializable{
+
     @SerializedName("UserProfileId")
     private String userProfileId;
     @SerializedName("UserId")
@@ -21,8 +22,16 @@ public class ProfilePOJO implements Serializable{
     private String middleName;
     @SerializedName("LastName")
     private String lastName;
+    @SerializedName("DateOfBirth")
+    private String dateOfBirth;
+    @SerializedName("Gender")
+    private String gender;
+    @SerializedName("MaritalStatus")
+    private String maritalStatus;
     @SerializedName("Email")
     private String email;
+    @SerializedName("DepartmentName")
+    private String departmentName;
     @SerializedName("UserProfileDeviceToken")
     private String userProfileDeviceToken;
     @SerializedName("PoliticalPartyId")
@@ -43,12 +52,22 @@ public class ProfilePOJO implements Serializable{
     private String mobile;
     @SerializedName("AltMobile")
     private String altMobile;
+    @SerializedName("UserBio")
+    private String userBio;
     @SerializedName("ProfileStatus")
     private String profileStatus;
     @SerializedName("AddedBy")
     private String addedBy;
     @SerializedName("UpdatedBy")
     private String updatedBy;
+    @SerializedName("ProfilePhotoId")
+    private String profilePhotoId;
+    @SerializedName("ProfilePhotoPath")
+    private String profilePhotoPath;
+    @SerializedName("CoverPhotoId")
+    private String coverPhotoId;
+    @SerializedName("CoverPhotoPath")
+    private String coverPhotoPath;
     @SerializedName("WebsiteUrl")
     private String websiteUrl;
     @SerializedName("FacebookPageUrl")
@@ -120,12 +139,44 @@ public class ProfilePOJO implements Serializable{
         this.lastName = lastName;
     }
 
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getMaritalStatus() {
+        return maritalStatus;
+    }
+
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
     public String getUserProfileDeviceToken() {
@@ -208,6 +259,14 @@ public class ProfilePOJO implements Serializable{
         this.altMobile = altMobile;
     }
 
+    public String getUserBio() {
+        return userBio;
+    }
+
+    public void setUserBio(String userBio) {
+        this.userBio = userBio;
+    }
+
     public String getProfileStatus() {
         return profileStatus;
     }
@@ -230,6 +289,38 @@ public class ProfilePOJO implements Serializable{
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public String getProfilePhotoId() {
+        return profilePhotoId;
+    }
+
+    public void setProfilePhotoId(String profilePhotoId) {
+        this.profilePhotoId = profilePhotoId;
+    }
+
+    public String getProfilePhotoPath() {
+        return profilePhotoPath;
+    }
+
+    public void setProfilePhotoPath(String profilePhotoPath) {
+        this.profilePhotoPath = profilePhotoPath;
+    }
+
+    public String getCoverPhotoId() {
+        return coverPhotoId;
+    }
+
+    public void setCoverPhotoId(String coverPhotoId) {
+        this.coverPhotoId = coverPhotoId;
+    }
+
+    public String getCoverPhotoPath() {
+        return coverPhotoPath;
+    }
+
+    public void setCoverPhotoPath(String coverPhotoPath) {
+        this.coverPhotoPath = coverPhotoPath;
     }
 
     public String getWebsiteUrl() {

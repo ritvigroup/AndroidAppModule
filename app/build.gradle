@@ -100,5 +100,7 @@ dependencies {
     compile 'com.github.qapqap:TimelineView:v1.6'
     compile 'com.payumoney.sdkui:plug-n-play:1.2.0'
     implementation project(':multiple-media-picker')
+    compile 'com.afollestad:easyvideoplayer:0.3.0'
+    compile 'org.adw.library:discrete-seekbar:1.0.1'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -18,6 +18,7 @@ import com.ritvi.kaajneeti.adapter.EventAttachAdapter;
 import com.ritvi.kaajneeti.pojo.analyze.ComplaintAttachmentPOJO;
 import com.ritvi.kaajneeti.pojo.analyze.ComplaintPOJO;
 import com.ritvi.kaajneeti.pojo.event.EventAttachment;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,18 @@ public class ComplaintDetailActivity extends AppCompatActivity {
     TextView tv_complaint_name;
     @BindView(R.id.tv_complaint_description)
     TextView tv_complaint_description;
+    @BindView(R.id.tv_location)
+    TextView tv_location;
+    @BindView(R.id.tv_date)
+    TextView tv_date;
+    @BindView(R.id.tv_name)
+    TextView tv_name;
+    @BindView(R.id.tv_father_name)
+    TextView tv_father_name;
+    @BindView(R.id.tv_mobile_number)
+    TextView tv_mobile_number;
+
+
     @BindView(R.id.rv_attachments)
     RecyclerView rv_attachments;
     @BindView(R.id.ll_attende)
@@ -75,10 +88,18 @@ public class ComplaintDetailActivity extends AppCompatActivity {
             }
             eventAttachAdapter.notifyDataSetChanged();
 
-            if(complaintPOJO.getComplaintProfile().getUserProfileDetailPOJO().getUserInfoPOJO().getUserId().equals(Constants.userInfoPOJO.getUserId())){
+            if(complaintPOJO.getComplaintProfile().getUserId().equals(Constants.userProfilePOJO.getUserId())){
                 ll_attende.setVisibility(View.GONE);
             }else{
                 ll_attende.setVisibility(View.VISIBLE);
+            }
+
+            tv_location.setText(complaintPOJO.getComplaintAddress()+" , "+complaintPOJO.getComplaintPlace());
+            tv_date.setText(complaintPOJO.getAddedOnTime());
+            UserProfilePOJO userProfilePOJO=complaintPOJO.getComplaintProfile();
+            if(userProfilePOJO!=null) {
+                tv_name.setText(userProfilePOJO.getFirstName()+" "+userProfilePOJO.getLastName());
+                tv_mobile_number.setText(userProfilePOJO.getMobile());
             }
         }
     }

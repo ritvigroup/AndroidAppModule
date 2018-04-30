@@ -6,4 +6,7 @@
     <item
         android:id="@+id/popup_gallery"
         android:title="Gallery" />
+    <item
+        android:id="@+id/popup_remove"
+        android:title="Remove Photo" />
 </menu>

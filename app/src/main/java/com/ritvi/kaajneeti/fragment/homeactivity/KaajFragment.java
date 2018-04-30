@@ -5,38 +5,41 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
+import com.ritvi.kaajneeti.Util.SetViews;
+import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
-import com.ritvi.kaajneeti.activity.AddCommunication;
-import com.ritvi.kaajneeti.activity.CreateEventActivity;
-import com.ritvi.kaajneeti.activity.CreateInformationActivity;
-import com.ritvi.kaajneeti.activity.CreateIssueActivity;
-import com.ritvi.kaajneeti.activity.CreatePollActivity;
-import com.ritvi.kaajneeti.activity.CreateSuggestionActivity;
 import com.ritvi.kaajneeti.activity.HomeActivity;
-import com.ritvi.kaajneeti.activity.Profile.ProfileDescriptionActivity;
 import com.ritvi.kaajneeti.activity.ProfilePageActivity;
 import com.ritvi.kaajneeti.adapter.HomeFeedAdapter;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.home.FeedPOJO;
+import com.ritvi.kaajneeti.pojo.home.PollAnsPOJO;
+import com.ritvi.kaajneeti.pojo.home.PollPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.testing.CreateExpressActivity;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
+import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
+import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +53,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class KaajFragment extends Fragment {
+
+
+    int start_position=0;
+    int range=10;
+
+    boolean  check_scroll=true;
+    boolean is_apicalled=true;
 
     private static final String CALL_NEWS_FEED = "call_news_feed";
     @BindView(R.id.ll_scroll)
@@ -74,9 +84,17 @@ public class KaajFragment extends Fragment {
     TextView tv_information;
     @BindView(R.id.tv_issue)
     TextView tv_issue;
+    @BindView(R.id.scroll_home)
+    ScrollView scroll_home;
+    @BindView(R.id.ll_post)
+    LinearLayout ll_post;
+
+    @BindView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @BindView(R.id.ll_whats_mind)
     LinearLayout ll_whats_mind;
+
 
     @Nullable
     @Override
@@ -93,29 +111,24 @@ public class KaajFragment extends Fragment {
         cv_profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), ProfilePageActivity.class).putExtra("userInfo", Constants.userInfoPOJO));
+                startActivity(new Intent(getActivity(), ProfilePageActivity.class).putExtra("userProfilePOJO", Constants.userProfilePOJO));
             }
         });
 
-/*
-        tv_whats_mind.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(), AddPostActivity.class));
-            }
-        });*/
-
         if (getActivity() instanceof HomeActivity) {
 
-//            inflateNewsFeeds();
-            tv_profile_name.setText(Constants.userInfoPOJO.getUserName());
+            tv_profile_name.setText(Constants.userProfilePOJO.getFirstName()+" "+Constants.userProfilePOJO.getLastName());
 
-            Glide.with(getActivity().getApplicationContext())
-                    .load(Constants.userInfoPOJO.getProfilePhotoPath())
-                    .placeholder(R.drawable.ic_default_profile_pic)
-                    .error(R.drawable.ic_default_profile_pic)
-                    .dontAnimate()
-                    .into(cv_profile_pic);
+            Log.d(TagUtils.getTag(),"profile photo path:-"+Constants.userProfilePOJO.getProfilePhotoPath());
+
+//            Glide.with(getActivity().getApplicationContext())
+//                    .load(Constants.userProfilePOJO.getProfilePhotoPath())
+//                    .placeholder(R.drawable.ic_default_profile_pic)
+//                    .error(R.drawable.ic_default_profile_pic)
+//                    .dontAnimate()
+//                    .into(cv_profile_pic);
+
+            SetViews.setProfilePhoto(getActivity().getApplicationContext(),Constants.userProfilePOJO.getProfilePhotoPath(),cv_profile_pic);
 
             ll_whats_mind.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -168,71 +181,144 @@ public class KaajFragment extends Fragment {
             cv_profile_pic.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startActivity(new Intent(getActivity(), ProfileDescriptionActivity.class).putExtra("userInfo",Constants.userInfoPOJO));
+//                    startActivity(new Intent(getActivity(), ProfileDescriptionActivity.class).putExtra("userInfo", Constants.userInfoPOJO));
+                    if(getActivity() instanceof HomeActivity){
+                        UserProfilePOJO userProfilePOJO=Constants.userProfilePOJO;
+                        HomeActivity homeActivity= (HomeActivity) getActivity();
+                        homeActivity.showUserProfileFragment(userProfilePOJO.getUserId(),userProfilePOJO.getUserProfileId());
+                    }
                 }
             });
 
-//            StringRequest req = new StringRequest("https://demo8911870.mockable.io/getnewsfeeds",
-//                    new Response.Listener<String>() {
-//                        @Override
-//                        public void onResponse(String response) {
-//                            Log.d(TagUtils.getTag(), response.toString());
-////                        parseHomeNewsResponse(response);
-//                            onGetMsg("", response.toString());
-//                        }
-//                    }, new Response.ErrorListener() {
-//                @Override
-//                public void onErrorResponse(VolleyError error) {
-//                    Log.d(TagUtils.getTag(), "api error:-" + error.toString());
-//                }
-//            });
-//            RequestQueue queue = Volley.newRequestQueue(getActivity());
-//            queue.add(req);
+            tv_profile_name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(getActivity() instanceof HomeActivity){
+                        UserProfilePOJO userProfilePOJO=Constants.userProfilePOJO;
+                        HomeActivity homeActivity= (HomeActivity) getActivity();
+                        homeActivity.showUserProfileFragment(userProfilePOJO.getUserId(),userProfilePOJO.getUserProfileId());
+                    }
+                }
+            });
 
             attachAdapter();
-            getAllData();
+            getAllData(false);
+
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    start_position=0;
+                    range=10;
+                    check_scroll=true;
+                    is_apicalled=true;
+                    getAllData(true);
+                }
+            });
         }
+
+//        scroll_home.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+//            @Override
+//            public void onScrollChanged() {
+//                int scrollY = scroll_home.getScrollY(); // For ScrollView
+//                int scrollX = scroll_home.getScrollX();
+//                Log.d(TagUtils.getTag(),"scroll X:-"+scrollX+" scroll y:-"+scrollY);
+//            }
+//        });
+
+
+
     }
 
-    public void getAllData() {
+    public void getAllData(final boolean is_refreshing) {
+
+        is_apicalled=true;
+
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("start", String.valueOf(start_position)));
+        nameValuePairs.add(new BasicNameValuePair("end", String.valueOf(range)));
         new WebServiceBaseResponseList<FeedPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<FeedPOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<FeedPOJO> responseListPOJO) {
                 try {
-                    feedPOJOS.clear();
+//                    feedPOJOS.clear();
                     if (responseListPOJO.isSuccess()) {
+                        Log.d(TagUtils.getTag(),"response length:-"+responseListPOJO.getResultList().size());
+                        if(is_refreshing){
+                            feedPOJOS.clear();
+                        }
                         feedPOJOS.addAll(responseListPOJO.getResultList());
+                        homeFeedAdapter.notifyDataSetChanged();
+                        if(!is_refreshing) {
+                            if (responseListPOJO.getResultList().size() == range) {
+                                check_scroll = true;
+                                is_apicalled = false;
+                                start_position = start_position + range;
+                            } else {
+                                check_scroll = false;
+                                is_apicalled = true;
+                            }
+                        }else{
+                            start_position=0;
+                            range=10;
+                            check_scroll=true;
+                            is_apicalled=true;
+                        }
+//                        inflateViews();
                     } else {
                         ToastClass.showShortToast(getActivity(), responseListPOJO.getMessage());
                     }
-                    homeFeedAdapter.notifyDataSetChanged();
+                    swipeRefreshLayout.setRefreshing(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }, FeedPOJO.class, "CALL_FEED_DATA", true).execute(WebServicesUrls.HOME_PAGE_DATA);
-
+//
+//        new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
+//            @Override
+//            public void onGetMsg(String apicall, String response) {
+//                try{
+//                    JSONObject jsonObject=new JSONObject(response);
+//                    if(jsonObject.optString("status").equals("success")){
+//                        JSONArray jsonArray=jsonObject.optJSONArray("result");
+//                        for(int i=0;i<jsonArray.length();i++){
+//                            Gson gson=new Gson();
+//                            Log.d(TagUtils.getTag(),"data:-"+jsonArray.optJSONObject(i).toString());
+//                            FeedPOJO feedPOJO=gson.fromJson(jsonArray.optJSONObject(i).toString(),FeedPOJO.class);
+//                        }
+//                    }
+//                }
+//                catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+//        },"CALL_FEED_DATA",true).execute(WebServicesUrls.HOME_PAGE_DATA);
     }
 
-    public void goTo(int position){
-        if(position==0) {
+    public void goTo(int position) {
+        if (position == 0) {
 //            startActivity(new Intent(getActivity(),CreatePostActivity.class));
             startActivity(new Intent(getActivity(), CreateExpressActivity.class));
-        }else if(position==1){
-            startActivity(new Intent(getActivity(),CreateIssueActivity.class));
-        }else if(position==2){
-            startActivity(new Intent(getActivity(), AddCommunication.class));
-        }else if(position==3){
-            startActivity(new Intent(getActivity(),CreateSuggestionActivity.class));
-        }else if(position==4){
-            startActivity(new Intent(getActivity(),CreateInformationActivity.class));
-        }else if(position==5){
-            startActivity(new Intent(getActivity(),CreateEventActivity.class));
-        }else if(position==6){
-            startActivity(new Intent(getActivity(),CreatePollActivity.class));
+        } else if (position == 1) {
+//            startActivity(new Intent(getActivity(),CreateIssueActivity.class));
+            startActivity(new Intent(getActivity(), CreateExpressActivity.class).putExtra("type", "issue"));
+        } else if (position == 2) {
+//            startActivity(new Intent(getActivity(), AddCommunication.class));
+            startActivity(new Intent(getActivity(), CreateExpressActivity.class).putExtra("type", "complaint"));
+        } else if (position == 3) {
+//            startActivity(new Intent(getActivity(),CreateSuggestionActivity.class));
+            startActivity(new Intent(getActivity(), CreateExpressActivity.class).putExtra("type", "suggestion"));
+        } else if (position == 4) {
+//            startActivity(new Intent(getActivity(),CreateInformationActivity.class));
+            startActivity(new Intent(getActivity(), CreateExpressActivity.class).putExtra("type", "information"));
+        } else if (position == 5) {
+//            startActivity(new Intent(getActivity(),CreateEventActivity.class));
+            startActivity(new Intent(getActivity(), CreateExpressActivity.class).putExtra("type", "event"));
+        } else if (position == 6) {
+//            startActivity(new Intent(getActivity(),CreatePollActivity.class));
+            startActivity(new Intent(getActivity(), CreateExpressActivity.class).putExtra("type", "poll"));
         }
     }
 
@@ -240,306 +326,458 @@ public class KaajFragment extends Fragment {
     List<FeedPOJO> feedPOJOS = new ArrayList<>();
 
     public void attachAdapter() {
-        homeFeedAdapter = new HomeFeedAdapter(getActivity(), this, feedPOJOS);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        homeFeedAdapter = new HomeFeedAdapter(getActivity(), this, feedPOJOS,getChildFragmentManager());
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rv_feeds.setHasFixedSize(true);
         rv_feeds.setAdapter(homeFeedAdapter);
         rv_feeds.setLayoutManager(linearLayoutManager);
+        rv_feeds.setNestedScrollingEnabled(true);
         rv_feeds.setItemAnimator(new DefaultItemAnimator());
+
+        rv_feeds.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+//                if (linearLayoutManager.findFirstVisibleItemPosition() != -1) {
+//                    int position = linearLayoutManager.findFirstVisibleItemPosition();
+//                    Log.d(TagUtils.getTag(),"position scroll:-"+position);
+//                }
+                if (linearLayoutManager.findFirstVisibleItemPosition() != -1) {
+                    int position = linearLayoutManager.findFirstVisibleItemPosition();
+                    Log.d(TagUtils.getTag(),"position scroll:-"+position);
+                    Log.d(TagUtils.getTag(),"checking position:-"+(start_position-3));
+                    if(check_scroll&&!is_apicalled){
+                        if(position>=((start_position)-3)){
+                            getAllData(false);
+                        }
+                    }
+                }
+            }
+        });
 
     }
 
-//
-//    public void getNewsFeed() {
-//        new GetWebServices(getActivity(), this, CALL_NEWS_FEED, true).execute("https://demo8911870.mockable.io/getnewsfeeds");
-//    }
-//
-//    public void inflateNewsFeeds() {
-//        for (int i = 0; i < 10; i++) {
-//            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//
-//            View view = null;
-//            if (i % 4 == 0) {
-//                view = inflater.inflate(R.layout.inflate_poll_feed, null);
-//            } else if (i % 4 == 1) {
-//                view = inflater.inflate(R.layout.inflate_event_feed, null);
-//
-//                final TextView tv_title = view.findViewById(R.id.tv_title);
-//                final LinearLayout ll_preview = view.findViewById(R.id.ll_preview);
-//
-//                final View preview_card = inflater.inflate(R.layout.preview_content, null);
-//
-//                final ImageView image_post_set = preview_card.findViewById(R.id.image_post_set);
-//                final TextView title = preview_card.findViewById(R.id.title);
-//                final TextView url = preview_card.findViewById(R.id.url);
-//                final TextView description = preview_card.findViewById(R.id.description);
-//
-//
-//                TextCrawler textCrawler = new TextCrawler();
-//
-//                LinkPreviewCallback linkPreviewCallback = new LinkPreviewCallback() {
-//                    @Override
-//                    public void onPre() {
-//                        // Any work that needs to be done before generating the preview. Usually inflate
-//                        // your custom preview layout here.
-//                    }
-//
-//                    @Override
-//                    public void onPos(SourceContent sourceContent, boolean b) {
-//                        // Populate your preview layout with the results of sourceContent.
-//
-//                        if (sourceContent.getImages().size() > 0) {
-//                            Log.d(TagUtils.getTag(), "source:-" + sourceContent.getImages().get(0));
-//                            Glide.with(getActivity().getApplicationContext())
-//                                    .load(sourceContent.getImages().get(0))
-//                                    .into(image_post_set);
-//                        }
-//                        Log.d(TagUtils.getTag(), "source final:-" + sourceContent.getFinalUrl());
-//                        Log.d(TagUtils.getTag(), "source title:-" + sourceContent.getTitle());
-//                        Log.d(TagUtils.getTag(), "source description:-" + sourceContent.getDescription());
-//
-//                        title.setText(sourceContent.getTitle());
-//                        url.setText(sourceContent.getFinalUrl());
-//                        description.setText(sourceContent.getDescription());
-//                        ll_preview.addView(preview_card);
-//                        tv_title.setText(sourceContent.getTitle());
-//
-//                    }
-//                };
-//                textCrawler.makePreview(linkPreviewCallback, "https://www.androidhive.info/2018/01/android-app-ui-designing-using-sketch-app-and-zeplin/");
-//
-//            } else if (i % 4 == 2) {
-//                view = inflater.inflate(R.layout.inflate_sponsored_add, null);
-//            } else if (i % 4 == 3) {
-//                view = inflater.inflate(R.layout.inflate_news_feeds, null);
+//    public void inflateViews() {
+//        if (feedPOJOS.size() > 0) {
+//            for (FeedPOJO feedPOJO : feedPOJOS) {
+//                switch (feedPOJO.getFeedtype()) {
+//                    case "post":
+//                        inflatePostPOJO(getActivity(), feedPOJO.getPostPOJO());
+//                        break;
+//                    case "poll":
+//                        inflatePollPOJO(getActivity(), feedPOJO.getPollPOJO());
+//                        break;
+//                    case "event":
+//                        inflateEventPOJO(getActivity(), feedPOJO.getEventPOJO());
+//                        break;
+//                    case "complaint":
+//                        inflateComplaintPOJO(getActivity(), feedPOJO.getComplaintPOJO());
+//                        break;
+//                }
 //            }
+//        }
+//    }
+
+//    public void inflateComplaintPOJO(final Activity activity, final ComplaintPOJO complaintPOJO) {
 //
-//            CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
-//            TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
+//        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View itemView = inflater.inflate(R.layout.inflate_complaint_feed, null);
+//        TextView tv_profile_name = itemView.findViewById(R.id.tv_profile_name);
+//        TextView tv_date = itemView.findViewById(R.id.tv_date);
+//        CircleImageView cv_profile_pic = itemView.findViewById(R.id.cv_profile_pic);
+//        TextView tv_analyze = itemView.findViewById(R.id.tv_analyze);
+//        TextView tv_id = itemView.findViewById(R.id.tv_id);
+//        TextView tv_accepted = itemView.findViewById(R.id.tv_accepted);
+//        LinearLayout ll_analyze = itemView.findViewById(R.id.ll_analyze);
+//        LinearLayout ll_accept = itemView.findViewById(R.id.ll_accept);
+//        LinearLayout ll_decline = itemView.findViewById(R.id.ll_decline);
+//        LinearLayout ll_accepted = itemView.findViewById(R.id.ll_accepted);
+//        LinearLayout ll_acceptdecline = itemView.findViewById(R.id.ll_acceptdecline);
+//        ImageView iv_info = itemView.findViewById(R.id.iv_info);
+//        ImageView iv_complaint_menu = itemView.findViewById(R.id.iv_complaint_menu);
 //
-//            tv_profile_name.setText(Constants.userInfoPOJO.getUserName());
-//            Glide.with(getActivity().getApplicationContext())
-//                    .load(Constants.userInfoPOJO.getProfilePhotoPath())
-//                    .placeholder(R.drawable.ic_default_profile_pic)
+//
+//        Glide.with(activity.getApplicationContext())
+//                .load(complaintPOJO.getComplaintProfile().getUserProfileDetailPOJO().getUserInfoPOJO().getProfilePhotoPath())
+//                .error(R.drawable.ic_default_profile_pic)
+//                .placeholder(R.drawable.ic_default_profile_pic)
+//                .dontAnimate()
+//                .into(cv_profile_pic);
+//
+//        String name = "";
+//        UserProfilePOJO userProfilePOJO = complaintPOJO.getComplaintProfile().getUserProfileDetailPOJO().getUserProfilePOJO();
+//
+//        if (userProfilePOJO != null) {
+//            if (userProfilePOJO.getFirstName().equalsIgnoreCase("")
+//                    || userProfilePOJO.getMiddleName().equalsIgnoreCase("")
+//                    || userProfilePOJO.getLastName().equalsIgnoreCase("")) {
+//                name = userProfilePOJO.getFirstName();
+//            } else {
+//                name = userProfilePOJO.getFirstName() + " " + userProfilePOJO.getMiddleName() + " " + userProfilePOJO.getLastName();
+//            }
+//        }
+//
+//        iv_complaint_menu.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                final PopupMenu menu = new PopupMenu(activity, view);
+//
+//                if (UtilityFunction.getProfileID(complaintPOJO.getComplaintProfile().getUserProfileDetailPOJO().getUserInfoPOJO()).equals(Constants.userProfilePOJO.getUserProfileId())) {
+//                    menu.inflate(R.menu.menu_my_complaint);
+//                    menu.show();
+//                } else {
+//                    menu.inflate(R.menu.menu_other_complaint);
+//                    menu.show();
+//                }
+//            }
+//        });
+//
+//        tv_profile_name.setText(Html.fromHtml(name));
+//
+//        tv_date.setText(complaintPOJO.getAddedOn());
+//
+//        tv_analyze.setText(complaintPOJO.getComplaintSubject());
+//        tv_id.setText("CID:-" + complaintPOJO.getComplaintUniqueId());
+//
+//        if (complaintPOJO.getComplaintTypeId().equals("2")) {
+//            if (!UtilityFunction.getUserProfilePOJO(complaintPOJO.getComplaintProfile().getUserProfileDetailPOJO().getUserInfoPOJO()).getUserProfileId().equals(Constants.userProfilePOJO.getUserProfileId())) {
+//                boolean is_accepted = false;
+//                boolean is_declined = false;
+//                for (OutGoingRequestPOJO complaintMemberPOJO : complaintPOJO.getComplaintMemberPOJOS()) {
+//                    if (UtilityFunction.getUserProfilePOJO(complaintMemberPOJO.getUserProfileDetailPOJO().getUserInfoPOJO()).getUserProfileId().equals(Constants.userProfilePOJO.getUserProfileId())) {
+//                        if (complaintMemberPOJO.getAcceptedYesNo().equals("1")) {
+//                            is_accepted = true;
+//                        } else if (complaintMemberPOJO.getAcceptedYesNo().equals("-1")) {
+//                            is_declined = true;
+//                        }
+//                    }
+//                }
+//                if (is_accepted) {
+//                    ll_acceptdecline.setVisibility(View.GONE);
+//                    tv_accepted.setText("You accepted the complaint request");
+//                } else if (is_declined) {
+//                    ll_acceptdecline.setVisibility(View.GONE);
+//                    tv_accepted.setText("You declined the complaint request");
+//                } else {
+//                    ll_accepted.setVisibility(View.GONE);
+//                }
+//            } else {
+//                ll_acceptdecline.setVisibility(View.GONE);
+//            }
+//        } else {
+//            ll_acceptdecline.setVisibility(View.GONE);
+//        }
+//
+////        ll_decline.setOnClickListener(new View.OnClickListener() {
+////            @Override
+////            public void onClick(View view) {
+////                showAcceptDeclintDialog("Do you want to decline the Complaint Request",0,items.get(position).getComplaintId());
+////            }
+////        });
+////
+////        ll_accept.setOnClickListener(new View.OnClickListener() {
+////            @Override
+////            public void onClick(View view) {
+////                showAcceptDeclintDialog("Do you want to accept the Complaint Request",1,items.get(position).getComplaintId());
+////            }
+////        });
+//
+//        ll_analyze.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(activity, ViewComplaintActivity.class);
+//                intent.putExtra("complaint", complaintPOJO);
+//                activity.startActivity(intent);
+//            }
+//        });
+//
+//        iv_info.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(activity, ComplaintDetailActivity.class);
+//                intent.putExtra("complaintPOJO", complaintPOJO);
+//                activity.startActivity(intent);
+//            }
+//        });
+//
+//        ll_post.addView(itemView);
+//    }
+
+//    public void inflateEventPOJO(final Activity activity, final EventPOJO eventPOJO) {
+//        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View view = inflater.inflate(R.layout.inflate_event_feed, null);
+//
+//        TextView tv_name = view.findViewById(R.id.tv_name);
+//        TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
+//        TextView tv_date = view.findViewById(R.id.tv_date);
+//        ImageView iv_event_image = view.findViewById(R.id.iv_event_image);
+//        ImageView iv_event_menu = view.findViewById(R.id.iv_event_menu);
+//        CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
+//        TextView tv_event_date = view.findViewById(R.id.tv_event_date);
+//        TextView tv_place = view.findViewById(R.id.tv_place);
+//        TextView tv_month = view.findViewById(R.id.tv_month);
+//        TextView tv_day = view.findViewById(R.id.tv_day);
+//
+//
+//        iv_event_menu.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                final PopupMenu menu = new PopupMenu(activity, view);
+//
+//                if (UtilityFunction.getProfileID(eventPOJO.getEventProfile().getUserProfileDetailPOJO().getUserInfoPOJO()).equals(Constants.userProfilePOJO.getUserProfileId())) {
+//                    menu.inflate(R.menu.menu_my_complaint);
+//                    menu.show();
+//                } else {
+//                    menu.inflate(R.menu.menu_other_complaint);
+//                    menu.show();
+//                }
+//            }
+//        });
+//
+//        tv_name.setText(eventPOJO.getEventName());
+//
+//        Glide.with(activity.getApplicationContext())
+//                .load(eventPOJO.getEventProfile().getUserProfileDetailPOJO().getUserInfoPOJO().getProfilePhotoPath())
+//                .error(R.drawable.ic_default_profile_pic)
+//                .placeholder(R.drawable.ic_default_profile_pic)
+//                .dontAnimate()
+//                .into(cv_profile_pic);
+//
+//        if (eventPOJO.getEventAttachment().size() > 0) {
+//            Glide.with(activity.getApplicationContext())
+//                    .load(eventPOJO.getEventAttachment().get(0).getAttachmentFile())
 //                    .error(R.drawable.ic_default_profile_pic)
+//                    .placeholder(R.drawable.ic_default_profile_pic)
+//                    .dontAnimate()
+//                    .into(iv_event_image);
+//        }
+//
+//        String name = "";
+//        UserProfilePOJO userProfilePOJO = eventPOJO.getEventProfile().getUserProfileDetailPOJO().getUserProfilePOJO();
+//
+//        if (userProfilePOJO != null) {
+//            if (userProfilePOJO.getFirstName().equalsIgnoreCase("")
+//                    || userProfilePOJO.getMiddleName().equalsIgnoreCase("")
+//                    || userProfilePOJO.getLastName().equalsIgnoreCase("")) {
+//                name = userProfilePOJO.getFirstName();
+//            } else {
+//                name = userProfilePOJO.getFirstName() + " " + userProfilePOJO.getMiddleName() + " " + userProfilePOJO.getLastName();
+//            }
+//        }
+//
+//        tv_event_date.setText(eventPOJO.getStartDate() + "-" + eventPOJO.getEndDate());
+//        tv_place.setText(eventPOJO.getEventLocation());
+////        tv_month.setText(eventPOJO.getEveryMonth());
+//
+//        tv_profile_name.setText(name);
+//        tv_date.setText(eventPOJO.getAddedOn());
+//
+//        ll_post.addView(view);
+//    }
+
+//    public void inflatePollPOJO(final Activity activity, final PollPOJO pollPOJO) {
+//        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View view = inflater.inflate(R.layout.inflate_poll_feed, null);
+//
+//        TextView tv_questions = view.findViewById(R.id.tv_questions);
+//        LinearLayout ll_ans = view.findViewById(R.id.ll_ans);
+//        TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
+//        TextView tv_date = view.findViewById(R.id.tv_date);
+//        CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
+//        ImageView iv_poll_menu = view.findViewById(R.id.iv_poll_menu);
+//
+//        tv_questions.setText(pollPOJO.getPollQuestion());
+//
+//        iv_poll_menu.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                final PopupMenu menu = new PopupMenu(activity, view);
+//
+//                if (UtilityFunction.getProfileID(pollPOJO.getProfileDetailPOJO().getUserProfileDetailPOJO().getUserInfoPOJO()).equals(Constants.userProfilePOJO.getUserProfileId())) {
+//                    menu.inflate(R.menu.menu_my_complaint);
+//                    menu.show();
+//                } else {
+//                    menu.inflate(R.menu.menu_other_complaint);
+//                    menu.show();
+//                }
+//            }
+//        });
+//
+//        Glide.with(activity.getApplicationContext())
+//                .load(pollPOJO.getProfileDetailPOJO().getUserProfileDetailPOJO().getUserInfoPOJO().getProfilePhotoPath())
+//                .error(R.drawable.ic_default_profile_pic)
+//                .placeholder(R.drawable.ic_default_profile_pic)
+//                .dontAnimate()
+//                .into(cv_profile_pic);
+//
+//        String name = "";
+//        UserProfilePOJO userProfilePOJO = pollPOJO.getProfileDetailPOJO().getUserProfileDetailPOJO().getUserProfilePOJO();
+//
+//        if (userProfilePOJO != null) {
+//            if (userProfilePOJO.getFirstName().equalsIgnoreCase("")
+//                    || userProfilePOJO.getMiddleName().equalsIgnoreCase("")
+//                    || userProfilePOJO.getLastName().equalsIgnoreCase("")) {
+//                name = userProfilePOJO.getFirstName();
+//            } else {
+//                name = userProfilePOJO.getFirstName() + " " + userProfilePOJO.getMiddleName() + " " + userProfilePOJO.getLastName();
+//            }
+//        }
+//
+//        tv_profile_name.setText(name);
+//        tv_date.setText(pollPOJO.getAddedOn());
+//
+//        for (final PollAnsPOJO pollAnsPOJO : pollPOJO.getPollAnsPOJOS()) {
+//            LayoutInflater inflater1 = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//            View view1 = inflater1.inflate(R.layout.inflate_poll_ans, null);
+//
+//            Button btn_ans = view1.findViewById(R.id.btn_ans);
+//            btn_ans.setTag(pollAnsPOJO.getPollAnswer());
+//            btn_ans.setText(pollAnsPOJO.getPollAnswer());
+//
+//            btn_ans.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    callSavePollAns(pollPOJO, pollAnsPOJO);
+//                }
+//            });
+//            if (ll_ans.findViewWithTag(pollAnsPOJO.getPollAnswer()) == null) {
+//                ll_ans.addView(view1);
+//            }
+//        }
+//
+//        ll_post.addView(view);
+//    }
+
+    public void callSavePollAns(PollPOJO pollPOJO, PollAnsPOJO pollAnsPOJO) {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("poll_id", pollPOJO.getPollId()));
+        nameValuePairs.add(new BasicNameValuePair("answer_id", pollAnsPOJO.getPollAnswerId()));
+        new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.optString("status").equals("success")) {
+                        ToastClass.showShortToast(getActivity().getApplicationContext(), "Poll Ans Saved");
+                    } else {
+                        ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "POLL_ANS", true).execute(WebServicesUrls.SAVE_POLL_ANS);
+
+    }
+
+//    public void inflatePostPOJO(final Activity activity, final PostPOJO postPOJO) {
+//        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View view = inflater.inflate(R.layout.inflate_news_feeds, null);
+//        TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
+//        TextView tv_date = view.findViewById(R.id.tv_date);
+//        ImageView iv_feed_image = view.findViewById(R.id.iv_feed_image);
+//        ImageView iv_post_menu = view.findViewById(R.id.iv_post_menu);
+//        TextView tv_description = view.findViewById(R.id.tv_description);
+//        CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
+//
+//        if (postPOJO != null) {
+//
+//
+//            iv_post_menu.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//
+//                    final PopupMenu menu = new PopupMenu(activity, view);
+//
+//                    if (UtilityFunction.getProfileID(postPOJO.getPostProfile().getUserProfileDetailPOJO().getUserInfoPOJO()).equals(Constants.userProfilePOJO.getUserProfileId())) {
+//                        menu.inflate(R.menu.menu_my_complaint);
+//                        menu.show();
+//                    } else {
+//                        menu.inflate(R.menu.menu_other_complaint);
+//                        menu.show();
+//                    }
+//                }
+//            });
+//
+//            Glide.with(activity.getApplicationContext())
+//                    .load(postPOJO.getPostProfile().getUserProfileDetailPOJO().getUserInfoPOJO().getProfilePhotoPath())
+//                    .error(R.drawable.ic_default_profile_pic)
+//                    .placeholder(R.drawable.ic_default_profile_pic)
 //                    .dontAnimate()
 //                    .into(cv_profile_pic);
 //
-//
-//            ll_scroll.addView(view);
-//
-//        }
-//
-//    }
-
-//    @Override
-//    public void onGetMsg(String apicall, String response) {
-//        Log.d(TagUtils.getTag(), apicall + ":-" + response);
-//        try {
-//            JSONObject jsonObject = new JSONObject(response);
-//            if (jsonObject.optString("status").equals("success")) {
-//                JSONArray jsonArray = jsonObject.optJSONArray("feeds");
-//                if (jsonArray.length() > 0) {
-//                    for (int i = 0; i < jsonArray.length(); i++) {
-//                        inflateNewsFeed(jsonArray.optJSONObject(i).toString());
-//                    }
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public void inflateNewsFeed(String news) {
-//
-//        try {
-//
-//            JSONObject jsonObject = new JSONObject(news);
-//
-//            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            View view = null;
-//            if (jsonObject.optString("feedtype").equals("post")) {
-//                view = inflater.inflate(R.layout.inflate_news_feeds, null);
-//
-//                Gson gson = new Gson();
-//                PostFeed postFeed = gson.fromJson(jsonObject.optJSONObject("data").toString(), PostFeed.class);
-//                inflatePostFeed(view, postFeed);
-//
-//            } else if (jsonObject.optString("feedtype").equals("poll")) {
-//                view = inflater.inflate(R.layout.inflate_poll_feed, null);
-//
-//                Gson gson = new Gson();
-//                PollFeed pollFeed = gson.fromJson(jsonObject.optJSONObject("data").toString(), PollFeed.class);
-//                inflatePollFeed(view, pollFeed);
-//            } else if (jsonObject.optString("feedtype").equals("event")) {
-//                view = inflater.inflate(R.layout.inflate_event_feed, null);
-//
-//                Gson gson = new Gson();
-//                EventFeed eventFeed = gson.fromJson(jsonObject.optJSONObject("data").toString(), EventFeed.class);
-//                inflateEventFeed(view, eventFeed);
-//            }
-//
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public void inflatePostFeed(View view, PostFeed postFeed) {
-//        CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
-//        TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
-//        ImageView iv_feed_image = view.findViewById(R.id.iv_feed_image);
-//        TextView tv_description = view.findViewById(R.id.tv_description);
-////        ViewPager viewPager = view.findViewById(R.id.viewPager);
-//
-//        tv_profile_name.setText(postFeed.getFirst_name() + " " + postFeed.getLast_name());
-//        Glide.with(getActivity().getApplicationContext())
-//                .load(postFeed.getProfile_pic())
-//                .placeholder(R.drawable.ic_default_profile_pic)
-//                .error(R.drawable.ic_default_profile_pic)
-//                .dontAnimate()
-//                .into(cv_profile_pic);
-//
-//
-//        String profile_name = postFeed.getFirst_name() + " " + postFeed.getLast_name();
-//        String profile_desc = "<b>" + profile_name + "</b>";
-//
-//        if (!postFeed.getFeeling().equals("")) {
-//            profile_desc += " is feeling <b>" + postFeed.getFeeling() + "</b> ";
-//        } else {
-//            if (postFeed.getPostAttachments().size() > 0) {
-//                if (postFeed.getPostAttachments().size() > 1) {
-//                    profile_desc += " - added " + postFeed.getPostAttachments().size() + " Photos";
-//                } else {
-//                    profile_desc += " - added Photo";
-//                }
-//                Glide.with(getActivity())
-//                        .load(postFeed.getPostAttachments().get(0).getAttachmentFile())
+//            if (postPOJO.getPostAttachment().size() > 0) {
+//                Glide.with(activity.getApplicationContext())
+//                        .load(postPOJO.getPostAttachment().get(0).getAttachmentFile())
+//                        .error(R.drawable.ic_default_profile_pic)
+//                        .placeholder(R.drawable.ic_default_profile_pic)
+//                        .dontAnimate()
 //                        .into(iv_feed_image);
 //            } else {
 //                iv_feed_image.setVisibility(View.GONE);
-////            viewPager.setVisibility(View.GONE);
 //            }
+//
+//            String name = "";
+//            UserProfilePOJO userProfilePOJO = postPOJO.getPostProfile().getUserProfileDetailPOJO().getUserProfilePOJO();
+//
+//            if (userProfilePOJO != null) {
+//                if (userProfilePOJO.getFirstName().equalsIgnoreCase("")
+//                        || userProfilePOJO.getMiddleName().equalsIgnoreCase("")
+//                        || userProfilePOJO.getLastName().equalsIgnoreCase("")) {
+//                    name = userProfilePOJO.getFirstName();
+//                } else {
+//                    name = userProfilePOJO.getFirstName() + " " + userProfilePOJO.getMiddleName() + " " + userProfilePOJO.getLastName();
+//                }
+//            }
+//
+//            String profile_description = "";
+//            boolean containDescribe = false;
+//            if (postPOJO.getPostTag().size() > 0) {
+//                containDescribe = true;
+//            }
+//
+//            if (postPOJO.getFeelingDataPOJOS().size() > 0) {
+//                containDescribe = true;
+//            }
+//
+//            if (containDescribe) {
+//                profile_description += " is ";
+//
+//                if (postPOJO.getFeelingDataPOJOS().size() > 0) {
+//                    profile_description += "<b>feeling " + postPOJO.getFeelingDataPOJOS().get(0).getFeelingName() + "</b>";
+//                }
+//
+//                if (postPOJO.getPostTag().size() > 0) {
+//                    profile_description += " with ";
+//                    if (postPOJO.getPostTag().size() > 2) {
+//                        profile_description += "<b>" + postPOJO.getPostTag().get(0).getUserProfileDetailPOJO().getUserProfilePOJO().getFirstName() + " and " + (postPOJO.getPostTag().size() - 1) + " other" + "</b>";
+//                    } else if (postPOJO.getPostTag().size() == 2) {
+//                        profile_description += "<b>" + postPOJO.getPostTag().get(0).getUserProfileDetailPOJO().getUserProfilePOJO().getFirstName() + " " + postPOJO.getPostTag().get(0).getUserProfileDetailPOJO().getUserProfilePOJO().getLastName() +
+//                                " and " + postPOJO.getPostTag().get(1).getUserProfileDetailPOJO().getUserProfilePOJO().getFirstName() + " " + postPOJO.getPostTag().get(1).getUserProfileDetailPOJO().getUserProfilePOJO().getLastName() + "</b>";
+//                    } else {
+//                        profile_description += "<b>" + postPOJO.getPostTag().get(0).getUserProfileDetailPOJO().getUserProfilePOJO().getFirstName() + " " + postPOJO.getPostTag().get(0).getUserProfileDetailPOJO().getUserProfilePOJO().getLastName() + "</b>";
+//                    }
+//                }
+//            }
+//
+//            tv_profile_name.setText(Html.fromHtml(name + " " + profile_description));
+//            if (!postPOJO.getPostDescription().equalsIgnoreCase("")) {
+//                tv_description.setText(postPOJO.getPostDescription());
+//            } else {
+//                tv_description.setVisibility(View.GONE);
+//            }
+//            tv_date.setText(postPOJO.getAddedOn());
 //        }
-//
-//        if (postFeed.getPostAttachments().size() > 0) {
-//            Glide.with(getActivity())
-//                    .load(postFeed.getPostAttachments().get(0).getAttachmentFile())
-//                    .into(iv_feed_image);
-//        } else {
-//            iv_feed_image.setVisibility(View.GONE);
-////            viewPager.setVisibility(View.GONE);
-//        }
-//
-//
-//        if (postFeed.getPostDescription().equals("")) {
-//            tv_description.setVisibility(View.GONE);
-//        } else {
-//            tv_description.setText(postFeed.getPostDescription());
-//        }
-//        if (postFeed.getTaggedusersList().size() > 0) {
-//            if (postFeed.getTaggedusersList().size() == 1) {
-//                profile_desc += " with <b>" + postFeed.getTaggedusersList().get(0).getFirst_name() + " " + postFeed.getTaggedusersList().get(0).getLast_name() + "</b>";
-//            } else if (postFeed.getTaggedusersList().size() == 2) {
-//                profile_desc += " with <b>" + postFeed.getTaggedusersList().get(0).getFirst_name() + " " + postFeed.getTaggedusersList().get(0).getLast_name() + "</b> and <b>" + postFeed.getTaggedusersList().get(1).getFirst_name() + " " + postFeed.getTaggedusersList().get(1).getLast_name() + "</b>";
-//            } else if (postFeed.getTaggedusersList().size() > 2) {
-//                profile_desc += " with <b>" + postFeed.getTaggedusersList().get(0).getFirst_name() + " " + postFeed.getTaggedusersList().get(0).getLast_name() + "</b> , <b>" + postFeed.getTaggedusersList().get(1).getFirst_name() + " " + postFeed.getTaggedusersList().get(1).getLast_name() + "</b> and <b>" + (postFeed.getTaggedusersList().size() - 2) + " others.</b>";
-//            }
-//        }
-//
-//
-//        tv_profile_name.setText(Html.fromHtml(profile_desc));
-//        ll_scroll.addView(view);
-//    }
-//
-//    public void inflatePollFeed(View view, PollFeed pollFeed) {
-//        CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
-//        TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
-//        final LinearLayout ll_votes = view.findViewById(R.id.ll_votes);
-//        final LinearLayout ll_review = view.findViewById(R.id.ll_review);
-//
-//        tv_profile_name.setText(pollFeed.getFirstName() + " " + pollFeed.getLastName());
-//        Glide.with(getActivity().getApplicationContext())
-//                .load(pollFeed.getProfilePic())
-//                .placeholder(R.drawable.ic_default_profile_pic)
-//                .error(R.drawable.ic_default_profile_pic)
-//                .dontAnimate()
-//                .into(cv_profile_pic);
-//
-//        final Button btn_ans1 = view.findViewById(R.id.btn_ans1);
-//        Button btn_ans2 = view.findViewById(R.id.btn_ans2);
-//        Button btn_ans3 = view.findViewById(R.id.btn_ans3);
-//        final Button btn_ans4 = view.findViewById(R.id.btn_ans4);
-//
-//        btn_ans1.setText(pollFeed.getPollAnsList().get(0).getPollAnswer());
-//        btn_ans2.setText(pollFeed.getPollAnsList().get(1).getPollAnswer());
-//        btn_ans3.setText(pollFeed.getPollAnsList().get(2).getPollAnswer());
-//        btn_ans4.setText(pollFeed.getPollAnsList().get(3).getPollAnswer());
-//
-//        btn_ans1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                ll_votes.setVisibility(View.GONE);
-//                ll_review.setVisibility(View.VISIBLE);
-//            }
-//        });
-//        btn_ans2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                btn_ans1.callOnClick();
-//            }
-//        });
-//
-//        btn_ans3.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                btn_ans1.callOnClick();
-//            }
-//        });
-//        btn_ans4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                btn_ans1.callOnClick();
-//            }
-//        });
-////        for (PollAns pollAns : pollFeed.getPollAnsList()) {
-////            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-////            View pollAnsView = inflater.inflate(R.layout.inflate_poll_ans, ll_votes,true);
-////
-////            Button btn_ans = pollAnsView.findViewById(R.id.btn_ans);
-////            btn_ans.setText(pollAns.getPollAnswer());
-////            ll_votes.addView(btn_ans);
-////        }
-//
-//        ll_scroll.addView(view);
-//    }
-//
-//    public void inflateEventFeed(View view, EventFeed eventFeed) {
-//        CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
-//        TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
-//
-//        tv_profile_name.setText(eventFeed.getFirstName() + " " + eventFeed.getLastName());
-//        Glide.with(getActivity().getApplicationContext())
-//                .load(eventFeed.getProfilePic())
-//                .placeholder(R.drawable.ic_default_profile_pic)
-//                .error(R.drawable.ic_default_profile_pic)
-//                .dontAnimate()
-//                .into(cv_profile_pic);
-//
-//        ImageView iv_event_image=view.findViewById(R.id.iv_event_image);
-//        TextView tv_name=view.findViewById(R.id.tv_name);
-//        TextView tv_date=view.findViewById(R.id.tv_date);
-//        TextView tv_place=view.findViewById(R.id.tv_place);
-//
-//        Glide.with(getActivity().getApplicationContext())
-//                .load(eventFeed.getAttachments().get(0).getAttachmentFile())
-//                .into(iv_event_image);
-//
-//        tv_name.setText(eventFeed.getEventName());
-//        tv_place.setText(eventFeed.getEventLocation());
-//        tv_date.setText(eventFeed.getStartDate()+" - "+eventFeed.getEndDate());
-//
-//
-//        ll_scroll.addView(view);
+//        ll_post.addView(view);
 //    }
 }

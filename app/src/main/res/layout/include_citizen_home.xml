@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -32,11 +31,11 @@
                 <LinearLayout
                     android:id="@+id/ll_header"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:gravity="center_vertical">
-                    0
+
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -46,35 +45,38 @@
                         android:text="Kaajneeti"
                         android:textColor="#FFFFFF"
                         android:textSize="22sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:visibility="gone"/>
 
                     <FrameLayout
+                        android:id="@+id/frame_search"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="25dp"
-                        android:layout_weight="1"
-                        android:visibility="gone">
+                        android:layout_weight="1">
 
                         <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
                             android:layout_gravity="center_vertical"
                             android:src="@drawable/places_ic_search"
                             android:tint="#FFFFFF" />
 
-                        <EditText
-                            android:id="@+id/et_search"
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:hint="Search"
+                            android:textColorHint="#EEEEEE"
                             android:backgroundTint="#FFFFFF"
-                            android:paddingLeft="30dp"
-                            android:paddingRight="30dp"
-                            android:singleLine="true"
                             android:textColor="#FFFFFF"
-                            android:textColorHint="#FFFFFF" />
+                            android:paddingLeft="30dp"
+                            android:textSize="18sp"/>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#FFFFFF"
+                            android:layout_gravity="bottom"/>
 
                         <ImageView
-                            android:id="@+id/iv_search_close"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_gravity="right|center_vertical"

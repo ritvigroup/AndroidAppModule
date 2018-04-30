@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.fragment.homeactivity.InvestigateFragment;
 import com.ritvi.kaajneeti.pojo.analyze.AnalyzeCategoryPOJO;
 
@@ -47,33 +48,33 @@ public class AnalyzeCategoryAdapter extends RecyclerView.Adapter<AnalyzeCategory
             public void onClick(View view) {
                 if(items.get(position).getType().equalsIgnoreCase("Complaints")){
                     if(fragment instanceof InvestigateFragment){
-                        InvestigateFragment investigateFragment= (InvestigateFragment) fragment;
-                        investigateFragment.showComplaintListFragment();
+                        HomeActivity homeActivity= (HomeActivity) activity;
+                        homeActivity.showComplaintListFragment();
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Suggestions")){
                     if(fragment instanceof InvestigateFragment){
-                        InvestigateFragment investigateFragment= (InvestigateFragment) fragment;
-                        investigateFragment.showSuggestionListFragment();
+                        HomeActivity homeActivity= (HomeActivity) activity;
+                        homeActivity.showSuggestionListFragment();
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Informations")){
                     if(fragment instanceof InvestigateFragment){
-                        InvestigateFragment investigateFragment= (InvestigateFragment) fragment;
-                        investigateFragment.showInformationFragment();
+                        HomeActivity homeActivity= (HomeActivity) activity;
+                        homeActivity.showInformationFragment();
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Post")){
                     if(fragment instanceof InvestigateFragment){
-                        InvestigateFragment investigateFragment= (InvestigateFragment) fragment;
-                        investigateFragment.showAllPostFragment();
+                        HomeActivity homeActivity= (HomeActivity) activity;
+                        homeActivity.showAllPostFragment();
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Event")){
                     if(fragment instanceof InvestigateFragment){
-                        InvestigateFragment investigateFragment= (InvestigateFragment) fragment;
-                        investigateFragment.showALLEventFragment();
+                        HomeActivity homeActivity= (HomeActivity) activity;
+                        homeActivity.showALLEventFragment();
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Poll")){
                     if(fragment instanceof InvestigateFragment){
-                        InvestigateFragment investigateFragment= (InvestigateFragment) fragment;
-                        investigateFragment.shoAllPollFragment();
+                        HomeActivity homeActivity= (HomeActivity) activity;
+                        homeActivity.shoAllPollFragment();
                     }
                 }
             }

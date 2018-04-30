@@ -123,7 +123,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="@string/lmn_login_button" />
+            android:text="@string/lmn_login_button"
+            android:background="@color/colorPrimary"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"/>
 
     </LinearLayout>
 

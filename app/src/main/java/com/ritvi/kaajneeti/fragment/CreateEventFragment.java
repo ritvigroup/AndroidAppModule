@@ -156,7 +156,7 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        UserProfilePOJO userProfilePOJO = UtilityFunction.getUserProfilePOJO(Constants.userInfoPOJO);
+        UserProfilePOJO userProfilePOJO = Constants.userProfilePOJO;
         profile_description = "<b>" + userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName() + "</b> ";
         tagging_description = getTaggedDescription(taggeduserInfoPOJOS);
         updateProfileStatus();
@@ -174,7 +174,7 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
         });
 
         Glide.with(getActivity().getApplicationContext())
-                .load(Constants.userInfoPOJO.getProfilePhotoPath())
+                .load(Constants.userProfilePOJO.getProfilePhotoPath())
                 .error(R.drawable.ic_default_profile_pic)
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
@@ -290,7 +290,7 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
 
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("", ""));
-            reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePOJO.getUserProfileId()));
             reqEntity.addPart("event_name", new StringBody(et_event_name.getText().toString()));
             reqEntity.addPart("event_description", new StringBody(et_description.getText().toString()));
             reqEntity.addPart("event_location", new StringBody(tv_location.getText().toString()));

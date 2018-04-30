@@ -1,7 +1,7 @@
 package com.ritvi.kaajneeti.pojo.home;
 
 import com.google.gson.annotations.SerializedName;
-import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  * Created by sunil on 30-03-2018.
  */
 
-public class PostPOJO implements Serializable{
+public class PostPOJO implements Serializable {
     @SerializedName("PostId")
     private String postId;
     @SerializedName("UserProfileId")
@@ -36,9 +36,9 @@ public class PostPOJO implements Serializable{
     @SerializedName("FeelingData")
     private List<FeelingDataPOJO> feelingDataPOJOS;
     @SerializedName("PostProfile")
-    private OutGoingRequestPOJO postProfile;
+    private UserProfilePOJO postProfile;
     @SerializedName("PostTag")
-    private List<OutGoingRequestPOJO> postTag;
+    private List<UserProfilePOJO> postTag;
     @SerializedName("PostAttachment")
     private List<PostAttachmentPOJO> postAttachment;
 
@@ -138,19 +138,19 @@ public class PostPOJO implements Serializable{
         this.feelingDataPOJOS = feelingDataPOJOS;
     }
 
-    public OutGoingRequestPOJO getPostProfile() {
+    public UserProfilePOJO getPostProfile() {
         return postProfile;
     }
 
-    public void setPostProfile(OutGoingRequestPOJO postProfile) {
+    public void setPostProfile(UserProfilePOJO postProfile) {
         this.postProfile = postProfile;
     }
 
-    public List<OutGoingRequestPOJO> getPostTag() {
+    public List<UserProfilePOJO> getPostTag() {
         return postTag;
     }
 
-    public void setPostTag(List<OutGoingRequestPOJO> postTag) {
+    public void setPostTag(List<UserProfilePOJO> postTag) {
         this.postTag = postTag;
     }
 

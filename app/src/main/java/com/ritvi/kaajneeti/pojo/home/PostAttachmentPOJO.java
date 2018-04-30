@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Created by sunil on 30-03-2018.
  */
 
-public class PostAttachmentPOJO implements Serializable{
+public class PostAttachmentPOJO implements Serializable {
     @SerializedName("PostAttachmentId")
     private String postAttachmentId;
     @SerializedName("PostId")
@@ -21,6 +21,8 @@ public class PostAttachmentPOJO implements Serializable{
     private String attachmentFile;
     @SerializedName("AttachmentOrginalFile")
     private String attachmentOrginalFile;
+    @SerializedName("AttachmentThumb")
+    private String attachmentThumb;
     @SerializedName("AttachmentOrder")
     private String attachmentOrder;
     @SerializedName("AttachmentStatus")
@@ -76,6 +78,14 @@ public class PostAttachmentPOJO implements Serializable{
 
     public void setAttachmentOrginalFile(String attachmentOrginalFile) {
         this.attachmentOrginalFile = attachmentOrginalFile;
+    }
+
+    public String getAttachmentThumb() {
+        return attachmentThumb;
+    }
+
+    public void setAttachmentThumb(String attachmentThumb) {
+        this.attachmentThumb = attachmentThumb;
     }
 
     public String getAttachmentOrder() {

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 import com.akexorcist.localizationactivity.ui.LocalizationActivity;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
-import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
@@ -33,7 +31,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RegistrationActivity extends LocalizationActivity implements View.OnClickListener, TextWatcher, WebServicesCallBack {
+public class RegistrationActivity extends LocalizationActivity implements View.OnClickListener, TextWatcher{
 
 
     @BindView(R.id.btn_accept)
@@ -115,18 +113,14 @@ public class RegistrationActivity extends LocalizationActivity implements View.O
             nameValuePairs.add(new BasicNameValuePair("request_action", "REGISTER_MOBILE"));
             nameValuePairs.add(new BasicNameValuePair("device_token", ""));
             nameValuePairs.add(new BasicNameValuePair("mobile", "+91" + et_phone_number.getText().toString()));
-            new WebServiceBase(nameValuePairs, this, this, Constants.CALL_REGISTER_API, true).execute(WebServicesUrls.REGISTER_URL);
+            new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+                @Override
+                public void onGetMsg(String apicall, String response) {
+                    parseRegisterResponse(response);
+                }
+            }, Constants.CALL_REGISTER_API, true).execute(WebServicesUrls.REGISTER_URL);
 
 //            startActivity(new Intent(RegistrationActivity.this, OtpVerificationActivity.class));
-        }
-    }
-
-    @Override
-    public void onGetMsg(String apicall, String response) {
-        Log.d(TagUtils.getTag(), apicall + " :- " + response);
-
-        if (apicall.equals(Constants.CALL_REGISTER_API)) {
-            parseRegisterResponse(response);
         }
     }
 

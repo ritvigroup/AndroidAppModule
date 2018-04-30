@@ -68,7 +68,7 @@ public class PollAnsAdapter extends RecyclerView.Adapter<PollAnsAdapter.ViewHold
             public void onClick(View view) {
                 if(fragment instanceof CreatePollFragment){
                     CreatePollFragment createPollFragment= (CreatePollFragment) fragment;
-                    createPollFragment.selectMedia(position);
+                    createPollFragment.selectMediaMethod(position);
                 }
             }
         });
@@ -76,7 +76,7 @@ public class PollAnsAdapter extends RecyclerView.Adapter<PollAnsAdapter.ViewHold
         holder.iv_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(items.size()==2) {
+                if(items.size()>2) {
                     items.remove(position);
                     notifyDataSetChanged();
                 }

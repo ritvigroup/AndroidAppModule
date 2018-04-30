@@ -1,6 +1,6 @@
 package com.ritvi.kaajneeti.Util;
 
-import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,8 @@ import java.util.List;
  */
 
 public class Constants {
+
+    public static final String LOGIN_TYPE="1";
 
     public static final int GENDER_DEFAULT=0;
     public static final int GENDER_MALE=1;
@@ -21,7 +23,8 @@ public class Constants {
     public static final int COMPLAINT_OTHER=3;
 
     public static final int USER_TYPE_NONE=0;
-    public static UserInfoPOJO userInfoPOJO = null;
+
+    public static UserProfilePOJO userProfilePOJO=null;
 
     //event attachments
     public static final String EVENT_IMAGE_ATTACH="event_image_attach";

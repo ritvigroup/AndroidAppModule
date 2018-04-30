@@ -50,7 +50,7 @@ import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.pojo.ResponsePOJO;
-import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.pojo.userdetail.EducationPOJO;
 import com.ritvi.kaajneeti.pojo.userdetail.ProfileResultPOJO;
 import com.ritvi.kaajneeti.pojo.userdetail.WorkPOJO;
@@ -199,7 +199,7 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    UserInfoPOJO userInfoPOJO;
+    UserProfilePOJO userProfilePOJO;
 
     private static final String WORK_FROM = "work_from";
     private static final String WORK_TO = "work_to";
@@ -225,10 +225,10 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle("Profile Edit");
 
-        userInfoPOJO = (UserInfoPOJO) getIntent().getSerializableExtra("userInfo");
+        userProfilePOJO = (UserProfilePOJO) getIntent().getSerializableExtra("userProfilePOJO");
 
         Glide.with(getApplicationContext())
-                .load(userInfoPOJO.getProfilePhotoPath())
+                .load(userProfilePOJO.getProfilePhotoPath())
                 .into(cv_profile_pic);
 
 //        ll_add_work.setOnClickListener(new View.OnClickListener() {
@@ -538,8 +538,8 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
     public void saveCollege() {
 
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("education_id", ""));
         nameValuePairs.add(new BasicNameValuePair("qualification", et_qualification.getText().toString()));
         nameValuePairs.add(new BasicNameValuePair("location", et_college_place.getText().toString()));
@@ -564,8 +564,8 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
     public void callWorkUpdate() {
 
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("work_id", "0"));
         nameValuePairs.add(new BasicNameValuePair("work", et_work.getText().toString()));
         nameValuePairs.add(new BasicNameValuePair("place", et_work_location.getText().toString()));
@@ -610,8 +610,8 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
     ProfileResultPOJO profileResultPOJO;
     public void getAllProfileDetails() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         new WebServiceBaseResponse<ProfileResultPOJO>(nameValuePairs, this, new ResponseCallBack<ProfileResultPOJO>() {
             @Override
             public void onGetMsg(ResponsePOJO<ProfileResultPOJO> responsePOJO) {
@@ -809,8 +809,8 @@ public class ProfileEditPageActivity extends AppCompatActivity implements DatePi
                     break;
             }
 
-            reqEntity.addPart("user_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
-            reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+            reqEntity.addPart("user_id", new StringBody(Constants.userProfilePOJO.getUserId()));
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePOJO.getUserProfileId()));
             reqEntity.addPart("fullname", new StringBody(et_first_name.getText().toString() + " " + et_last_name.getText().toString()));
             reqEntity.addPart("gender", new StringBody(gender));
             reqEntity.addPart("date_of_birth", new StringBody(et_dob.getText().toString()));

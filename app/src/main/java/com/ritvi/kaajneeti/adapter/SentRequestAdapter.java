@@ -6,12 +6,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
-import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
+import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
@@ -30,11 +31,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class SentRequestAdapter extends RecyclerView.Adapter<SentRequestAdapter.ViewHolder> {
-    private List<OutGoingRequestPOJO> items;
+    private List<UserProfilePOJO> items;
     Activity activity;
     Fragment fragment;
 
-    public SentRequestAdapter(Activity activity, Fragment fragment, List<OutGoingRequestPOJO> items) {
+    public SentRequestAdapter(Activity activity, Fragment fragment, List<UserProfilePOJO> items) {
         this.items = items;
         this.activity = activity;
         this.fragment = fragment;
@@ -49,22 +50,15 @@ public class SentRequestAdapter extends RecyclerView.Adapter<SentRequestAdapter.
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        holder.tv_user_name.setText(items.get(position).getUserProfileDetailPOJO().getUserInfoPOJO().getUserName());
+        holder.tv_user_name.setText(items.get(position).getFirstName()+" "+items.get(position).getLastName());
         Glide.with(activity.getApplicationContext())
-                .load(items.get(position).getUserProfileDetailPOJO().getUserInfoPOJO().getProfilePhotoPath())
+                .load(items.get(position).getProfilePhotoPath())
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .error(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
                 .into(holder.cv_profile_pic);
 
-        final UserProfilePOJO userProfilePOJO;
-        if(items.get(position).getUserProfileDetailPOJO().getUserInfoPOJO().getUserProfileLeader()!=null){
-            userProfilePOJO=items.get(position).getUserProfileDetailPOJO().getUserInfoPOJO().getUserProfileLeader();
-        }else{
-            userProfilePOJO=items.get(position).getUserProfileDetailPOJO().getUserInfoPOJO().getUserProfileCitizen();
-        }
-
-        switch (userProfilePOJO.getMyFriend()) {
+        switch (items.get(position).getMyFriend()) {
             case 0:
                 holder.tv_add_friend.setText("Add Friend");
                 break;
@@ -85,25 +79,35 @@ public class SentRequestAdapter extends RecyclerView.Adapter<SentRequestAdapter.
         holder.tv_add_friend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (userProfilePOJO.getMyFriend()) {
+                switch (items.get(position).getMyFriend()) {
                     case 0:
 //                        holder.tv_add_friend.setText("Add Friend");
-                        sendFriendRequest(userProfilePOJO,holder.tv_add_friend);
+                        sendFriendRequest(items.get(position),holder.tv_add_friend);
                         break;
                     case 1:
-                        undoFriendRequest(userProfilePOJO,holder.tv_add_friend);
+                        undoFriendRequest(items.get(position),holder.tv_add_friend);
 //                        holder.tv_add_friend.setText("Friend Request Sent");
                         break;
                     case 2:
 //                        holder.tv_add_friend.setText("Accept Request");
-                        acceptRequest(userProfilePOJO,position);
+                        acceptRequest(items.get(position),position);
                         break;
                     case 3:
 //                        holder.tv_add_friend.setText("");
-                        cancelFriendRequest(userProfilePOJO,holder.tv_add_friend);
+                        cancelFriendRequest(items.get(position),holder.tv_add_friend);
                         break;
                 }
 
+            }
+        });
+
+        holder.ll_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(activity instanceof HomeActivity){
+                    HomeActivity homeActivity= (HomeActivity) activity;
+                    homeActivity.showUserProfileFragment(items.get(position).getUserId(),items.get(position).getUserProfileId());
+                }
             }
         });
 
@@ -113,8 +117,8 @@ public class SentRequestAdapter extends RecyclerView.Adapter<SentRequestAdapter.
 
     public void sendFriendRequest(final UserProfilePOJO userProfilePOJO, TextView textView){
         ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id",userProfilePOJO.getUserProfileId()));
         new WebServiceBase(nameValuePairs, activity, new WebServicesCallBack() {
             @Override
@@ -127,8 +131,8 @@ public class SentRequestAdapter extends RecyclerView.Adapter<SentRequestAdapter.
 
     public void undoFriendRequest(final UserProfilePOJO userProfilePOJO, TextView textView){
         ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id",userProfilePOJO.getUserProfileId()));
         new WebServiceBase(nameValuePairs, activity, new WebServicesCallBack() {
             @Override
@@ -141,8 +145,8 @@ public class SentRequestAdapter extends RecyclerView.Adapter<SentRequestAdapter.
 
     public void cancelFriendRequest(final UserProfilePOJO userProfilePOJO, TextView textView){
         ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id",userProfilePOJO.getUserProfileId()));
         new WebServiceBase(nameValuePairs, activity, new WebServicesCallBack() {
             @Override
@@ -155,8 +159,8 @@ public class SentRequestAdapter extends RecyclerView.Adapter<SentRequestAdapter.
 
     public void acceptRequest(final UserProfilePOJO userProfilePOJO, final int position){
         ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id",userProfilePOJO.getUserProfileId()));
         new WebServiceBase(nameValuePairs, activity, new WebServicesCallBack() {
             @Override
@@ -177,12 +181,13 @@ public class SentRequestAdapter extends RecyclerView.Adapter<SentRequestAdapter.
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public CircleImageView cv_profile_pic;
         public TextView tv_user_name, tv_add_friend;
-
+        public LinearLayout ll_user;
         public ViewHolder(View itemView) {
             super(itemView);
             cv_profile_pic = itemView.findViewById(R.id.cv_profile_pic);
             tv_user_name = itemView.findViewById(R.id.tv_user_name);
             tv_add_friend = itemView.findViewById(R.id.tv_add_friend);
+            ll_user = itemView.findViewById(R.id.ll_user);
         }
     }
 }

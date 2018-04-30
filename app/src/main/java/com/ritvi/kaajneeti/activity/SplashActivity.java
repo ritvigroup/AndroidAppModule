@@ -23,7 +23,7 @@ import com.ritvi.kaajneeti.Util.GPSTracker;
 import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
-import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -211,13 +211,14 @@ public class SplashActivity extends LocalizationActivity {
 //        Log.d(TagUtils.getTag(),"PRODUCT:-"+ android.os.Build.PRODUCT);
 
         String def_english = Locale.getDefault().getLanguage();
-        Log.d(TagUtils.getTag(),"language:-"+ def_english);
-        new CountDownTimer(3000,1000){
+        Log.d(TagUtils.getTag(), "language:-" + def_english);
+        new CountDownTimer(3000, 1000) {
 
             @Override
             public void onTick(long l) {
 
             }
+
             @Override
             public void onFinish() {
                 proceed();
@@ -226,21 +227,15 @@ public class SplashActivity extends LocalizationActivity {
 
     }
 
-    public void proceed(){
-        getLocation();
-//
-        if (Pref.GetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, false)) {
-            Constants.userInfoPOJO =new Gson().fromJson(Pref.GetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,""), UserInfoPOJO.class);
-            if (Pref.GetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED, false) ||
-                    Pref.GetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_SKIPPED, false)) {
-                startActivity(new Intent(SplashActivity.this, HomeActivity.class));
-//                startActivity(new Intent(SplashActivity.this, PayUMoneyIntegration.class));
-            } else {
-                startActivity(new Intent(SplashActivity.this, ProfileInfoActivity.class));
-            }
+    public void proceed() {
 
+        getLocation();
+
+        if (Pref.GetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, false)) {
+            Constants.userProfilePOJO = new Gson().fromJson(Pref.GetStringPref(getApplicationContext(), StringUtils.USER_PROFILE, ""), UserProfilePOJO.class);
+            startActivity(new Intent(SplashActivity.this, HomeActivity.class));
         } else {
-            if (Pref.getPermanentBoolean(getApplicationContext(), StringUtils.INTO_COMPLETED, false)) {
+            if (Pref.getPermanentBoolean(getApplicationContext(), StringUtils.INTRO_COMPLETED, false)) {
                 startActivity(new Intent(SplashActivity.this, LoginActivity.class));
             } else {
                 startActivity(new Intent(SplashActivity.this, SliderActivity.class));

@@ -20,12 +20,10 @@ import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.ToastClass;
-import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.adapter.HomeFeedAdapter;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.ResponsePOJO;
 import com.ritvi.kaajneeti.pojo.home.FeedPOJO;
-import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.pojo.userdetail.ProfilePOJO;
 import com.ritvi.kaajneeti.pojo.userdetail.ProfileResultPOJO;
@@ -81,7 +79,7 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
     @BindView(R.id.ll_transition)
     LinearLayout ll_transition;
 
-    UserInfoPOJO userInfoPOJO;
+    UserProfilePOJO userProfilePOJO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,15 +91,14 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        userInfoPOJO = (UserInfoPOJO) getIntent().getSerializableExtra("userInfo");
+        userProfilePOJO = (UserProfilePOJO) getIntent().getSerializableExtra("userProfilePOJO");
         attachAdapter();
-        if (userInfoPOJO != null) {
-            UserProfilePOJO userProfilePOJO = UtilityFunction.getUserProfilePOJO(userInfoPOJO);
+        if (userProfilePOJO != null) {
             tv_profile_name.setText(userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName());
             getAnalysisData(userProfilePOJO);
             callAPI();
             Glide.with(getApplicationContext())
-                    .load(userInfoPOJO.getProfilePhotoPath())
+                    .load(userProfilePOJO.getProfilePhotoPath())
                     .into(cv_profile_pic);
         }
 
@@ -127,8 +124,8 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
 
     public void getAllProfileDetails() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         new WebServiceBaseResponse<ProfileResultPOJO>(nameValuePairs, this, new ResponseCallBack<ProfileResultPOJO>() {
             @Override
             public void onGetMsg(ResponsePOJO<ProfileResultPOJO> responsePOJO) {
@@ -171,7 +168,7 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
 
     public void callAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
 
         new WebServiceBaseResponseList<FeedPOJO>(nameValuePairs, this, new ResponseListCallback<FeedPOJO>() {
             @Override
@@ -196,7 +193,7 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
     List<FeedPOJO> feedPOJOS = new ArrayList<>();
 
     public void attachAdapter() {
-        homeFeedAdapter = new HomeFeedAdapter(this, null, feedPOJOS);
+        homeFeedAdapter = new HomeFeedAdapter(this, null, feedPOJOS,getSupportFragmentManager());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rv_post.setHasFixedSize(true);
         rv_post.setAdapter(homeFeedAdapter);
@@ -239,7 +236,7 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        if (userInfoPOJO.getUserId().equals(Constants.userInfoPOJO.getUserId())) {
+        if (userProfilePOJO.getUserId().equals(Constants.userProfilePOJO.getUserId())) {
             getMenuInflater().inflate(R.menu.menu_edit, menu);//Menu Resource, Menu
         }
         return true;
@@ -249,7 +246,7 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add:
-                startActivity(new Intent(ProfileDescriptionActivity.this, ProfileEditPageActivity.class).putExtra("userInfo", userInfoPOJO));
+                startActivity(new Intent(ProfileDescriptionActivity.this, ProfileEditPageActivity.class).putExtra("userProfilePOJO", userProfilePOJO));
                 return true;
             case android.R.id.home:
                 finish();

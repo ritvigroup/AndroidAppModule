@@ -18,7 +18,7 @@ public class StringUtils {
     public static final String USER_PROFILE="user_profile";
 
 
-    public static final String INTO_COMPLETED="intro_completed";
+    public static final String INTRO_COMPLETED ="intro_completed";
 
 
     public static final String C_PROFILE_DETAIL="c_profile_detail";

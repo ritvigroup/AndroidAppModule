@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:clickable="true">
 
     <EditText
         android:id="@+id/et_search"
@@ -15,10 +17,9 @@
         android:background="@drawable/et_border"
         android:minHeight="40dp"
         android:paddingLeft="5dp"
-        android:hint="Search complain"
+        android:hint="Search..."
         android:drawableRight="@drawable/places_ic_search"
         android:drawablePadding="10dp"/>
-
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs"

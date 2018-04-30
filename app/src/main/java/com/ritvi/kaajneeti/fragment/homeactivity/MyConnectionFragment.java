@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.adapter.ViewPagerWithTitleAdapter;
+import com.ritvi.kaajneeti.fragment.GroupListFragment;
 import com.ritvi.kaajneeti.fragment.myconnection.ContactFragment;
 import com.ritvi.kaajneeti.fragment.myconnection.FriendsFragment;
 import com.ritvi.kaajneeti.fragment.myconnection.RequestFragment;
@@ -64,16 +65,18 @@ public class MyConnectionFragment extends Fragment {
         final RequestFragment requestFragment = new RequestFragment();
         final ContactFragment contactFragment = new ContactFragment();
         final FriendsFragment friendsFragment = new FriendsFragment();
+        final GroupListFragment groupListFragment = new GroupListFragment();
 
         adapter.addFrag(searchFragment, "Search");
         adapter.addFrag(requestFragment, "Request");
         adapter.addFrag(contactFragment, "Contact");
-        adapter.addFrag(friendsFragment, "Friends");
+        adapter.addFrag(friendsFragment, "Connect");
+        adapter.addFrag(groupListFragment, "Group");
 
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(adapter.getCount());
 
-        searchFragment.initialize();
+//        searchFragment.initialize();
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -84,14 +87,16 @@ public class MyConnectionFragment extends Fragment {
             @Override
             public void onPageSelected(int position) {
                 switch (position) {
-                    case 0:searchFragment.initialize();
-                        break;
-                    case 1:
+//                    case 0:searchFragment.initialize();
+//                        break;
+                    case 0:
                         requestFragment.initialize();
                         break;
-                    case 2:contactFragment.initialize();
+                    case 1:
+                        contactFragment.initialize();
                         break;
-                    case 3:friendsFragment.initialize();
+                    case 2:
+                        friendsFragment.initialize();
                         break;
                 }
             }

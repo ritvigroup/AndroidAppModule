@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.adapter.SearchUserProfileAdapter;
-import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ public class LeaderSearchFragment extends Fragment{
         attachAdapter();
     }
 
-    public void setRv_users(List<UserInfoPOJO> userProfilePOJOS){
+    public void setRv_users(List<UserProfilePOJO> userProfilePOJOS){
         this.userProfilePOJOS.clear();
         this.userProfilePOJOS.addAll(userProfilePOJOS);
         searchUserProfileAdapter.notifyDataSetChanged();
@@ -55,7 +55,7 @@ public class LeaderSearchFragment extends Fragment{
 
 
     SearchUserProfileAdapter searchUserProfileAdapter;
-    List<UserInfoPOJO> userProfilePOJOS=new ArrayList<>();
+    List<UserProfilePOJO> userProfilePOJOS=new ArrayList<>();
     public void attachAdapter() {
         searchUserProfileAdapter = new SearchUserProfileAdapter(getActivity(), this, userProfilePOJOS);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());

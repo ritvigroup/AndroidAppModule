@@ -18,9 +18,8 @@ import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
-import com.ritvi.kaajneeti.activity.AllLeaderActivity;
-import com.ritvi.kaajneeti.fragment.homeactivity.ContributeFragment;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.AdapterWebService;
 import com.ritvi.kaajneeti.webservice.MsgPassInterface;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
@@ -40,12 +39,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class LeaderAdapter extends RecyclerView.Adapter<LeaderAdapter.ViewHolder> implements WebServicesCallBack {
-    private List<UserInfoPOJO> items;
+    private List<UserProfilePOJO> items;
     Activity activity;
     Fragment fragment;
     int device_height = 0;
 
-    public LeaderAdapter(Activity activity, Fragment fragment, List<UserInfoPOJO> items) {
+    public LeaderAdapter(Activity activity, Fragment fragment, List<UserProfilePOJO> items) {
         this.items = items;
         this.activity = activity;
         this.fragment = fragment;
@@ -59,47 +58,47 @@ public class LeaderAdapter extends RecyclerView.Adapter<LeaderAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-
-        holder.tv_leader_name.setText(items.get(position).getUserName());
-        holder.tv_leader_email.setText(items.get(position).getUserEmail());
-
-        if (activity instanceof AllLeaderActivity) {
-            if (items.get(position).getMyFavouriteLeader().equals("1")) {
-                holder.iv_favorite.setImageResource(R.drawable.ic_favorite);
-            } else {
-                holder.iv_favorite.setImageResource(R.drawable.ic_unfavorite);
-            }
-
-            holder.iv_favorite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    callFavoriteAPI(items.get(position), holder.iv_favorite);
-                }
-            });
-        } else {
-            holder.iv_favorite.setVisibility(View.GONE);
-        }
-
-
-        holder.ll_leader.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(fragment!=null&&fragment instanceof ContributeFragment) {
-                    ContributeFragment contributeFragment= (ContributeFragment) fragment;
-//                    contributeFragment.showpaymentDialog(items.get(position),items.get(position).getUserProfileLeader().getUserProfileId());
-                }else{
-                    showLeaderProfile(items.get(position));
-                }
-            }
-        });
+//
+//        holder.tv_leader_name.setText(items.get(position).getUserName());
+//        holder.tv_leader_email.setText(items.get(position).getUserEmail());
+//
+//        if (activity instanceof AllLeaderActivity) {
+//            if (items.get(position).getMyFavouriteLeader().equals("1")) {
+//                holder.iv_favorite.setImageResource(R.drawable.ic_favorite);
+//            } else {
+//                holder.iv_favorite.setImageResource(R.drawable.ic_unfavorite);
+//            }
+//
+//            holder.iv_favorite.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    callFavoriteAPI(items.get(position), holder.iv_favorite);
+//                }
+//            });
+//        } else {
+//            holder.iv_favorite.setVisibility(View.GONE);
+//        }
+//
+//
+//        holder.ll_leader.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(fragment!=null&&fragment instanceof ContributeFragment) {
+//                    ContributeFragment contributeFragment= (ContributeFragment) fragment;
+////                    contributeFragment.showpaymentDialog(items.get(position),items.get(position).getUserProfileLeader().getUserProfileId());
+//                }else{
+//                    showLeaderProfile(items.get(position));
+//                }
+//            }
+//        });
 
         holder.itemView.setTag(items.get(position));
     }
 
     public void callFavoriteAPI(UserInfoPOJO leaderPOJO, final ImageView favorite_image) {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id", leaderPOJO.getUserProfileLeader().getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("leader_profile_id", leaderPOJO.getUserProfileLeader().getUserProfileId()));
 

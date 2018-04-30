@@ -16,7 +16,7 @@ import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.adapter.SentRequestAdapter;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
-import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -50,23 +50,26 @@ public class FriendsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         attachAdapter();
+        callAPI();
     }
-    boolean is_initialize=false;
-    public void initialize(){
-        if(!is_initialize){
+
+    boolean is_initialize = false;
+
+    public void initialize() {
+        if (!is_initialize) {
             callAPI();
 //            is_initialize=true;
         }
     }
 
-    public void callAPI(){
+    public void callAPI() {
 
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
-        new WebServiceBaseResponseList<OutGoingRequestPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<OutGoingRequestPOJO>() {
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        new WebServiceBaseResponseList<UserProfilePOJO>(nameValuePairs, getActivity(), new ResponseListCallback<UserProfilePOJO>() {
             @Override
-            public void onGetMsg(ResponseListPOJO<OutGoingRequestPOJO> responseListPOJO) {
+            public void onGetMsg(ResponseListPOJO<UserProfilePOJO> responseListPOJO) {
                 userProfilePOJOS.clear();
                 if (responseListPOJO.isSuccess()) {
                     userProfilePOJOS.addAll(responseListPOJO.getResultList());
@@ -75,11 +78,12 @@ public class FriendsFragment extends Fragment {
                 }
                 searchUserProfileAdapter.notifyDataSetChanged();
             }
-        },OutGoingRequestPOJO.class,"CALL_ALL_REQUEST_API",false).execute(WebServicesUrls.MY_FRIENDS);
+        }, UserProfilePOJO.class, "CALL_ALL_REQUEST_API", false).execute(WebServicesUrls.MY_FRIENDS);
     }
 
     SentRequestAdapter searchUserProfileAdapter;
-    List<OutGoingRequestPOJO> userProfilePOJOS=new ArrayList<>();
+    List<UserProfilePOJO> userProfilePOJOS = new ArrayList<>();
+
     public void attachAdapter() {
         searchUserProfileAdapter = new SentRequestAdapter(getActivity(), this, userProfilePOJOS);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());

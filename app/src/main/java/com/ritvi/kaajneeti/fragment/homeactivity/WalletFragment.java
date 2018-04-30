@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,12 +32,15 @@ import com.ritvi.kaajneeti.pojo.payment.PaymentTransPOJO;
 import com.ritvi.kaajneeti.testing.PayUMoneyIntegration;
 import com.ritvi.kaajneeti.webservice.ResponseCallBack;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
+import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponse;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
+import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +52,7 @@ import butterknife.ButterKnife;
  * Created by sunil on 06-04-2018.
  */
 
-public class WalletFragment extends Fragment{
+public class WalletFragment extends Fragment {
 
     @BindView(R.id.rv_transactions)
     RecyclerView rv_transactions;
@@ -56,15 +60,17 @@ public class WalletFragment extends Fragment{
     TextView tv_topup;
     @BindView(R.id.tv_amount)
     TextView tv_amount;
+    @BindView(R.id.tv_convert_to_point)
+    TextView tv_convert_to_point;
 
-    List<PaymentTransPOJO> paymentTransPOJOS=new ArrayList<>();
+    List<PaymentTransPOJO> paymentTransPOJOS = new ArrayList<>();
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.frag_wallet,container,false);
-        ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.frag_wallet, container, false);
+        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -79,44 +85,109 @@ public class WalletFragment extends Fragment{
         });
         attachAdapter();
         getPaymentLogs();
+
+        tv_convert_to_point.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showConvertDialog();
+            }
+        });
     }
 
-    public void getPaymentLogs(){
-        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+    public void showConvertDialog() {
+        final Dialog dialog1 = new Dialog(getActivity(), android.R.style.Theme_DeviceDefault_Light_Dialog);
+        dialog1.setCancelable(true);
+        dialog1.setContentView(R.layout.dialog_rupees_to_point);
+        dialog1.setTitle("Select");
+        dialog1.show();
+        dialog1.setCancelable(true);
+        Window window = dialog1.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        Button btn_convert = dialog1.findViewById(R.id.btn_convert);
+        final EditText et_rupees = dialog1.findViewById(R.id.et_rupees);
+        final TextView tv_balance_rupees = dialog1.findViewById(R.id.tv_balance_rupees);
+
+        tv_balance_rupees.setText("BALANCE AMOUNT:- "+tv_amount.getText().toString());
+
+        btn_convert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (et_rupees.getText().toString().length() > 0) {
+                    try {
+                        double balance = Double.parseDouble(et_rupees.getText().toString());
+                        double remaining_balance = Double.parseDouble(balance_amount);
+                        if (balance >= remaining_balance) {
+                            ToastClass.showShortToast(getActivity().getApplicationContext(), "Entered Amount should not be greater than balance Amount");
+                        } else {
+                            ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+                            nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+                            nameValuePairs.add(new BasicNameValuePair("rupee", String.valueOf(balance)));
+                            new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
+                                @Override
+                                public void onGetMsg(String apicall, String response) {
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(response);
+                                        if (jsonObject.optString("status").equals("success")) {
+                                            ToastClass.showShortToast(getActivity().getApplicationContext(), "Rupees Converted");
+                                            dialog1.dismiss();
+                                            getPaymentLogs();
+                                        } else {
+                                            ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }, "CONVERT_POINT_TO_RUPEE", true).execute(WebServicesUrls.CONVERT_RUPEES_TO_POINTS);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+    }
+    String balance_amount="";
+    public void getPaymentLogs() {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         new WebServiceBaseResponseList<PaymentTransPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<PaymentTransPOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<PaymentTransPOJO> responseListPOJO) {
                 paymentTransPOJOS.clear();
-                if(responseListPOJO.isSuccess()) {
+                if (responseListPOJO.isSuccess()) {
                     paymentTransPOJOS.addAll(responseListPOJO.getResultList());
-                    double amount=0;
-                    for(PaymentTransPOJO paymentTransPOJO:responseListPOJO.getResultList()){
-                        if(paymentTransPOJO.getDebitOrCredit().equals("0")){
-                            amount-=getTransAmount(paymentTransPOJO.getTransactionAmount());
-                        }else{
-                            amount+=getTransAmount(paymentTransPOJO.getTransactionAmount());
+                    double amount = 0;
+                    for (PaymentTransPOJO paymentTransPOJO : responseListPOJO.getResultList()) {
+                        if (paymentTransPOJO.getDebitOrCredit().equals("0")) {
+                            amount -= getTransAmount(paymentTransPOJO.getTransactionAmount());
+                        } else {
+                            amount += getTransAmount(paymentTransPOJO.getTransactionAmount());
                         }
                     }
-
-                    tv_amount.setText("Rs. "+String.valueOf(amount));
+                    balance_amount=String.valueOf(amount);
+                    tv_amount.setText("Rs. " + String.valueOf(amount));
                 }
                 paymentTransAdapter.notifyDataSetChanged();
             }
 
-        },PaymentTransPOJO.class,"CALL_PAYMENT_LOGS_API",true).execute(WebServicesUrls.GET_PAYMENT_TRANS_LOGS);
+        }, PaymentTransPOJO.class, "CALL_PAYMENT_LOGS_API", true).execute(WebServicesUrls.GET_PAYMENT_TRANS_LOGS);
     }
-    public double getTransAmount(String amount){
-        try{
-            double trans_amount=Double.parseDouble(amount);
+
+    public double getTransAmount(String amount) {
+        try {
+            double trans_amount = Double.parseDouble(amount);
             return trans_amount;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
     }
 
     PaymentTransAdapter paymentTransAdapter;
+
     public void attachAdapter() {
         paymentTransAdapter = new PaymentTransAdapter(getActivity(), this, paymentTransPOJOS);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -127,18 +198,18 @@ public class WalletFragment extends Fragment{
     }
 
     public void showpaymentDialog() {
-        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", UtilityFunction.getProfileID(Constants.userInfoPOJO)));
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         new WebServiceBaseResponseList<PaymentPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<PaymentPOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<PaymentPOJO> responseListPOJO) {
-                if(responseListPOJO.isSuccess()){
+                if (responseListPOJO.isSuccess()) {
                     showPaymentOptions(responseListPOJO.getResultList());
-                }else{
-                    ToastClass.showShortToast(getActivity().getApplicationContext(),responseListPOJO.getMessage());
+                } else {
+                    ToastClass.showShortToast(getActivity().getApplicationContext(), responseListPOJO.getMessage());
                 }
             }
-        },PaymentPOJO.class,"GET_ALL_PAYMENT_METHODS",true).execute(WebServicesUrls.ALL_PAYMENT_GATEWAY);
+        }, PaymentPOJO.class, "GET_ALL_PAYMENT_METHODS", true).execute(WebServicesUrls.ALL_PAYMENT_GATEWAY);
     }
 
     private void showPaymentOptions(List<PaymentPOJO> resultList) {
@@ -151,8 +222,8 @@ public class WalletFragment extends Fragment{
         Window window = dialog1.getWindow();
         window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        RecyclerView rv_payment_options=dialog1.findViewById(R.id.rv_payment_options);
-        Button btn_cancel=dialog1.findViewById(R.id.btn_cancel);
+        RecyclerView rv_payment_options = dialog1.findViewById(R.id.rv_payment_options);
+        Button btn_cancel = dialog1.findViewById(R.id.btn_cancel);
 
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,18 +242,18 @@ public class WalletFragment extends Fragment{
     }
 
     public void callPaymentDetailAPI(final PaymentPOJO paymentPOJO) {
-        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id",UtilityFunction.getProfileID(Constants.userInfoPOJO)));
-        nameValuePairs.add(new BasicNameValuePair("payment_gateway_id",paymentPOJO.getPaymentGatewayId()));
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("payment_gateway_id", paymentPOJO.getPaymentGatewayId()));
         new WebServiceBaseResponse<PaymentDetailPOJO>(nameValuePairs, getActivity(), new ResponseCallBack<PaymentDetailPOJO>() {
             @Override
             public void onGetMsg(ResponsePOJO<PaymentDetailPOJO> responsePOJO) {
-                if(responsePOJO.isSuccess()){
-                    Intent intent=new Intent(getActivity(), PayUMoneyIntegration.class);
-                    intent.putExtra("paymentPOJO",paymentPOJO);
+                if (responsePOJO.isSuccess()) {
+                    Intent intent = new Intent(getActivity(), PayUMoneyIntegration.class);
+                    intent.putExtra("paymentPOJO", paymentPOJO);
                     startActivity(intent);
                 }
             }
-        },PaymentDetailPOJO.class,"GET_PAYMENT_DETAIL",true).execute(WebServicesUrls.PAYMENT_GATEWAY_API_DETAILS);
+        }, PaymentDetailPOJO.class, "GET_PAYMENT_DETAIL", true).execute(WebServicesUrls.PAYMENT_GATEWAY_API_DETAILS);
     }
 }

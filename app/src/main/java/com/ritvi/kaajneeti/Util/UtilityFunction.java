@@ -1,6 +1,15 @@
 package com.ritvi.kaajneeti.Util;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Point;
+import android.media.ThumbnailUtils;
+import android.provider.MediaStore;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
@@ -9,6 +18,12 @@ import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -78,6 +93,15 @@ public class UtilityFunction {
         }
     }
 
+    public static String getProfileName(UserInfoPOJO userInfoPOJO){
+        UserProfilePOJO userProfilePOJO=getUserProfilePOJO(userInfoPOJO);
+        if(userProfilePOJO.getFirstName().equals("")||userProfilePOJO.getLastName().equals("")){
+            return userInfoPOJO.getUserName();
+        }else{
+            return userProfilePOJO.getFirstName()+" "+userProfilePOJO.getLastName();
+        }
+    }
+
     public static UserProfilePOJO getUserProfilePOJO(UserInfoPOJO userInfoPOJO) {
         if(userInfoPOJO.getUserProfileCitizen()!=null){
             return userInfoPOJO.getUserProfileCitizen();
@@ -115,5 +139,96 @@ public class UtilityFunction {
         return true;
     }
 
+
+    public static String saveThumbFile(File f){
+        Bitmap thumb = ThumbnailUtils.createVideoThumbnail(f.toString(), MediaStore.Video.Thumbnails.MINI_KIND);
+//            iv_image.setImageBitmap(thumb);
+
+        String storage_file = FileUtils.getVideoFolder() + File.separator + System.currentTimeMillis() + ".png";
+        FileOutputStream fos = null;
+
+        try {
+            fos = new FileOutputStream(new File(storage_file));
+            Log.d(TagUtils.getTag(), "taking photos");
+            thumb.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+            return storage_file;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public boolean copyFile(File sourceFile, File destFile) throws IOException {
+        if (!destFile.getParentFile().exists())
+            destFile.getParentFile().mkdirs();
+
+        if (!destFile.exists()) {
+            destFile.createNewFile();
+        }
+
+        FileChannel source = null;
+        FileChannel destination = null;
+
+        try {
+            source = new FileInputStream(sourceFile).getChannel();
+            destination = new FileOutputStream(destFile).getChannel();
+            destination.transferFrom(source, 0, source.size());
+
+            if (source != null) {
+                source.close();
+            }
+            if (destination != null) {
+                destination.close();
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static int dp(float value) {
+        return (int) Math.ceil(1 * value);
+    }
+
+    public static int dpToPx(int dp)
+    {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public static int pxToDp(int px)
+    {
+        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public static int convertedDP(Context context, int size){
+        final float scale = context.getResources().getDisplayMetrics().density;
+        Log.d(TagUtils.getTag(),"scale:-"+scale);
+        return (int) (size/scale);
+    }
+
+    public static int convertDpToPx(Context context,int dp){
+        return Math.round(dp*(context.getResources().getDisplayMetrics().xdpi/ DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    public static int[] screenDimensions(Context context){
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+
+        int[] sizes=new int[]{width,height};
+        return sizes;
+    }
+
+//    public void setProfilPicWithName(CircleImageView circleImageView, TextView textView,){
+//
+//    }
 
 }

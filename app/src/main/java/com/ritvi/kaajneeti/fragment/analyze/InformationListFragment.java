@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
@@ -42,7 +43,8 @@ public class InformationListFragment extends Fragment {
 
     @BindView(R.id.rv_complaints)
     RecyclerView rv_complaints;
-
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,11 +73,17 @@ public class InformationListFragment extends Fragment {
                 return false;
             }
         });
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
     }
 
     public void callAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
 
         new WebServiceBaseResponseList<InformationPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<InformationPOJO>() {
             @Override

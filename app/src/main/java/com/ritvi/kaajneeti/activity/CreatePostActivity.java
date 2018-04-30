@@ -145,7 +145,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("", ""));
-            reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePOJO.getUserProfileId()));
             reqEntity.addPart("title", new StringBody(et_title.getText().toString()));
             reqEntity.addPart("location", new StringBody(check_in_place));
             reqEntity.addPart("description", new StringBody(et_description.getText().toString()));

@@ -132,7 +132,7 @@ public class AddGroupComplaintDescriptionActivity extends AppCompatActivity {
 
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("", ""));
-            reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePOJO.getUserProfileId()));
             reqEntity.addPart("complaint_subject", new StringBody(et_subject.getText().toString()));
             reqEntity.addPart("complaint_description", new StringBody(et_description.getText().toString()));
             reqEntity.addPart("applicant_name", new StringBody(applicant_name));

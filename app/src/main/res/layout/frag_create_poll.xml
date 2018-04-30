@@ -32,7 +32,7 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:src="@drawable/ic_back"
-                    android:tint="#FFFFFF"/>
+                    android:tint="#FFFFFF" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -48,9 +48,10 @@
                     android:id="@+id/iv_add_ans"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:layout_marginRight="7dp"
                     android:src="@drawable/ic_plus_black"
                     android:tint="#FFFFFF"
-                    android:layout_marginRight="7dp"/>
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/tv_post"
@@ -64,10 +65,10 @@
 
         </android.support.v7.widget.Toolbar>
 
-        <!--<ScrollView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:fillViewport="true">-->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -124,35 +125,76 @@
 
                 </LinearLayout>
 
-                <EditText
-                    android:id="@+id/et_whats"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_margin="10dp"
-                    android:background="@null"
-                    android:hint="Ask a question..." />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/et_whats"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:hint="Ask a question..." />
+
+                    <ImageView
+                        android:id="@+id/iv_poll_question"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:maxHeight="250dp"
+                        android:src="@drawable/ic_default_pic" />
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/frame_question_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/iv_question_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true" />
+
+                    <ImageView
+                        android:id="@+id/iv_remove_question_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:background="#FFFFFF"
+                        android:src="@drawable/close" />
+
+                </FrameLayout>
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
 
                     <TextView
                         android:id="@+id/tv_add_ans"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Add Ans"
                         android:layout_marginLeft="5dp"
                         android:background="@null"
-                        android:textStyle="bold"/>
+                        android:text="Add Ans"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_remove_images"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Remove Images"
+                        android:layout_gravity="right"
                         android:background="@null"
-                        android:textStyle="bold"
-                        android:layout_gravity="right"/>
+                        android:text="Remove Images"
+                        android:textStyle="bold" />
 
                 </FrameLayout>
 
@@ -164,12 +206,13 @@
                     android:orientation="vertical">
 
 
-
                 </LinearLayout>
-               <android.support.v7.widget.RecyclerView
-                   android:id="@+id/rv_poll_media"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_poll_media"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -213,8 +256,7 @@
 
                 </LinearLayout>
             </LinearLayout>
-
-        <!--</ScrollView>-->
+        </ScrollView>
 
     </LinearLayout>
 

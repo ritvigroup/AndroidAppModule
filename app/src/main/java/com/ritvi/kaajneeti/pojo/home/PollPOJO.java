@@ -1,7 +1,7 @@
 package com.ritvi.kaajneeti.pojo.home;
 
 import com.google.gson.annotations.SerializedName;
-import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  * Created by sunil on 30-03-2018.
  */
 
-public class PollPOJO implements Serializable{
+public class PollPOJO implements Serializable {
     @SerializedName("PollId")
     private String pollId;
     @SerializedName("PollUniqueId")
@@ -34,11 +34,15 @@ public class PollPOJO implements Serializable{
     @SerializedName("UpdatedOnTime")
     private String updatedOnTime;
     @SerializedName("PollProfile")
-    private OutGoingRequestPOJO profileDetailPOJO;
+    private UserProfilePOJO profileDetailPOJO;
+    @SerializedName("PollImage")
+    private String pollImage;
     @SerializedName("PollTotalParticipation")
     private Integer pollTotalParticipation;
     @SerializedName("PollAnswerWithTotalParticipation")
     private List<PollAnsPOJO> pollAnsPOJOS;
+    @SerializedName("MeParticipated")
+    private Integer meParticipated;
 
     public String getPollId() {
         return pollId;
@@ -128,12 +132,20 @@ public class PollPOJO implements Serializable{
         this.updatedOnTime = updatedOnTime;
     }
 
-    public OutGoingRequestPOJO getProfileDetailPOJO() {
+    public UserProfilePOJO getProfileDetailPOJO() {
         return profileDetailPOJO;
     }
 
-    public void setProfileDetailPOJO(OutGoingRequestPOJO profileDetailPOJO) {
+    public void setProfileDetailPOJO(UserProfilePOJO profileDetailPOJO) {
         this.profileDetailPOJO = profileDetailPOJO;
+    }
+
+    public String getPollImage() {
+        return pollImage;
+    }
+
+    public void setPollImage(String pollImage) {
+        this.pollImage = pollImage;
     }
 
     public Integer getPollTotalParticipation() {
@@ -150,5 +162,13 @@ public class PollPOJO implements Serializable{
 
     public void setPollAnsPOJOS(List<PollAnsPOJO> pollAnsPOJOS) {
         this.pollAnsPOJOS = pollAnsPOJOS;
+    }
+
+    public Integer getMeParticipated() {
+        return meParticipated;
+    }
+
+    public void setMeParticipated(Integer meParticipated) {
+        this.meParticipated = meParticipated;
     }
 }

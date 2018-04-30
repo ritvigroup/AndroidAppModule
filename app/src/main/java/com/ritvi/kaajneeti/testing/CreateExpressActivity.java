@@ -134,12 +134,13 @@ public class CreateExpressActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        UserProfilePOJO userProfilePOJO = UtilityFunction.getUserProfilePOJO(Constants.userInfoPOJO);
+
+        UserProfilePOJO userProfilePOJO = Constants.userProfilePOJO;
         profile_description = "<b>" + userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName() + "</b> ";
         updateProfileStatus();
 
         Glide.with(getApplicationContext())
-                .load(Constants.userInfoPOJO.getProfilePhotoPath())
+                .load(Constants.userProfilePOJO.getProfilePhotoPath())
                 .error(R.drawable.ic_default_profile_pic)
                 .placeholder(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
@@ -207,6 +208,33 @@ public class CreateExpressActivity extends AppCompatActivity {
         });
 
         attachMediaAdapter();
+
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            String type = bundle.getString("type");
+            if (type != null) {
+                switch (type) {
+                    case "issue":
+                        break;
+                    case "complaint":
+                        ll_complaint.callOnClick();
+                        break;
+                    case "suggestion":
+                        ll_suggestion.callOnClick();
+                        break;
+                    case "information":
+                        ll_information.callOnClick();
+                        break;
+                    case "event":
+                        ll_event.callOnClick();
+                        break;
+                    case "poll":
+                        ll_poll.callOnClick();
+                        break;
+                }
+            }
+        }
 
     }
 
@@ -296,7 +324,7 @@ public class CreateExpressActivity extends AppCompatActivity {
     }
 
     public void createGroupComplaint() {
-        CreateGroupComplaintFragment createGroupComplaint = new CreateGroupComplaintFragment(taggeduserInfoPOJOS,mediaList, spinner_privpub.getSelectedItem().toString(), et_whats.getText().toString());
+        CreateGroupComplaintFragment createGroupComplaint = new CreateGroupComplaintFragment(taggeduserInfoPOJOS, mediaList, spinner_privpub.getSelectedItem().toString(), et_whats.getText().toString());
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.frame_main, createGroupComplaint, "createGroupComplaint");
@@ -349,7 +377,7 @@ public class CreateExpressActivity extends AppCompatActivity {
 
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("", ""));
-            reqEntity.addPart("user_profile_id", new StringBody(Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+            reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePOJO.getUserProfileId()));
             reqEntity.addPart("title", new StringBody(et_whats.getText().toString()));
             reqEntity.addPart("location", new StringBody(check_in_place));
             reqEntity.addPart("description", new StringBody(et_whats.getText().toString()));
@@ -367,8 +395,15 @@ public class CreateExpressActivity extends AppCompatActivity {
 //                Log.d(TagUtils.getTag(), "attachment:-" + eventAttachment.toString());
 
 //                if (eventAttachment.getType().equals(Constants.EVENT_IMAGE_ATTACH)) {
-                reqEntity.addPart("file[" + (count) + "]", new FileBody(new File(file_path)));
-                reqEntity.addPart("thumb[" + (count) + "]", new StringBody(""));
+
+                if (file_path.contains(".mp4")
+                        || file_path.contains(".MP4")) {
+                    reqEntity.addPart("file[" + (count) + "]", new FileBody(new File(file_path)));
+                    reqEntity.addPart("thumb[" + (count) + "]", new FileBody(new File(UtilityFunction.saveThumbFile(new File(file_path)))));
+                }else{
+                    reqEntity.addPart("file[" + (count) + "]", new FileBody(new File(file_path)));
+                    reqEntity.addPart("thumb[" + (count) + "]", new StringBody(""));
+                }
 //                } else if (eventAttachment.getType().equals(Constants.EVENT_VIDEO_ATTACH)) {
 //                    reqEntity.addPart("file[" + (count) + "]", new FileBody(new File(eventAttachment.getFile_path())));
 //                    reqEntity.addPart("thumb[" + (count) + "]", new FileBody(new File(eventAttachment.getThumb_path())));

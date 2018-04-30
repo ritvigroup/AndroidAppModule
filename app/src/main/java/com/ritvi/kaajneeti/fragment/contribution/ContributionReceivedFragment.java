@@ -60,7 +60,7 @@ public class ContributionReceivedFragment extends Fragment{
 
     public void getPaymentLogs(){
         ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         new WebServiceBaseResponseList<PaymentTransPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<PaymentTransPOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<PaymentTransPOJO> responseListPOJO) {

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,9 +21,8 @@ import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.StringUtils;
-import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
-import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -38,7 +36,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class LoginOtpConfirmActivity extends AppCompatActivity implements WebServicesCallBack {
+public class LoginOtpConfirmActivity extends AppCompatActivity {
     private static final String CALL_LOGIN_OTP_VERIFY = "call_login_otp_verify";
     private static final String CALL_RESEND_OTP = "call_resend_otp";
     @BindView(R.id.toolbar)
@@ -132,14 +130,24 @@ public class LoginOtpConfirmActivity extends AppCompatActivity implements WebSer
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("request_action", "REGENERATE_MOBILE_OTP"));
         nameValuePairs.add(new BasicNameValuePair("mobile", mobile_number));
-        new WebServiceBase(nameValuePairs, this, this, CALL_RESEND_OTP, true).execute(WebServicesUrls.LOGIN_URL);
+        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                parseResendOTP(response);
+            }
+        }, CALL_RESEND_OTP, true).execute(WebServicesUrls.LOGIN_URL);
     }
 
     public void callOTPAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("mobile", mobile_number));
         nameValuePairs.add(new BasicNameValuePair("otp", et_otp.getText().toString()));
-        new WebServiceBase(nameValuePairs, this, this, CALL_LOGIN_OTP_VERIFY, true).execute(WebServicesUrls.VERIFY_LOGIN_OTP);
+        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                parseLoginOTPResponse(response);
+            }
+        }, CALL_LOGIN_OTP_VERIFY, true).execute(WebServicesUrls.VERIFY_LOGIN_OTP);
     }
 
 
@@ -150,20 +158,6 @@ public class LoginOtpConfirmActivity extends AppCompatActivity implements WebSer
         }
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onGetMsg(String apicall, String response) {
-        Log.d(TagUtils.getTag(), apicall + ":-" + response);
-        switch (apicall) {
-            case CALL_LOGIN_OTP_VERIFY:
-                parseLoginOTPResponse(response);
-                break;
-            case CALL_RESEND_OTP:
-                parseResendOTP(response);
-                break;
-        }
-    }
-
 
     public void parseResendOTP(String response) {
         try {
@@ -178,31 +172,19 @@ public class LoginOtpConfirmActivity extends AppCompatActivity implements WebSer
     }
 
     public void parseLoginOTPResponse(String response) {
-        try{
-            JSONObject jsonObject=new JSONObject(response);
+        try {
+            JSONObject jsonObject = new JSONObject(response);
             if (jsonObject.optString(Constants.API_STATUS).equals(Constants.API_SUCCESS)) {
                 String user_profile = jsonObject.optJSONObject("result").toString();
                 Gson gson = new Gson();
-                UserInfoPOJO userProfilePOJO = gson.fromJson(user_profile, UserInfoPOJO.class);
-//                Pref.SaveUserProfile(LoginActivity.this, user_profile);
-                Pref.SetStringPref(getApplicationContext(),StringUtils.USER_PROFILE,user_profile);
+                UserProfilePOJO userProfilePOJO = gson.fromJson(user_profile, UserProfilePOJO.class);
+                Pref.SetStringPref(getApplicationContext(), StringUtils.USER_PROFILE, user_profile);
                 Pref.SetBooleanPref(this, StringUtils.IS_LOGIN, true);
-                Constants.userInfoPOJO =userProfilePOJO;
-//                if(userProfilePOJO.getUserName().equals("")||userProfilePOJO.getUserEmail().equals("")||
-//                        userProfilePOJO.getGender().equals("0")||userProfilePOJO.getDateOfBirth().equals("")){
-//                    Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED,false);
-//
-//                    Pref.SetBooleanPref(this, StringUtils.IS_PROFILE_COMPLETED, false);
-//                    startActivity(new Intent(this, ProfileInfoActivity.class));
-//                    finishAffinity();
-//
-//                } else {
-                    Pref.SetBooleanPref(this, StringUtils.IS_PROFILE_COMPLETED, true);
-                    startActivity(new Intent(this, HomeActivity.class));
-                    finishAffinity();
-//                }
+                Constants.userProfilePOJO = userProfilePOJO;
+                startActivity(new Intent(this, HomeActivity.class));
+                finishAffinity();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

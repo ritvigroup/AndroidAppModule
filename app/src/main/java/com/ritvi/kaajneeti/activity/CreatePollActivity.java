@@ -113,7 +113,7 @@ public class CreatePollActivity extends AppCompatActivity implements DatePickerD
 
     public void createPoll() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userInfoPOJO.getUserProfileCitizen().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("poll_question", et_question.getText().toString()));
         nameValuePairs.add(new BasicNameValuePair("event_description", ""));
         nameValuePairs.add(new BasicNameValuePair("poll_privacy", "1"));

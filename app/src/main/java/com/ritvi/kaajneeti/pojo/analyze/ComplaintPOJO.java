@@ -1,7 +1,7 @@
 package com.ritvi.kaajneeti.pojo.analyze;
 
 import com.google.gson.annotations.SerializedName;
-import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -11,6 +11,7 @@ import java.util.List;
  */
 
 public class ComplaintPOJO implements Serializable {
+
     @SerializedName("ComplaintId")
     private String complaintId;
     @SerializedName("ComplaintUniqueId")
@@ -52,9 +53,9 @@ public class ComplaintPOJO implements Serializable {
     @SerializedName("UpdatedOnTime")
     private String updatedOnTime;
     @SerializedName("ComplaintProfile")
-    private OutGoingRequestPOJO complaintProfile;
+    private UserProfilePOJO complaintProfile;
     @SerializedName("ComplaintMember")
-    private List<OutGoingRequestPOJO> complaintMemberPOJOS;
+    private List<UserProfilePOJO> complaintMemberPOJOS;
     @SerializedName("ComplaintAttachment")
     private List<ComplaintAttachmentPOJO> complaintAttachments;
 
@@ -218,19 +219,19 @@ public class ComplaintPOJO implements Serializable {
         this.updatedOnTime = updatedOnTime;
     }
 
-    public OutGoingRequestPOJO getComplaintProfile() {
+    public UserProfilePOJO getComplaintProfile() {
         return complaintProfile;
     }
 
-    public void setComplaintProfile(OutGoingRequestPOJO complaintProfile) {
+    public void setComplaintProfile(UserProfilePOJO complaintProfile) {
         this.complaintProfile = complaintProfile;
     }
 
-    public List<OutGoingRequestPOJO> getComplaintMemberPOJOS() {
+    public List<UserProfilePOJO> getComplaintMemberPOJOS() {
         return complaintMemberPOJOS;
     }
 
-    public void setComplaintMemberPOJOS(List<OutGoingRequestPOJO> complaintMemberPOJOS) {
+    public void setComplaintMemberPOJOS(List<UserProfilePOJO> complaintMemberPOJOS) {
         this.complaintMemberPOJOS = complaintMemberPOJOS;
     }
 
