@@ -37,6 +37,7 @@ import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.activity.ApplicationSubmittedActivity;
+import com.ritvi.kaajneeti.activity.FavoriteLeaderActivity;
 import com.ritvi.kaajneeti.activity.TagPeopleActivity;
 import com.ritvi.kaajneeti.adapter.CustomAutoCompleteAdapter;
 import com.ritvi.kaajneeti.adapter.MediaListAdapter;
@@ -77,7 +78,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 @SuppressLint("ValidFragment")
 public class CreateGroupComplaintFragment extends Fragment implements DatePickerDialog.OnDateSetListener{
 
-    List<UserInfoPOJO> taggeduserInfoPOJOS = new ArrayList<>();
+    List<UserProfilePOJO> taggeduserInfoPOJOS = new ArrayList<>();
 
     static final int OPEN_MEDIA_PICKER = 1;
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 101;
@@ -129,7 +130,7 @@ public class CreateGroupComplaintFragment extends Fragment implements DatePicker
     String complaint_name;
     List<String> mediaFiles = new ArrayList<>();
 
-    public CreateGroupComplaintFragment(List<UserInfoPOJO> userInfoPOJOS,List<String> mediaFiles, String privPublic, String complaint_name) {
+    public CreateGroupComplaintFragment(List<UserProfilePOJO> userInfoPOJOS,List<String> mediaFiles, String privPublic, String complaint_name) {
         this.taggeduserInfoPOJOS=userInfoPOJOS;
         this.complaint_name = complaint_name;
         this.privPublic = privPublic;
@@ -218,8 +219,15 @@ public class CreateGroupComplaintFragment extends Fragment implements DatePicker
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (leaderPOJOS.size() > 0) {
-                    leader_id = leaderPOJOS.get(i).getUserProfileLeader().getUserProfileId();
+                    leader_id = leaderPOJOS.get(i).getUserProfileId();
                 }
+            }
+        });
+
+        iv_favorite_leader_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), FavoriteLeaderActivity.class));
             }
         });
 
@@ -227,7 +235,7 @@ public class CreateGroupComplaintFragment extends Fragment implements DatePicker
     }
 
     public String leader_id = "";
-    List<UserInfoPOJO> leaderPOJOS = new ArrayList<>();
+    List<UserProfilePOJO> leaderPOJOS = new ArrayList<>();
     CustomAutoCompleteAdapter adapter = null;
 
     public void callLeaderAPI() {
@@ -235,17 +243,17 @@ public class CreateGroupComplaintFragment extends Fragment implements DatePicker
         nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
 //        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
-        new WebServiceBaseResponseList<UserInfoPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<UserInfoPOJO>() {
+        new WebServiceBaseResponseList<UserProfilePOJO>(nameValuePairs, getActivity(), new ResponseListCallback<UserProfilePOJO>() {
             @Override
-            public void onGetMsg(ResponseListPOJO<UserInfoPOJO> responseListPOJO) {
+            public void onGetMsg(ResponseListPOJO<UserProfilePOJO> responseListPOJO) {
                 leaderPOJOS.clear();
                 if (responseListPOJO.isSuccess()) {
                     leaderPOJOS.addAll(responseListPOJO.getResultList());
-                    adapter = new CustomAutoCompleteAdapter(getActivity(), (ArrayList<UserInfoPOJO>) leaderPOJOS);
+                    adapter = new CustomAutoCompleteAdapter(getActivity(), (ArrayList<UserProfilePOJO>) leaderPOJOS);
                     auto_fav_list.setAdapter(adapter);
                 }
             }
-        }, UserInfoPOJO.class, "CALL_LEADER_API", true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
+        }, UserProfilePOJO.class, "CALL_LEADER_API", true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
     }
 
     List<DepartmentPOJO> departmentPOJOS=new ArrayList<>();
@@ -307,7 +315,7 @@ public class CreateGroupComplaintFragment extends Fragment implements DatePicker
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==TAG_PEOPLE) {
             if (resultCode == Activity.RESULT_OK) {
-                taggeduserInfoPOJOS = (List<UserInfoPOJO>) data.getSerializableExtra("taggedpeople");
+                taggeduserInfoPOJOS = (List<UserProfilePOJO>) data.getSerializableExtra("taggedpeople");
                 updateTaggingDesc();
             }
         }else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
@@ -350,7 +358,7 @@ public class CreateGroupComplaintFragment extends Fragment implements DatePicker
     public void updateTaggingDesc(){
         String users="";
         for(int i=0;i<taggeduserInfoPOJOS.size();i++){
-            UserProfilePOJO userProfilePOJO=UtilityFunction.getUserProfilePOJO(taggeduserInfoPOJOS.get(i));
+            UserProfilePOJO userProfilePOJO=taggeduserInfoPOJOS.get(i);
             if(i==(taggeduserInfoPOJOS.size()-1)){
                 users+=userProfilePOJO.getFirstName()+" "+userProfilePOJO.getLastName();
             }else{
@@ -400,7 +408,8 @@ public class CreateGroupComplaintFragment extends Fragment implements DatePicker
                 }
 
                 for (int i = 0; i < taggeduserInfoPOJOS.size(); i++) {
-                    UserProfilePOJO userProfilePOJO1 = UtilityFunction.getUserProfilePOJO(taggeduserInfoPOJOS.get(i));
+                    UserProfilePOJO userProfilePOJO1 =taggeduserInfoPOJOS.get(i);
+                    Log.d(TagUtils.getTag(),"complaint member id:-"+userProfilePOJO1.getUserProfileId());
                     reqEntity.addPart("complaint_member[" + i + "]", new StringBody(userProfilePOJO1.getUserProfileId()));
                 }
 

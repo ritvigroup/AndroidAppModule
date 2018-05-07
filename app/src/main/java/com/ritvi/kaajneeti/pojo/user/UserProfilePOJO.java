@@ -89,6 +89,8 @@ public class UserProfilePOJO implements Serializable {
     private Integer following;
     @SerializedName("Follower")
     private Integer follower;
+    @SerializedName("MyFavouriteLeader")
+    private Integer MyFavouriteLeader;
     private boolean is_checked;
     private int selected_position;
 
@@ -426,5 +428,13 @@ public class UserProfilePOJO implements Serializable {
 
     public void setSelected_position(int selected_position) {
         this.selected_position = selected_position;
+    }
+
+    public Integer getMyFavouriteLeader() {
+        return MyFavouriteLeader;
+    }
+
+    public void setMyFavouriteLeader(Integer myFavouriteLeader) {
+        MyFavouriteLeader = myFavouriteLeader;
     }
 }

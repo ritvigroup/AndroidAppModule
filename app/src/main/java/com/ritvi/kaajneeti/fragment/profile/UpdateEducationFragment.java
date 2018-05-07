@@ -1,11 +1,14 @@
 package com.ritvi.kaajneeti.fragment.profile;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +19,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
+import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.activity.HomeActivity;
@@ -44,7 +53,7 @@ import butterknife.ButterKnife;
 @SuppressLint("ValidFragment")
 public class UpdateEducationFragment extends Fragment implements DatePickerDialog.OnDateSetListener{
 
-
+    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 101;
     @BindView(R.id.et_college_name)
     EditText et_college_name;
     @BindView(R.id.et_qualification)
@@ -64,6 +73,8 @@ public class UpdateEducationFragment extends Fragment implements DatePickerDialo
 
     @BindView(R.id.iv_back)
     ImageView iv_back;
+    @BindView(R.id.location)
+    ImageView location;
 
     @BindView(R.id.btn_save)
     Button btn_save;
@@ -148,6 +159,13 @@ public class UpdateEducationFragment extends Fragment implements DatePickerDialo
             }
         });
 
+        location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                findPlace();
+            }
+        });
+
 //        view.setFocusableInTouchMode(true);
 //        view.requestFocus();
 //        view.setOnKeyListener(new View.OnKeyListener() {
@@ -167,6 +185,20 @@ public class UpdateEducationFragment extends Fragment implements DatePickerDialo
     public void backPressed(){
         getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
+
+    public void findPlace() {
+        try {
+            Intent intent =
+                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+                            .build(getActivity());
+            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle the error.
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // TODO: Handle the error.
+        }
+    }
+
 
     public void setValues(){
         et_college_name.setText(educationPOJO.getQualificationUniversity());
@@ -234,6 +266,26 @@ public class UpdateEducationFragment extends Fragment implements DatePickerDialo
             tv_college_from.setText(date);
         } else if (CALENDAR_TYPE.equals(EDUCATION_TO)) {
             tv_college_to.setText(date);
+        }
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(getActivity(), data);
+                Log.i(TagUtils.getTag(), "Place: " + place.getName());
+                et_college_place.setText((String) place.getName());
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(getActivity(), data);
+                // TODO: Handle the error.
+                Log.i(TagUtils.getTag(), status.getStatusMessage());
+
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
         }
     }
 }

@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.activity.HomeActivity;
+import com.ritvi.kaajneeti.fragment.promotion.EngagementFragment;
 import com.ritvi.kaajneeti.pojo.home.EventPOJO;
 
 import butterknife.BindView;
@@ -96,7 +97,8 @@ public class EventViewFragment extends Fragment {
             public void onClick(View view) {
                 if(getActivity() instanceof HomeActivity){
                     HomeActivity homeActivity= (HomeActivity) getActivity();
-                    homeActivity.showEngagementFragment();
+                    EngagementFragment engagementFragment = new EngagementFragment();
+                    homeActivity.addFragmentinFrameHome(engagementFragment,"engagementFragment");
                 }
             }
         });

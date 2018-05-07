@@ -2,6 +2,7 @@ package com.ritvi.kaajneeti.fragment.homeactivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.github.tamir7.contacts.Contact;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.SetViews;
@@ -25,6 +27,7 @@ import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.activity.ProfilePageActivity;
 import com.ritvi.kaajneeti.adapter.HomeFeedAdapter;
+import com.ritvi.kaajneeti.interfaces.OnLoadMoreListener;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.home.FeedPOJO;
 import com.ritvi.kaajneeti.pojo.home.PollAnsPOJO;
@@ -55,11 +58,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class KaajFragment extends Fragment {
 
 
-    int start_position=0;
-    int range=10;
+    int start_position = 0;
+    int range = 10;
 
-    boolean  check_scroll=true;
-    boolean is_apicalled=true;
+    boolean check_scroll = true;
+    boolean is_apicalled = true;
 
     private static final String CALL_NEWS_FEED = "call_news_feed";
     @BindView(R.id.ll_scroll)
@@ -108,27 +111,14 @@ public class KaajFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        cv_profile_pic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(), ProfilePageActivity.class).putExtra("userProfilePOJO", Constants.userProfilePOJO));
-            }
-        });
 
         if (getActivity() instanceof HomeActivity) {
 
-            tv_profile_name.setText(Constants.userProfilePOJO.getFirstName()+" "+Constants.userProfilePOJO.getLastName());
+            tv_profile_name.setText(Constants.userProfilePOJO.getFirstName() + " " + Constants.userProfilePOJO.getLastName());
 
-            Log.d(TagUtils.getTag(),"profile photo path:-"+Constants.userProfilePOJO.getProfilePhotoPath());
+            Log.d(TagUtils.getTag(), "profile photo path:-" + Constants.userProfilePOJO.getProfilePhotoPath());
 
-//            Glide.with(getActivity().getApplicationContext())
-//                    .load(Constants.userProfilePOJO.getProfilePhotoPath())
-//                    .placeholder(R.drawable.ic_default_profile_pic)
-//                    .error(R.drawable.ic_default_profile_pic)
-//                    .dontAnimate()
-//                    .into(cv_profile_pic);
-
-            SetViews.setProfilePhoto(getActivity().getApplicationContext(),Constants.userProfilePOJO.getProfilePhotoPath(),cv_profile_pic);
+            SetViews.setProfilePhoto(getActivity().getApplicationContext(), Constants.userProfilePOJO.getProfilePhotoPath(), cv_profile_pic);
 
             ll_whats_mind.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -182,10 +172,10 @@ public class KaajFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
 //                    startActivity(new Intent(getActivity(), ProfileDescriptionActivity.class).putExtra("userInfo", Constants.userInfoPOJO));
-                    if(getActivity() instanceof HomeActivity){
-                        UserProfilePOJO userProfilePOJO=Constants.userProfilePOJO;
-                        HomeActivity homeActivity= (HomeActivity) getActivity();
-                        homeActivity.showUserProfileFragment(userProfilePOJO.getUserId(),userProfilePOJO.getUserProfileId());
+                    if (getActivity() instanceof HomeActivity) {
+                        UserProfilePOJO userProfilePOJO = Constants.userProfilePOJO;
+                        HomeActivity homeActivity = (HomeActivity) getActivity();
+                        homeActivity.showUserProfileFragment(userProfilePOJO.getUserId(), userProfilePOJO.getUserProfileId());
                     }
                 }
             });
@@ -193,25 +183,25 @@ public class KaajFragment extends Fragment {
             tv_profile_name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(getActivity() instanceof HomeActivity){
-                        UserProfilePOJO userProfilePOJO=Constants.userProfilePOJO;
-                        HomeActivity homeActivity= (HomeActivity) getActivity();
-                        homeActivity.showUserProfileFragment(userProfilePOJO.getUserId(),userProfilePOJO.getUserProfileId());
+                    if (getActivity() instanceof HomeActivity) {
+                        UserProfilePOJO userProfilePOJO = Constants.userProfilePOJO;
+                        HomeActivity homeActivity = (HomeActivity) getActivity();
+                        homeActivity.showUserProfileFragment(userProfilePOJO.getUserId(), userProfilePOJO.getUserProfileId());
                     }
                 }
             });
 
             attachAdapter();
-            getAllData(false);
+            getAllData(false, 0);
 
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    start_position=0;
-                    range=10;
-                    check_scroll=true;
-                    is_apicalled=true;
-                    getAllData(true);
+                    start_position = 0;
+                    range = 10;
+                    check_scroll = true;
+                    is_apicalled = true;
+//                    getAllData(true);
                 }
             });
         }
@@ -226,12 +216,10 @@ public class KaajFragment extends Fragment {
 //        });
 
 
-
     }
 
-    public void getAllData(final boolean is_refreshing) {
+    public void getAllData(final boolean is_refreshing, int start_position) {
 
-        is_apicalled=true;
 
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
@@ -243,28 +231,30 @@ public class KaajFragment extends Fragment {
             public void onGetMsg(ResponseListPOJO<FeedPOJO> responseListPOJO) {
                 try {
 //                    feedPOJOS.clear();
+                    removeLastPosition();
+
                     if (responseListPOJO.isSuccess()) {
-                        Log.d(TagUtils.getTag(),"response length:-"+responseListPOJO.getResultList().size());
-                        if(is_refreshing){
+                        Log.d(TagUtils.getTag(), "response length:-" + responseListPOJO.getResultList().size());
+                        if (is_refreshing) {
                             feedPOJOS.clear();
                         }
                         feedPOJOS.addAll(responseListPOJO.getResultList());
                         homeFeedAdapter.notifyDataSetChanged();
-                        if(!is_refreshing) {
-                            if (responseListPOJO.getResultList().size() == range) {
-                                check_scroll = true;
-                                is_apicalled = false;
-                                start_position = start_position + range;
-                            } else {
-                                check_scroll = false;
-                                is_apicalled = true;
-                            }
-                        }else{
-                            start_position=0;
-                            range=10;
-                            check_scroll=true;
-                            is_apicalled=true;
-                        }
+//                        if(!is_refreshing) {
+//                            if (responseListPOJO.getResultList().size() == range) {
+//                                check_scroll = true;
+//                                is_apicalled = false;
+//                                start_position = start_position + range;
+//                            } else {
+//                                check_scroll = false;
+//                                is_apicalled = true;
+//                            }
+//                        }else{
+//                            start_position=0;
+//                            range=10;
+//                            check_scroll=true;
+//                            is_apicalled=true;
+//                        }
 //                        inflateViews();
                     } else {
                         ToastClass.showShortToast(getActivity(), responseListPOJO.getMessage());
@@ -274,32 +264,31 @@ public class KaajFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-        }, FeedPOJO.class, "CALL_FEED_DATA", true).execute(WebServicesUrls.HOME_PAGE_DATA);
-//
-//        new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
-//            @Override
-//            public void onGetMsg(String apicall, String response) {
-//                try{
-//                    JSONObject jsonObject=new JSONObject(response);
-//                    if(jsonObject.optString("status").equals("success")){
-//                        JSONArray jsonArray=jsonObject.optJSONArray("result");
-//                        for(int i=0;i<jsonArray.length();i++){
-//                            Gson gson=new Gson();
-//                            Log.d(TagUtils.getTag(),"data:-"+jsonArray.optJSONObject(i).toString());
-//                            FeedPOJO feedPOJO=gson.fromJson(jsonArray.optJSONObject(i).toString(),FeedPOJO.class);
-//                        }
-//                    }
-//                }
-//                catch (Exception e){
-//                    e.printStackTrace();
-//                }
-//            }
-//        },"CALL_FEED_DATA",true).execute(WebServicesUrls.HOME_PAGE_DATA);
+        }, FeedPOJO.class, "CALL_FEED_DATA", false).execute(WebServicesUrls.HOME_PAGE_DATA);
+
+    }
+
+    public void removeLastPosition() {
+
+        if (feedPOJOS.size() > 0) {
+            if(feedPOJOS.size()>1&&feedPOJOS.get(feedPOJOS.size()-1).getFeedtype()==null) {
+                feedPOJOS.remove(feedPOJOS.size() - 1);
+                homeFeedAdapter.notifyItemRemoved(feedPOJOS.size());
+            }
+
+            //Generating more data
+//            int index = feedPOJOS.size();
+//            int end = index + 10;
+
+//                homeFeedAdapter.notifyDataSetChanged();
+//                homeFeedAdapter.setLoaded();
+//            getAllData(false, index);
+        }
     }
 
     public void goTo(int position) {
         if (position == 0) {
-//            startActivity(new Intent(getActivity(),CreatePostActivity.class));
+
             startActivity(new Intent(getActivity(), CreateExpressActivity.class));
         } else if (position == 1) {
 //            startActivity(new Intent(getActivity(),CreateIssueActivity.class));
@@ -326,458 +315,31 @@ public class KaajFragment extends Fragment {
     List<FeedPOJO> feedPOJOS = new ArrayList<>();
 
     public void attachAdapter() {
-        homeFeedAdapter = new HomeFeedAdapter(getActivity(), this, feedPOJOS,getChildFragmentManager());
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rv_feeds.setHasFixedSize(true);
-        rv_feeds.setAdapter(homeFeedAdapter);
         rv_feeds.setLayoutManager(linearLayoutManager);
+        homeFeedAdapter = new HomeFeedAdapter(rv_feeds, getActivity(), this, feedPOJOS, getChildFragmentManager());
+        rv_feeds.setAdapter(homeFeedAdapter);
         rv_feeds.setNestedScrollingEnabled(true);
         rv_feeds.setItemAnimator(new DefaultItemAnimator());
 
-        rv_feeds.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        homeFeedAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-//                if (linearLayoutManager.findFirstVisibleItemPosition() != -1) {
-//                    int position = linearLayoutManager.findFirstVisibleItemPosition();
-//                    Log.d(TagUtils.getTag(),"position scroll:-"+position);
-//                }
-                if (linearLayoutManager.findFirstVisibleItemPosition() != -1) {
-                    int position = linearLayoutManager.findFirstVisibleItemPosition();
-                    Log.d(TagUtils.getTag(),"position scroll:-"+position);
-                    Log.d(TagUtils.getTag(),"checking position:-"+(start_position-3));
-                    if(check_scroll&&!is_apicalled){
-                        if(position>=((start_position)-3)){
-                            getAllData(false);
-                        }
+            public void onLoadMore() {
+                Log.d(TagUtils.getTag(), "item loading");
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        FeedPOJO feedPOJO = new FeedPOJO();
+                        feedPOJO.setFeedtype(null);
+                        feedPOJOS.add(feedPOJO);
+                        homeFeedAdapter.notifyItemInserted(feedPOJOS.size() - 1);
+                        getAllData(false,feedPOJOS.size());
                     }
-                }
+                }, 0);
             }
         });
 
     }
 
-//    public void inflateViews() {
-//        if (feedPOJOS.size() > 0) {
-//            for (FeedPOJO feedPOJO : feedPOJOS) {
-//                switch (feedPOJO.getFeedtype()) {
-//                    case "post":
-//                        inflatePostPOJO(getActivity(), feedPOJO.getPostPOJO());
-//                        break;
-//                    case "poll":
-//                        inflatePollPOJO(getActivity(), feedPOJO.getPollPOJO());
-//                        break;
-//                    case "event":
-//                        inflateEventPOJO(getActivity(), feedPOJO.getEventPOJO());
-//                        break;
-//                    case "complaint":
-//                        inflateComplaintPOJO(getActivity(), feedPOJO.getComplaintPOJO());
-//                        break;
-//                }
-//            }
-//        }
-//    }
-
-//    public void inflateComplaintPOJO(final Activity activity, final ComplaintPOJO complaintPOJO) {
-//
-//        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        View itemView = inflater.inflate(R.layout.inflate_complaint_feed, null);
-//        TextView tv_profile_name = itemView.findViewById(R.id.tv_profile_name);
-//        TextView tv_date = itemView.findViewById(R.id.tv_date);
-//        CircleImageView cv_profile_pic = itemView.findViewById(R.id.cv_profile_pic);
-//        TextView tv_analyze = itemView.findViewById(R.id.tv_analyze);
-//        TextView tv_id = itemView.findViewById(R.id.tv_id);
-//        TextView tv_accepted = itemView.findViewById(R.id.tv_accepted);
-//        LinearLayout ll_analyze = itemView.findViewById(R.id.ll_analyze);
-//        LinearLayout ll_accept = itemView.findViewById(R.id.ll_accept);
-//        LinearLayout ll_decline = itemView.findViewById(R.id.ll_decline);
-//        LinearLayout ll_accepted = itemView.findViewById(R.id.ll_accepted);
-//        LinearLayout ll_acceptdecline = itemView.findViewById(R.id.ll_acceptdecline);
-//        ImageView iv_info = itemView.findViewById(R.id.iv_info);
-//        ImageView iv_complaint_menu = itemView.findViewById(R.id.iv_complaint_menu);
-//
-//
-//        Glide.with(activity.getApplicationContext())
-//                .load(complaintPOJO.getComplaintProfile().getUserProfileDetailPOJO().getUserInfoPOJO().getProfilePhotoPath())
-//                .error(R.drawable.ic_default_profile_pic)
-//                .placeholder(R.drawable.ic_default_profile_pic)
-//                .dontAnimate()
-//                .into(cv_profile_pic);
-//
-//        String name = "";
-//        UserProfilePOJO userProfilePOJO = complaintPOJO.getComplaintProfile().getUserProfileDetailPOJO().getUserProfilePOJO();
-//
-//        if (userProfilePOJO != null) {
-//            if (userProfilePOJO.getFirstName().equalsIgnoreCase("")
-//                    || userProfilePOJO.getMiddleName().equalsIgnoreCase("")
-//                    || userProfilePOJO.getLastName().equalsIgnoreCase("")) {
-//                name = userProfilePOJO.getFirstName();
-//            } else {
-//                name = userProfilePOJO.getFirstName() + " " + userProfilePOJO.getMiddleName() + " " + userProfilePOJO.getLastName();
-//            }
-//        }
-//
-//        iv_complaint_menu.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                final PopupMenu menu = new PopupMenu(activity, view);
-//
-//                if (UtilityFunction.getProfileID(complaintPOJO.getComplaintProfile().getUserProfileDetailPOJO().getUserInfoPOJO()).equals(Constants.userProfilePOJO.getUserProfileId())) {
-//                    menu.inflate(R.menu.menu_my_complaint);
-//                    menu.show();
-//                } else {
-//                    menu.inflate(R.menu.menu_other_complaint);
-//                    menu.show();
-//                }
-//            }
-//        });
-//
-//        tv_profile_name.setText(Html.fromHtml(name));
-//
-//        tv_date.setText(complaintPOJO.getAddedOn());
-//
-//        tv_analyze.setText(complaintPOJO.getComplaintSubject());
-//        tv_id.setText("CID:-" + complaintPOJO.getComplaintUniqueId());
-//
-//        if (complaintPOJO.getComplaintTypeId().equals("2")) {
-//            if (!UtilityFunction.getUserProfilePOJO(complaintPOJO.getComplaintProfile().getUserProfileDetailPOJO().getUserInfoPOJO()).getUserProfileId().equals(Constants.userProfilePOJO.getUserProfileId())) {
-//                boolean is_accepted = false;
-//                boolean is_declined = false;
-//                for (OutGoingRequestPOJO complaintMemberPOJO : complaintPOJO.getComplaintMemberPOJOS()) {
-//                    if (UtilityFunction.getUserProfilePOJO(complaintMemberPOJO.getUserProfileDetailPOJO().getUserInfoPOJO()).getUserProfileId().equals(Constants.userProfilePOJO.getUserProfileId())) {
-//                        if (complaintMemberPOJO.getAcceptedYesNo().equals("1")) {
-//                            is_accepted = true;
-//                        } else if (complaintMemberPOJO.getAcceptedYesNo().equals("-1")) {
-//                            is_declined = true;
-//                        }
-//                    }
-//                }
-//                if (is_accepted) {
-//                    ll_acceptdecline.setVisibility(View.GONE);
-//                    tv_accepted.setText("You accepted the complaint request");
-//                } else if (is_declined) {
-//                    ll_acceptdecline.setVisibility(View.GONE);
-//                    tv_accepted.setText("You declined the complaint request");
-//                } else {
-//                    ll_accepted.setVisibility(View.GONE);
-//                }
-//            } else {
-//                ll_acceptdecline.setVisibility(View.GONE);
-//            }
-//        } else {
-//            ll_acceptdecline.setVisibility(View.GONE);
-//        }
-//
-////        ll_decline.setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View view) {
-////                showAcceptDeclintDialog("Do you want to decline the Complaint Request",0,items.get(position).getComplaintId());
-////            }
-////        });
-////
-////        ll_accept.setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View view) {
-////                showAcceptDeclintDialog("Do you want to accept the Complaint Request",1,items.get(position).getComplaintId());
-////            }
-////        });
-//
-//        ll_analyze.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(activity, ViewComplaintActivity.class);
-//                intent.putExtra("complaint", complaintPOJO);
-//                activity.startActivity(intent);
-//            }
-//        });
-//
-//        iv_info.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(activity, ComplaintDetailActivity.class);
-//                intent.putExtra("complaintPOJO", complaintPOJO);
-//                activity.startActivity(intent);
-//            }
-//        });
-//
-//        ll_post.addView(itemView);
-//    }
-
-//    public void inflateEventPOJO(final Activity activity, final EventPOJO eventPOJO) {
-//        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        View view = inflater.inflate(R.layout.inflate_event_feed, null);
-//
-//        TextView tv_name = view.findViewById(R.id.tv_name);
-//        TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
-//        TextView tv_date = view.findViewById(R.id.tv_date);
-//        ImageView iv_event_image = view.findViewById(R.id.iv_event_image);
-//        ImageView iv_event_menu = view.findViewById(R.id.iv_event_menu);
-//        CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
-//        TextView tv_event_date = view.findViewById(R.id.tv_event_date);
-//        TextView tv_place = view.findViewById(R.id.tv_place);
-//        TextView tv_month = view.findViewById(R.id.tv_month);
-//        TextView tv_day = view.findViewById(R.id.tv_day);
-//
-//
-//        iv_event_menu.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                final PopupMenu menu = new PopupMenu(activity, view);
-//
-//                if (UtilityFunction.getProfileID(eventPOJO.getEventProfile().getUserProfileDetailPOJO().getUserInfoPOJO()).equals(Constants.userProfilePOJO.getUserProfileId())) {
-//                    menu.inflate(R.menu.menu_my_complaint);
-//                    menu.show();
-//                } else {
-//                    menu.inflate(R.menu.menu_other_complaint);
-//                    menu.show();
-//                }
-//            }
-//        });
-//
-//        tv_name.setText(eventPOJO.getEventName());
-//
-//        Glide.with(activity.getApplicationContext())
-//                .load(eventPOJO.getEventProfile().getUserProfileDetailPOJO().getUserInfoPOJO().getProfilePhotoPath())
-//                .error(R.drawable.ic_default_profile_pic)
-//                .placeholder(R.drawable.ic_default_profile_pic)
-//                .dontAnimate()
-//                .into(cv_profile_pic);
-//
-//        if (eventPOJO.getEventAttachment().size() > 0) {
-//            Glide.with(activity.getApplicationContext())
-//                    .load(eventPOJO.getEventAttachment().get(0).getAttachmentFile())
-//                    .error(R.drawable.ic_default_profile_pic)
-//                    .placeholder(R.drawable.ic_default_profile_pic)
-//                    .dontAnimate()
-//                    .into(iv_event_image);
-//        }
-//
-//        String name = "";
-//        UserProfilePOJO userProfilePOJO = eventPOJO.getEventProfile().getUserProfileDetailPOJO().getUserProfilePOJO();
-//
-//        if (userProfilePOJO != null) {
-//            if (userProfilePOJO.getFirstName().equalsIgnoreCase("")
-//                    || userProfilePOJO.getMiddleName().equalsIgnoreCase("")
-//                    || userProfilePOJO.getLastName().equalsIgnoreCase("")) {
-//                name = userProfilePOJO.getFirstName();
-//            } else {
-//                name = userProfilePOJO.getFirstName() + " " + userProfilePOJO.getMiddleName() + " " + userProfilePOJO.getLastName();
-//            }
-//        }
-//
-//        tv_event_date.setText(eventPOJO.getStartDate() + "-" + eventPOJO.getEndDate());
-//        tv_place.setText(eventPOJO.getEventLocation());
-////        tv_month.setText(eventPOJO.getEveryMonth());
-//
-//        tv_profile_name.setText(name);
-//        tv_date.setText(eventPOJO.getAddedOn());
-//
-//        ll_post.addView(view);
-//    }
-
-//    public void inflatePollPOJO(final Activity activity, final PollPOJO pollPOJO) {
-//        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        View view = inflater.inflate(R.layout.inflate_poll_feed, null);
-//
-//        TextView tv_questions = view.findViewById(R.id.tv_questions);
-//        LinearLayout ll_ans = view.findViewById(R.id.ll_ans);
-//        TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
-//        TextView tv_date = view.findViewById(R.id.tv_date);
-//        CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
-//        ImageView iv_poll_menu = view.findViewById(R.id.iv_poll_menu);
-//
-//        tv_questions.setText(pollPOJO.getPollQuestion());
-//
-//        iv_poll_menu.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                final PopupMenu menu = new PopupMenu(activity, view);
-//
-//                if (UtilityFunction.getProfileID(pollPOJO.getProfileDetailPOJO().getUserProfileDetailPOJO().getUserInfoPOJO()).equals(Constants.userProfilePOJO.getUserProfileId())) {
-//                    menu.inflate(R.menu.menu_my_complaint);
-//                    menu.show();
-//                } else {
-//                    menu.inflate(R.menu.menu_other_complaint);
-//                    menu.show();
-//                }
-//            }
-//        });
-//
-//        Glide.with(activity.getApplicationContext())
-//                .load(pollPOJO.getProfileDetailPOJO().getUserProfileDetailPOJO().getUserInfoPOJO().getProfilePhotoPath())
-//                .error(R.drawable.ic_default_profile_pic)
-//                .placeholder(R.drawable.ic_default_profile_pic)
-//                .dontAnimate()
-//                .into(cv_profile_pic);
-//
-//        String name = "";
-//        UserProfilePOJO userProfilePOJO = pollPOJO.getProfileDetailPOJO().getUserProfileDetailPOJO().getUserProfilePOJO();
-//
-//        if (userProfilePOJO != null) {
-//            if (userProfilePOJO.getFirstName().equalsIgnoreCase("")
-//                    || userProfilePOJO.getMiddleName().equalsIgnoreCase("")
-//                    || userProfilePOJO.getLastName().equalsIgnoreCase("")) {
-//                name = userProfilePOJO.getFirstName();
-//            } else {
-//                name = userProfilePOJO.getFirstName() + " " + userProfilePOJO.getMiddleName() + " " + userProfilePOJO.getLastName();
-//            }
-//        }
-//
-//        tv_profile_name.setText(name);
-//        tv_date.setText(pollPOJO.getAddedOn());
-//
-//        for (final PollAnsPOJO pollAnsPOJO : pollPOJO.getPollAnsPOJOS()) {
-//            LayoutInflater inflater1 = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            View view1 = inflater1.inflate(R.layout.inflate_poll_ans, null);
-//
-//            Button btn_ans = view1.findViewById(R.id.btn_ans);
-//            btn_ans.setTag(pollAnsPOJO.getPollAnswer());
-//            btn_ans.setText(pollAnsPOJO.getPollAnswer());
-//
-//            btn_ans.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    callSavePollAns(pollPOJO, pollAnsPOJO);
-//                }
-//            });
-//            if (ll_ans.findViewWithTag(pollAnsPOJO.getPollAnswer()) == null) {
-//                ll_ans.addView(view1);
-//            }
-//        }
-//
-//        ll_post.addView(view);
-//    }
-
-    public void callSavePollAns(PollPOJO pollPOJO, PollAnsPOJO pollAnsPOJO) {
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
-        nameValuePairs.add(new BasicNameValuePair("poll_id", pollPOJO.getPollId()));
-        nameValuePairs.add(new BasicNameValuePair("answer_id", pollAnsPOJO.getPollAnswerId()));
-        new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
-            @Override
-            public void onGetMsg(String apicall, String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    if (jsonObject.optString("status").equals("success")) {
-                        ToastClass.showShortToast(getActivity().getApplicationContext(), "Poll Ans Saved");
-                    } else {
-                        ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }, "POLL_ANS", true).execute(WebServicesUrls.SAVE_POLL_ANS);
-
-    }
-
-//    public void inflatePostPOJO(final Activity activity, final PostPOJO postPOJO) {
-//        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        View view = inflater.inflate(R.layout.inflate_news_feeds, null);
-//        TextView tv_profile_name = view.findViewById(R.id.tv_profile_name);
-//        TextView tv_date = view.findViewById(R.id.tv_date);
-//        ImageView iv_feed_image = view.findViewById(R.id.iv_feed_image);
-//        ImageView iv_post_menu = view.findViewById(R.id.iv_post_menu);
-//        TextView tv_description = view.findViewById(R.id.tv_description);
-//        CircleImageView cv_profile_pic = view.findViewById(R.id.cv_profile_pic);
-//
-//        if (postPOJO != null) {
-//
-//
-//            iv_post_menu.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//
-//                    final PopupMenu menu = new PopupMenu(activity, view);
-//
-//                    if (UtilityFunction.getProfileID(postPOJO.getPostProfile().getUserProfileDetailPOJO().getUserInfoPOJO()).equals(Constants.userProfilePOJO.getUserProfileId())) {
-//                        menu.inflate(R.menu.menu_my_complaint);
-//                        menu.show();
-//                    } else {
-//                        menu.inflate(R.menu.menu_other_complaint);
-//                        menu.show();
-//                    }
-//                }
-//            });
-//
-//            Glide.with(activity.getApplicationContext())
-//                    .load(postPOJO.getPostProfile().getUserProfileDetailPOJO().getUserInfoPOJO().getProfilePhotoPath())
-//                    .error(R.drawable.ic_default_profile_pic)
-//                    .placeholder(R.drawable.ic_default_profile_pic)
-//                    .dontAnimate()
-//                    .into(cv_profile_pic);
-//
-//            if (postPOJO.getPostAttachment().size() > 0) {
-//                Glide.with(activity.getApplicationContext())
-//                        .load(postPOJO.getPostAttachment().get(0).getAttachmentFile())
-//                        .error(R.drawable.ic_default_profile_pic)
-//                        .placeholder(R.drawable.ic_default_profile_pic)
-//                        .dontAnimate()
-//                        .into(iv_feed_image);
-//            } else {
-//                iv_feed_image.setVisibility(View.GONE);
-//            }
-//
-//            String name = "";
-//            UserProfilePOJO userProfilePOJO = postPOJO.getPostProfile().getUserProfileDetailPOJO().getUserProfilePOJO();
-//
-//            if (userProfilePOJO != null) {
-//                if (userProfilePOJO.getFirstName().equalsIgnoreCase("")
-//                        || userProfilePOJO.getMiddleName().equalsIgnoreCase("")
-//                        || userProfilePOJO.getLastName().equalsIgnoreCase("")) {
-//                    name = userProfilePOJO.getFirstName();
-//                } else {
-//                    name = userProfilePOJO.getFirstName() + " " + userProfilePOJO.getMiddleName() + " " + userProfilePOJO.getLastName();
-//                }
-//            }
-//
-//            String profile_description = "";
-//            boolean containDescribe = false;
-//            if (postPOJO.getPostTag().size() > 0) {
-//                containDescribe = true;
-//            }
-//
-//            if (postPOJO.getFeelingDataPOJOS().size() > 0) {
-//                containDescribe = true;
-//            }
-//
-//            if (containDescribe) {
-//                profile_description += " is ";
-//
-//                if (postPOJO.getFeelingDataPOJOS().size() > 0) {
-//                    profile_description += "<b>feeling " + postPOJO.getFeelingDataPOJOS().get(0).getFeelingName() + "</b>";
-//                }
-//
-//                if (postPOJO.getPostTag().size() > 0) {
-//                    profile_description += " with ";
-//                    if (postPOJO.getPostTag().size() > 2) {
-//                        profile_description += "<b>" + postPOJO.getPostTag().get(0).getUserProfileDetailPOJO().getUserProfilePOJO().getFirstName() + " and " + (postPOJO.getPostTag().size() - 1) + " other" + "</b>";
-//                    } else if (postPOJO.getPostTag().size() == 2) {
-//                        profile_description += "<b>" + postPOJO.getPostTag().get(0).getUserProfileDetailPOJO().getUserProfilePOJO().getFirstName() + " " + postPOJO.getPostTag().get(0).getUserProfileDetailPOJO().getUserProfilePOJO().getLastName() +
-//                                " and " + postPOJO.getPostTag().get(1).getUserProfileDetailPOJO().getUserProfilePOJO().getFirstName() + " " + postPOJO.getPostTag().get(1).getUserProfileDetailPOJO().getUserProfilePOJO().getLastName() + "</b>";
-//                    } else {
-//                        profile_description += "<b>" + postPOJO.getPostTag().get(0).getUserProfileDetailPOJO().getUserProfilePOJO().getFirstName() + " " + postPOJO.getPostTag().get(0).getUserProfileDetailPOJO().getUserProfilePOJO().getLastName() + "</b>";
-//                    }
-//                }
-//            }
-//
-//            tv_profile_name.setText(Html.fromHtml(name + " " + profile_description));
-//            if (!postPOJO.getPostDescription().equalsIgnoreCase("")) {
-//                tv_description.setText(postPOJO.getPostDescription());
-//            } else {
-//                tv_description.setVisibility(View.GONE);
-//            }
-//            tv_date.setText(postPOJO.getAddedOn());
-//        }
-//        ll_post.addView(view);
-//    }
 }

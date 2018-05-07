@@ -18,6 +18,8 @@ import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
+import com.ritvi.kaajneeti.activity.AllLeaderActivity;
+import com.ritvi.kaajneeti.fragment.homeactivity.ContributeFragment;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.AdapterWebService;
@@ -58,49 +60,50 @@ public class LeaderAdapter extends RecyclerView.Adapter<LeaderAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+
+
 //
-//        holder.tv_leader_name.setText(items.get(position).getUserName());
-//        holder.tv_leader_email.setText(items.get(position).getUserEmail());
-//
-//        if (activity instanceof AllLeaderActivity) {
-//            if (items.get(position).getMyFavouriteLeader().equals("1")) {
-//                holder.iv_favorite.setImageResource(R.drawable.ic_favorite);
-//            } else {
-//                holder.iv_favorite.setImageResource(R.drawable.ic_unfavorite);
-//            }
-//
-//            holder.iv_favorite.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    callFavoriteAPI(items.get(position), holder.iv_favorite);
-//                }
-//            });
-//        } else {
-//            holder.iv_favorite.setVisibility(View.GONE);
-//        }
-//
-//
-//        holder.ll_leader.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if(fragment!=null&&fragment instanceof ContributeFragment) {
-//                    ContributeFragment contributeFragment= (ContributeFragment) fragment;
-////                    contributeFragment.showpaymentDialog(items.get(position),items.get(position).getUserProfileLeader().getUserProfileId());
-//                }else{
-//                    showLeaderProfile(items.get(position));
-//                }
-//            }
-//        });
+        holder.tv_leader_name.setText(items.get(position).getFirstName()+" "+items.get(position).getLastName());
+        holder.tv_leader_email.setText(items.get(position).getEmail());
+
+        if (activity instanceof AllLeaderActivity) {
+            if (items.get(position).getMyFavouriteLeader().equals("1")) {
+                holder.iv_favorite.setImageResource(R.drawable.ic_favorite);
+            } else {
+                holder.iv_favorite.setImageResource(R.drawable.ic_unfavorite);
+            }
+
+            holder.iv_favorite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    callFavoriteAPI(items.get(position), holder.iv_favorite);
+                }
+            });
+        } else {
+            holder.iv_favorite.setVisibility(View.GONE);
+        }
+
+
+        holder.ll_leader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(fragment!=null&&fragment instanceof ContributeFragment) {
+                    ContributeFragment contributeFragment= (ContributeFragment) fragment;
+//                    contributeFragment.showpaymentDialog(items.get(position),items.get(position).getUserProfileLeader().getUserProfileId());
+                }else{
+                    showLeaderProfile(items.get(position));
+                }
+            }
+        });
 
         holder.itemView.setTag(items.get(position));
     }
 
-    public void callFavoriteAPI(UserInfoPOJO leaderPOJO, final ImageView favorite_image) {
+    public void callFavoriteAPI(UserProfilePOJO leaderPOJO, final ImageView favorite_image) {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
-        nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id", leaderPOJO.getUserProfileLeader().getUserProfileId()));
-        nameValuePairs.add(new BasicNameValuePair("leader_profile_id", leaderPOJO.getUserProfileLeader().getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id", leaderPOJO.getUserProfileId()));
 
         new AdapterWebService(activity, nameValuePairs, false, new MsgPassInterface() {
             @Override
@@ -123,7 +126,7 @@ public class LeaderAdapter extends RecyclerView.Adapter<LeaderAdapter.ViewHolder
         }).executeApi(WebServicesUrls.SET_MY_FAVORITE_LEADER);
     }
 
-    public void showLeaderProfile(UserInfoPOJO leaderPOJO) {
+    public void showLeaderProfile(UserProfilePOJO leaderPOJO) {
         final Dialog dialog = new Dialog(activity, android.R.style.Theme_DeviceDefault_Light_Dialog);
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -147,8 +150,8 @@ public class LeaderAdapter extends RecyclerView.Adapter<LeaderAdapter.ViewHolder
         TextView tv_profile_name = dialog.findViewById(R.id.tv_profile_name);
         TextView tv_mobile_number = dialog.findViewById(R.id.tv_mobile_number);
 
-        tv_mobile_number.setText(leaderPOJO.getUserMobile());
-        tv_profile_name.setText(leaderPOJO.getUserName());
+        tv_mobile_number.setText(leaderPOJO.getMobile());
+        tv_profile_name.setText(leaderPOJO.getFirstName()+" "+leaderPOJO.getLastName());
 
     }
 

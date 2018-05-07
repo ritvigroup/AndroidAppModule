@@ -90,7 +90,8 @@ public class AudienceFragment extends Fragment implements OnMapReadyCallback {
             public void onClick(View view) {
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
-                    homeActivity.showTitleAttachmentFragment();
+                    TitleAttachmentFragment titleAttachmentFragment = new TitleAttachmentFragment();
+                    homeActivity.addFragmentinFrameHome(titleAttachmentFragment,"titleAttachmentFragment");
                 }
             }
         });

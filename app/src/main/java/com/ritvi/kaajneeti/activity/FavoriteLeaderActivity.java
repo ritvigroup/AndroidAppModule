@@ -18,6 +18,7 @@ import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.adapter.FavoriteLeaderAdapter;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -39,7 +40,7 @@ public class FavoriteLeaderActivity extends LocalizationActivity{
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    List<UserInfoPOJO> leaderPOJOS = new ArrayList<>();
+    List<UserProfilePOJO> leaderPOJOS = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,9 +79,9 @@ public class FavoriteLeaderActivity extends LocalizationActivity{
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
-        new WebServiceBaseResponseList<UserInfoPOJO>(nameValuePairs, this, new ResponseListCallback<UserInfoPOJO>() {
+        new WebServiceBaseResponseList<UserProfilePOJO>(nameValuePairs, this, new ResponseListCallback<UserProfilePOJO>() {
             @Override
-            public void onGetMsg(ResponseListPOJO<UserInfoPOJO> responseListPOJO) {
+            public void onGetMsg(ResponseListPOJO<UserProfilePOJO> responseListPOJO) {
                 leaderPOJOS.clear();
                 if (responseListPOJO.isSuccess()) {
                     leaderPOJOS.addAll(responseListPOJO.getResultList());
@@ -91,7 +92,7 @@ public class FavoriteLeaderActivity extends LocalizationActivity{
                 }
                 leaderAdapter.notifyDataSetChanged();
             }
-        },UserInfoPOJO.class,CALL_ALL_LEADER,false).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
+        },UserProfilePOJO.class,CALL_ALL_LEADER,false).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
     }
 
 

@@ -113,7 +113,7 @@ public class CreateExpressActivity extends AppCompatActivity {
     @BindView(R.id.et_whats)
     EditText et_whats;
 
-    List<UserInfoPOJO> taggeduserInfoPOJOS = new ArrayList<>();
+    List<UserProfilePOJO> taggeduserInfoPOJOS = new ArrayList<>();
 
     String profile_description = "";
     String tagging_description = "";
@@ -385,7 +385,7 @@ public class CreateExpressActivity extends AppCompatActivity {
             reqEntity.addPart("feeling", new StringBody(activity));
 
             for (int i = 0; i < taggeduserInfoPOJOS.size(); i++) {
-                reqEntity.addPart("post_tag[" + i + "]", new StringBody(UtilityFunction.getUserProfilePOJO(taggeduserInfoPOJOS.get(i)).getUserProfileId()));
+                reqEntity.addPart("post_tag[" + i + "]", new StringBody(taggeduserInfoPOJOS.get(i).getUserProfileId()));
             }
 
             int count = 0;
@@ -472,7 +472,7 @@ public class CreateExpressActivity extends AppCompatActivity {
             }
         } else if (requestCode == TAG_PEOPLE) {
             if (resultCode == Activity.RESULT_OK) {
-                taggeduserInfoPOJOS = (List<UserInfoPOJO>) data.getSerializableExtra("taggedpeople");
+                taggeduserInfoPOJOS = (List<UserProfilePOJO>) data.getSerializableExtra("taggedpeople");
 
                 tagging_description = getTaggedDescription(taggeduserInfoPOJOS);
                 updateProfileStatus();
@@ -502,18 +502,18 @@ public class CreateExpressActivity extends AppCompatActivity {
         updateProfileStatus();
     }
 
-    public String getTaggedDescription(List<UserInfoPOJO> stringList) {
+    public String getTaggedDescription(List<UserProfilePOJO> stringList) {
         String description = "";
         if (stringList.size() == 1) {
-            UserProfilePOJO userProfilePOJO = UtilityFunction.getUserProfilePOJO(stringList.get(0));
+            UserProfilePOJO userProfilePOJO = stringList.get(0);
             description = " with <b>" + userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName() + "</b> ";
         } else if (stringList.size() == 2) {
-            UserProfilePOJO userProfilePOJO1 = UtilityFunction.getUserProfilePOJO(stringList.get(0));
-            UserProfilePOJO userProfilePOJO2 = UtilityFunction.getUserProfilePOJO(stringList.get(1));
+            UserProfilePOJO userProfilePOJO1 = stringList.get(0);
+            UserProfilePOJO userProfilePOJO2 = stringList.get(1);
             description = " with <b>" + userProfilePOJO1.getFirstName() + " " + userProfilePOJO1.getLastName() + "</b> and <b>" +
                     userProfilePOJO2.getFirstName() + " " + userProfilePOJO2.getLastName() + "</b>";
         } else if (stringList.size() > 2) {
-            UserProfilePOJO userProfilePOJO = UtilityFunction.getUserProfilePOJO(stringList.get(0));
+            UserProfilePOJO userProfilePOJO = stringList.get(0);
             description = " with <b>" + userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName() + "</b> and <b>" + (stringList.size() - 1) + " others";
         }
         return description;

@@ -166,8 +166,6 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
                         Log.d(TagUtils.getTag(), "email:-" + result.data.email);
                         Log.d(TagUtils.getTag(), "description:-" + result.data.description);
                         Log.d(TagUtils.getTag(), "image url:-" + result.data.profileImageUrl);
-
-
                     }
 
                     @Override
@@ -267,6 +265,7 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
             nameValuePairs.add(new BasicNameValuePair("request_action", "LOGIN_WITH_MPIN"));
             nameValuePairs.add(new BasicNameValuePair("mobile", "+91" + et_mobile_number.getText().toString()));
             nameValuePairs.add(new BasicNameValuePair("mpin", et_mpin.getText().toString()));
+            nameValuePairs.add(new BasicNameValuePair("login_type", "1"));
             new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
                 @Override
                 public void onGetMsg(String apicall, String response) {
@@ -469,6 +468,8 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
                 Pref.SetStringPref(getApplicationContext(), StringUtils.USER_PROFILE, user_profile);
                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                 finishAffinity();
+            }else{
+                ToastClass.showShortToast(getApplicationContext(),jsonObject.optString("message"));
             }
         } catch (Exception e) {
             e.printStackTrace();

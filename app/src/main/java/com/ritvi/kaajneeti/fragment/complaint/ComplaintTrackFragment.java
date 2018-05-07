@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,6 +28,8 @@ import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.adapter.ComplaintHistoryAdapter;
+import com.ritvi.kaajneeti.fragment.CreateComplaintReplyFragment;
+import com.ritvi.kaajneeti.fragment.search.SearchFragment;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.analyze.ComplaintPOJO;
 import com.ritvi.kaajneeti.pojo.complaint.ComplaintHistoryPOJO;
@@ -93,7 +96,8 @@ public class ComplaintTrackFragment extends Fragment{
             public void onClick(View view) {
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
-                    homeActivity.showSearchFragment();
+                    SearchFragment searchFragment = new SearchFragment();
+                    homeActivity.addFragmentinFrameHome(searchFragment,"searchFragment");
                 }
             }
         });
@@ -105,7 +109,8 @@ public class ComplaintTrackFragment extends Fragment{
             public void onClick(View view) {
                 if(getActivity() instanceof HomeActivity){
                     HomeActivity homeActivity= (HomeActivity) getActivity();
-                    homeActivity.showComplaintReplyFragment(complaintPOJO);
+                    CreateComplaintReplyFragment complaintReplyFragment = new CreateComplaintReplyFragment(complaintPOJO);
+                    homeActivity.addFragmentinFrameHome(complaintReplyFragment,"complaintReplyFragment");
                 }
             }
         });

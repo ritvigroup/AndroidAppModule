@@ -11,6 +11,12 @@ import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.activity.HomeActivity;
+import com.ritvi.kaajneeti.fragment.AllComplaintsFragment;
+import com.ritvi.kaajneeti.fragment.analyze.ALLPostListFragment;
+import com.ritvi.kaajneeti.fragment.analyze.AllEventFragment;
+import com.ritvi.kaajneeti.fragment.analyze.AllPollFragment;
+import com.ritvi.kaajneeti.fragment.analyze.InformationListFragment;
+import com.ritvi.kaajneeti.fragment.analyze.SuggestionListFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.InvestigateFragment;
 import com.ritvi.kaajneeti.pojo.analyze.AnalyzeCategoryPOJO;
 
@@ -49,32 +55,38 @@ public class AnalyzeCategoryAdapter extends RecyclerView.Adapter<AnalyzeCategory
                 if(items.get(position).getType().equalsIgnoreCase("Complaints")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
-                        homeActivity.showComplaintListFragment();
+                        AllComplaintsFragment complaintListFragment = new AllComplaintsFragment();
+                        homeActivity.addFragmentinFrameHome(complaintListFragment,"complaintListFragment");
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Suggestions")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
-                        homeActivity.showSuggestionListFragment();
+                        SuggestionListFragment suggestionListFragment = new SuggestionListFragment();
+                        homeActivity.addFragmentinFrameHome(suggestionListFragment,"suggestionListFragment");
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Informations")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
-                        homeActivity.showInformationFragment();
+                        InformationListFragment informationListFragment = new InformationListFragment();
+                        homeActivity.addFragmentinFrameHome(informationListFragment,"informationListFragment");
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Post")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
-                        homeActivity.showAllPostFragment();
+                        ALLPostListFragment allPostListFragment = new ALLPostListFragment();
+                        homeActivity.addFragmentinFrameHome(allPostListFragment,"allPostListFragment");
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Event")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
-                        homeActivity.showALLEventFragment();
+                        AllEventFragment allEventFragment = new AllEventFragment();
+                        homeActivity.addFragmentinFrameHome(allEventFragment,"allEventFragment");
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Poll")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
-                        homeActivity.shoAllPollFragment();
+                        AllPollFragment allPollFragment = new AllPollFragment();
+                        homeActivity.addFragmentinFrameHome(allPollFragment,"allPollFragment");
                     }
                 }
             }

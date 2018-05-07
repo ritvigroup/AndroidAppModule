@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 
 import java.util.List;
@@ -23,12 +24,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class FavoriteLeaderAdapter extends RecyclerView.Adapter<FavoriteLeaderAdapter.ViewHolder> implements WebServicesCallBack {
-    private List<UserInfoPOJO> items;
+    private List<UserProfilePOJO> items;
     Activity activity;
     Fragment fragment;
     int device_height = 0;
 
-    public FavoriteLeaderAdapter(Activity activity, Fragment fragment, List<UserInfoPOJO> items) {
+    public FavoriteLeaderAdapter(Activity activity, Fragment fragment, List<UserProfilePOJO> items) {
         this.items = items;
         this.activity = activity;
         this.fragment = fragment;
@@ -43,8 +44,8 @@ public class FavoriteLeaderAdapter extends RecyclerView.Adapter<FavoriteLeaderAd
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        holder.tv_leader_name.setText(items.get(position).getUserName());
-        holder.tv_leader_email.setText(items.get(position).getUserName());
+        holder.tv_leader_name.setText(items.get(position).getFirstName()+" "+items.get(position).getLastName());
+        holder.tv_leader_email.setText(items.get(position).getEmail());
 
 //        holder.ll_leader.setOnClickListener(new View.OnClickListener() {
 //            @Override

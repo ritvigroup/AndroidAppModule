@@ -1,15 +1,19 @@
 package com.ritvi.kaajneeti.adapter;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.activity.HomeActivity;
+import com.ritvi.kaajneeti.fragment.group.GroupFragment;
 import com.ritvi.kaajneeti.pojo.GroupPOJO;
 
 import java.util.List;
@@ -49,6 +53,23 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
 
         holder.tv_group_name.setText(items.get(position).getFriendGroupName());
 
+        holder.ll_group.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(activity instanceof HomeActivity){
+                    HomeActivity homeActivity= (HomeActivity) activity;
+
+                    GroupFragment fragment =  new GroupFragment();
+
+                    Bundle bundle =  new Bundle();
+                    bundle.putSerializable("group",items.get(position));
+                    fragment.setArguments(bundle);
+
+                    homeActivity.addFragmentinFrameHome(fragment,"Group Fragment");
+                }
+            }
+        });
+
         holder.itemView.setTag(items.get(position));
     }
 
@@ -62,11 +83,13 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
 
         public TextView tv_group_name;
         public CircleImageView cv_group_pic;
+        public LinearLayout ll_group;
 
         public ViewHolder(View itemView) {
             super(itemView);
             tv_group_name = itemView.findViewById(R.id.tv_group_name);
             cv_group_pic = itemView.findViewById(R.id.cv_group_pic);
+            ll_group = itemView.findViewById(R.id.ll_group);
 
         }
     }

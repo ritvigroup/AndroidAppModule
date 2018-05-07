@@ -30,12 +30,14 @@ public class MyFriendListAdapter extends RecyclerView.Adapter<MyFriendListAdapte
     Activity activity;
     Fragment fragment;
     boolean is_searching;
+    List<UserProfilePOJO> participatedUserProfilePOJOS;
 
-    public MyFriendListAdapter(Activity activity, Fragment fragment, List<UserProfilePOJO> items,boolean is_searching) {
+    public MyFriendListAdapter(Activity activity, Fragment fragment, List<UserProfilePOJO> items, boolean is_searching, List<UserProfilePOJO> participatedUserProfilePOJOS) {
         this.items = items;
         this.activity = activity;
         this.fragment = fragment;
-        this.is_searching=is_searching;
+        this.is_searching = is_searching;
+        this.participatedUserProfilePOJOS = participatedUserProfilePOJOS;
         setHasStableIds(true);
     }
 
@@ -57,7 +59,7 @@ public class MyFriendListAdapter extends RecyclerView.Adapter<MyFriendListAdapte
                 .into(holder.cv_profile_pic);
         holder.tv_email.setText(items.get(position).getEmail());
 
-        if(is_searching) {
+        if (is_searching) {
 
             if (items.get(position).isIs_checked()) {
                 holder.check_user.setChecked(true);
@@ -81,14 +83,21 @@ public class MyFriendListAdapter extends RecyclerView.Adapter<MyFriendListAdapte
                     }
                 }
             });
-        }else{
+            if (participatedUserProfilePOJOS != null) {
+                for (UserProfilePOJO userProfilePOJO : participatedUserProfilePOJOS) {
+                    if (userProfilePOJO.getUserProfileId().equalsIgnoreCase(items.get(position).getUserProfileId())) {
+                        holder.check_user.setChecked(true);
+                    }
+                }
+            }
+        } else {
             holder.check_user.setVisibility(View.GONE);
             holder.ll_friend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(activity instanceof HomeActivity){
-                        HomeActivity homeActivity= (HomeActivity) activity;
-                        homeActivity.showUserProfileFragment(items.get(position).getUserId(),items.get(position).getUserProfileId());
+                    if (activity instanceof HomeActivity) {
+                        HomeActivity homeActivity = (HomeActivity) activity;
+                        homeActivity.showUserProfileFragment(items.get(position).getUserId(), items.get(position).getUserProfileId());
                     }
                 }
             });

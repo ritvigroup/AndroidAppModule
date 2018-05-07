@@ -193,11 +193,11 @@ public class ProfileDescriptionActivity extends AppCompatActivity {
     List<FeedPOJO> feedPOJOS = new ArrayList<>();
 
     public void attachAdapter() {
-        homeFeedAdapter = new HomeFeedAdapter(this, null, feedPOJOS,getSupportFragmentManager());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        rv_post.setLayoutManager(linearLayoutManager);
+        homeFeedAdapter = new HomeFeedAdapter(rv_post,this, null, feedPOJOS,getSupportFragmentManager());
         rv_post.setHasFixedSize(true);
         rv_post.setAdapter(homeFeedAdapter);
-        rv_post.setLayoutManager(linearLayoutManager);
         rv_post.setItemAnimator(new DefaultItemAnimator());
 
     }

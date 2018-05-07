@@ -20,6 +20,7 @@ import com.ritvi.kaajneeti.adapter.CustomAutoCompleteAdapter;
 import com.ritvi.kaajneeti.fragment.adcommunication.SuggestionFragment;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -41,7 +42,7 @@ public class CreateSuggestionActivity extends AppCompatActivity {
     ImageView iv_favorite_leader_add;
     @BindView(R.id.auto_fav_list)
     AutoCompleteTextView auto_fav_list;
-    List<UserInfoPOJO> leaderPOJOS = new ArrayList<>();
+    List<UserProfilePOJO> leaderPOJOS = new ArrayList<>();
     public String leader_id="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,7 @@ public class CreateSuggestionActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (leaderPOJOS.size() > 0) {
-                    leader_id = leaderPOJOS.get(i).getUserProfileLeader().getUserProfileId();
+                    leader_id = leaderPOJOS.get(i).getUserProfileId();
                 }
             }
         });
@@ -87,12 +88,12 @@ public class CreateSuggestionActivity extends AppCompatActivity {
             @Override
             public void onGetMsg(String apicall, String response) {
                 try {
-                    ResponseListPOJO<UserInfoPOJO> responseListPOJO = (ResponseListPOJO<UserInfoPOJO>) new Gson().fromJson(response, new TypeToken<ResponseListPOJO<UserInfoPOJO>>() {
+                    ResponseListPOJO<UserProfilePOJO> responseListPOJO = (ResponseListPOJO<UserProfilePOJO>) new Gson().fromJson(response, new TypeToken<ResponseListPOJO<UserInfoPOJO>>() {
                     }.getType());
                     leaderPOJOS.clear();
                     if (responseListPOJO.isSuccess()) {
                         leaderPOJOS.addAll(responseListPOJO.getResultList());
-                        adapter = new CustomAutoCompleteAdapter(CreateSuggestionActivity.this, (ArrayList<UserInfoPOJO>) leaderPOJOS);
+                        adapter = new CustomAutoCompleteAdapter(CreateSuggestionActivity.this, (ArrayList<UserProfilePOJO>) leaderPOJOS);
                         auto_fav_list.setAdapter(adapter);
                     }
                 }catch (Exception e){

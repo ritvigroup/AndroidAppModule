@@ -55,6 +55,7 @@ import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.adapter.FriendGridAdapter;
 import com.ritvi.kaajneeti.adapter.HomeFeedAdapter;
 import com.ritvi.kaajneeti.adapter.SummaryAdapter;
+import com.ritvi.kaajneeti.fragment.search.SearchFragment;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.ResponsePOJO;
 import com.ritvi.kaajneeti.pojo.home.FeedPOJO;
@@ -245,7 +246,8 @@ public class UserProfileFragment extends Fragment {
             public void onClick(View view) {
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
-                    homeActivity.showSearchFragment();
+                    SearchFragment searchFragment = new SearchFragment();
+                    homeActivity.addFragmentinFrameHome(searchFragment,"searchFragment");
                 }
             }
         });
@@ -581,11 +583,11 @@ public class UserProfileFragment extends Fragment {
     List<FeedPOJO> feedPOJOS = new ArrayList<>();
 
     public void attachAdapter() {
-        homeFeedAdapter = new HomeFeedAdapter(getActivity(), this, feedPOJOS, getChildFragmentManager());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        rv_post.setLayoutManager(linearLayoutManager);
+        homeFeedAdapter = new HomeFeedAdapter(rv_post,getActivity(), this, feedPOJOS, getChildFragmentManager());
         rv_post.setHasFixedSize(true);
         rv_post.setAdapter(homeFeedAdapter);
-        rv_post.setLayoutManager(linearLayoutManager);
         rv_post.setItemAnimator(new DefaultItemAnimator());
 
     }

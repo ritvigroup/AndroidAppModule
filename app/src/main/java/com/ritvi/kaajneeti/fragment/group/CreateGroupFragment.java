@@ -1,5 +1,6 @@
 package com.ritvi.kaajneeti.fragment.group;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentUris;
@@ -61,6 +62,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+@SuppressLint("ValidFragment")
 public class CreateGroupFragment extends Fragment {
 
     private static final int PICK_IMAGE_REQUEST = 101;
@@ -210,7 +212,7 @@ public class CreateGroupFragment extends Fragment {
     MyFriendListAdapter myFriendListAdapter;
 
     public void attachAdapter() {
-        myFriendListAdapter = new MyFriendListAdapter(getActivity(), this, userProfilePOJOS, false);
+        myFriendListAdapter = new MyFriendListAdapter(getActivity(), this, userProfilePOJOS, false,null);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rv_users.setHasFixedSize(true);
         rv_users.setAdapter(myFriendListAdapter);

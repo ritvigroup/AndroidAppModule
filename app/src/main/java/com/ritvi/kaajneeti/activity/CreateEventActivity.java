@@ -223,13 +223,13 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
                 timePickerDialog.show(getFragmentManager(), "TimePicker");
             }
         });
-
-        btn_tag.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityForResult(new Intent(CreateEventActivity.this,TagPeopleActivity.class).putExtra("taggedpeople", (Serializable) taggedUserProfilePOJOS),TAG_PEOPLE);
-            }
-        });
+//
+//        btn_tag.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startActivityForResult(new Intent(CreateEventActivity.this,TagPeopleActivity.class).putExtra("taggedpeople", (Serializable) taggedUserProfilePOJOS),TAG_PEOPLE);
+//            }
+//        });
 
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override

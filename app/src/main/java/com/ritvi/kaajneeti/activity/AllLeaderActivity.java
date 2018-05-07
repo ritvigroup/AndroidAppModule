@@ -107,31 +107,6 @@ public class AllLeaderActivity extends LocalizationActivity{
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("search", et_search.getText().toString()));
-//        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
-//            @Override
-//            public void onGetMsg(String apicall, String response) {
-//                leaderPOJOS.clear();
-//                try {
-//                    ResponsePOJO<SearchUserResultPOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponsePOJO<SearchUserResultPOJO>>() {
-//                    }.getType());
-//                    leaderPOJOS.clear();
-//
-//                    if (responsePOJO.isSuccess()) {
-//                        leaderPOJOS.addAll(responsePOJO.getResult().getLeaderUserInfoPOJOS());
-//                    } else {
-//                        ToastClass.showShortToast(getApplicationContext(), responsePOJO.getMessage());
-//                    }
-//                    leaderAdapter.notifyDataSetChanged();
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//                leaderAdapter.notifyDataSetChanged();
-//            }
-//        }, CALL_ALL_LEADER, false).execute(WebServicesUrls.SEARCH_LEADER_PROFILE);
-
-
 
         new WebServiceBaseResponse<SearchUserResultPOJO>(nameValuePairs, this, new ResponseCallBack<SearchUserResultPOJO>() {
             @Override
@@ -147,7 +122,6 @@ public class AllLeaderActivity extends LocalizationActivity{
                 leaderAdapter.notifyDataSetChanged();
             }
         },SearchUserResultPOJO.class,CALL_ALL_LEADER,false).execute(WebServicesUrls.SEARCH_LEADER_PROFILE);
-
     }
 
 

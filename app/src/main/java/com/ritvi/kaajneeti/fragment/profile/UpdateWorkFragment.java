@@ -1,11 +1,14 @@
 package com.ritvi.kaajneeti.fragment.profile;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +20,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.activity.HomeActivity;
@@ -44,6 +53,8 @@ import butterknife.ButterKnife;
 @SuppressLint("ValidFragment")
 public class UpdateWorkFragment extends Fragment implements DatePickerDialog.OnDateSetListener{
 
+    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 101;
+
     private static final String WORK_FROM = "work_from";
     private static final String WORK_TO = "work_to";
     private static String CALENDAR_TYPE = WORK_FROM;
@@ -64,6 +75,8 @@ public class UpdateWorkFragment extends Fragment implements DatePickerDialog.OnD
     View view_work_to;
     @BindView(R.id.check_currently_work)
     CheckBox check_currently_work;
+    @BindView(R.id.iv_location)
+    ImageView iv_location;
 
     @BindView(R.id.iv_back)
     ImageView iv_back;
@@ -138,12 +151,26 @@ public class UpdateWorkFragment extends Fragment implements DatePickerDialog.OnD
             setValues();
         }
 
+        iv_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                findPlace();
+            }
+        });
+
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getActivity().onBackPressed();
             }
         });
+//
+//        et_work_location.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
 
 //        view.setFocusableInTouchMode(true);
 //        view.requestFocus();
@@ -159,6 +186,20 @@ public class UpdateWorkFragment extends Fragment implements DatePickerDialog.OnD
 //            }
 //        });
 
+    }
+
+
+    public void findPlace() {
+        try {
+            Intent intent =
+                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+                            .build(getActivity());
+            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle the error.
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // TODO: Handle the error.
+        }
     }
 
     public void backPressed(){
@@ -232,6 +273,25 @@ public class UpdateWorkFragment extends Fragment implements DatePickerDialog.OnD
             tv_work_from.setText(date);
         } else if (CALENDAR_TYPE.equals(WORK_TO)) {
             tv_work_to.setText(date);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(getActivity(), data);
+                Log.i(TagUtils.getTag(), "Place: " + place.getName());
+                et_work_location.setText((String) place.getName());
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(getActivity(), data);
+                // TODO: Handle the error.
+                Log.i(TagUtils.getTag(), status.getStatusMessage());
+
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
         }
     }
 }

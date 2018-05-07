@@ -187,11 +187,11 @@ public class ComplaintListFragment extends Fragment {
 
     public void attachAdapter() {
 
-        homeFeedAdapter = new HomeFeedAdapter(getActivity(), this, complaintPOJOS, getChildFragmentManager());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        rv_complaints.setLayoutManager(linearLayoutManager);
+        homeFeedAdapter = new HomeFeedAdapter(rv_complaints,getActivity(), this, complaintPOJOS, getChildFragmentManager());
         rv_complaints.setHasFixedSize(true);
         rv_complaints.setAdapter(homeFeedAdapter);
-        rv_complaints.setLayoutManager(linearLayoutManager);
         rv_complaints.setItemAnimator(new DefaultItemAnimator());
     }
 

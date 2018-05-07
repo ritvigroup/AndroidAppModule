@@ -455,6 +455,40 @@
                         android:minHeight="35dp" />
 
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:text="Tag"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tv_tag"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@drawable/et_rect_border"
+                            android:gravity="center_vertical"
+                            android:hint="Tag Peoples in the Event"
+                            android:minHeight="35dp"
+                            android:paddingLeft="7dp" />
+
+                        <ImageView
+                            android:id="@+id/iv_tag"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_gravity="center|right"
+                            android:layout_marginRight="7dp"
+                            android:src="@drawable/ic_location" />
+
+                    </FrameLayout>
+
                 </LinearLayout>
 
             </LinearLayout>

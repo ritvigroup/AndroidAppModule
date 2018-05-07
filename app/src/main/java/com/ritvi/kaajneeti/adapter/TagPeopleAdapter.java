@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.util.List;
 
@@ -23,11 +24,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class TagPeopleAdapter extends RecyclerView.Adapter<TagPeopleAdapter.ViewHolder>{
-    private List<UserInfoPOJO> items;
+    private List<UserProfilePOJO> items;
     Activity activity;
     Fragment fragment;
 
-    public TagPeopleAdapter(Activity activity, Fragment fragment, List<UserInfoPOJO> items) {
+    public TagPeopleAdapter(Activity activity, Fragment fragment, List<UserProfilePOJO> items) {
         this.items = items;
         this.activity = activity;
         this.fragment = fragment;
@@ -42,8 +43,8 @@ public class TagPeopleAdapter extends RecyclerView.Adapter<TagPeopleAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        holder.tv_user_name.setText(items.get(position).getUserName());
-        holder.tv_email.setText(items.get(position).getUserEmail());
+        holder.tv_user_name.setText(items.get(position).getFirstName()+" "+items.get(position).getLastName());
+        holder.tv_email.setText(items.get(position).getEmail());
 
         Glide.with(activity.getApplicationContext())
                 .load(items.get(position).getProfilePhotoPath())

@@ -11,6 +11,11 @@ import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.activity.HomeActivity;
+import com.ritvi.kaajneeti.fragment.AllComplaintsFragment;
+import com.ritvi.kaajneeti.fragment.analyze.ALLPostListFragment;
+import com.ritvi.kaajneeti.fragment.analyze.AllEventFragment;
+import com.ritvi.kaajneeti.fragment.analyze.AllPollFragment;
+import com.ritvi.kaajneeti.fragment.profile.friends.FriendsListFragment;
 import com.ritvi.kaajneeti.pojo.profile.SummaryPOJO;
 
 import java.util.List;
@@ -50,19 +55,24 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.ViewHold
                     HomeActivity homeActivity = (HomeActivity) activity;
                     switch (items.get(position).getType().toLowerCase()) {
                         case "connect":
-                            homeActivity.showFriendListFragment();
+                            FriendsListFragment friendsListFragment = new FriendsListFragment();
+                            homeActivity.addFragmentinFrameHome(friendsListFragment,"friendsListFragment");
                             break;
                         case "event":
-                            homeActivity.showALLEventFragment();
+                            AllEventFragment allEventFragment = new AllEventFragment();
+                            homeActivity.addFragmentinFrameHome(allEventFragment,"allEventFragment");
                             break;
                         case "poll":
-                            homeActivity.shoAllPollFragment();
+                            AllPollFragment allPollFragment = new AllPollFragment();
+                            homeActivity.addFragmentinFrameHome(allPollFragment,"allPollFragment");
                             break;
                         case "post":
-                            homeActivity.showAllPostFragment();
+                            ALLPostListFragment allPostListFragment = new ALLPostListFragment();
+                            homeActivity.addFragmentinFrameHome(allPostListFragment,"allPostListFragment");
                             break;
                         case "complaint":
-                            homeActivity.showComplaintListFragment();
+                            AllComplaintsFragment complaintListFragment = new AllComplaintsFragment();
+                            homeActivity.addFragmentinFrameHome(complaintListFragment,"complaintListFragment");
                             break;
                     }
                 }

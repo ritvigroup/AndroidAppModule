@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.util.ArrayList;
 
@@ -17,29 +18,29 @@ import java.util.ArrayList;
  * Created by sunil on 29-12-2017.
  */
 
-public class CustomAutoCompleteAdapter extends ArrayAdapter<UserInfoPOJO> {
-    ArrayList<UserInfoPOJO> customers, tempCustomer, suggestions;
+public class CustomAutoCompleteAdapter extends ArrayAdapter<UserProfilePOJO> {
+    ArrayList<UserProfilePOJO> customers, tempCustomer, suggestions;
     Context context;
 
-    public CustomAutoCompleteAdapter(Context context, ArrayList<UserInfoPOJO> objects) {
+    public CustomAutoCompleteAdapter(Context context, ArrayList<UserProfilePOJO> objects) {
         super(context, android.R.layout.simple_list_item_1, objects);
         this.context = context;
         this.customers = objects;
-        this.tempCustomer = new ArrayList<UserInfoPOJO>(objects);
-        this.suggestions = new ArrayList<UserInfoPOJO>(objects);
+        this.tempCustomer = new ArrayList<UserProfilePOJO>(objects);
+        this.suggestions = new ArrayList<UserProfilePOJO>(objects);
 
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        UserInfoPOJO customer = getItem(position);
+        UserProfilePOJO customer = getItem(position);
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.inflate_leaders, parent, false);
         }
         TextView tv_leader_name = (TextView) convertView.findViewById(R.id.tv_leader_name);
         TextView tv_leader_email = (TextView) convertView.findViewById(R.id.tv_leader_email);
-        tv_leader_name.setText(customer.getUserName());
-        tv_leader_email.setText("email");
+        tv_leader_name.setText(customer.getFirstName() + " " + customer.getLastName());
+        tv_leader_email.setText(customer.getEmail());
 
         return convertView;
     }
@@ -53,8 +54,8 @@ public class CustomAutoCompleteAdapter extends ArrayAdapter<UserInfoPOJO> {
     Filter myFilter = new Filter() {
         @Override
         public CharSequence convertResultToString(Object resultValue) {
-            UserInfoPOJO customer = (UserInfoPOJO) resultValue;
-            return customer.getUserName();
+            UserProfilePOJO customer = (UserProfilePOJO) resultValue;
+            return customer.getFirstName()+" "+customer.getLastName();
         }
 
         @Override
@@ -62,8 +63,12 @@ public class CustomAutoCompleteAdapter extends ArrayAdapter<UserInfoPOJO> {
             if (constraint != null) {
                 suggestions.clear();
                 for (Object people : tempCustomer) {
-                    UserInfoPOJO favoriteResultPOJO= (UserInfoPOJO) people;
-                    if (favoriteResultPOJO.getUserName().toLowerCase().startsWith(constraint.toString().toLowerCase())) {
+                    UserProfilePOJO favoriteResultPOJO = (UserProfilePOJO) people;
+                    if (favoriteResultPOJO.getFirstName().toLowerCase().startsWith(constraint.toString().toLowerCase())
+                            || favoriteResultPOJO.getLastName().toLowerCase().startsWith(constraint.toString().toLowerCase())
+                            || favoriteResultPOJO.getEmail().toLowerCase().startsWith(constraint.toString().toLowerCase())
+                            || favoriteResultPOJO.getMobile().toLowerCase().startsWith(constraint.toString().toLowerCase())
+                            || favoriteResultPOJO.getAltMobile().toLowerCase().startsWith(constraint.toString().toLowerCase())) {
                         suggestions.add(favoriteResultPOJO);
                     }
                 }
@@ -79,10 +84,10 @@ public class CustomAutoCompleteAdapter extends ArrayAdapter<UserInfoPOJO> {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            ArrayList<UserInfoPOJO> c = (ArrayList<UserInfoPOJO>) results.values;
+            ArrayList<UserProfilePOJO> c = (ArrayList<UserProfilePOJO>) results.values;
             if (results != null && results.count > 0) {
                 clear();
-                for (UserInfoPOJO cust : c) {
+                for (UserProfilePOJO cust : c) {
                     add(cust);
                     notifyDataSetChanged();
                 }

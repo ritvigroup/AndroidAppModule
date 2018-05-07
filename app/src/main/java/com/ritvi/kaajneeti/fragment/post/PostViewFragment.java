@@ -36,6 +36,8 @@ public class PostViewFragment extends Fragment {
     TextView tv_post_description;
     @BindView(R.id.iv_back)
     ImageView iv_back;
+    @BindView(R.id.tv_description)
+    TextView tv_description;
 
     PostPOJO postPOJO;
 
@@ -66,6 +68,10 @@ public class PostViewFragment extends Fragment {
                 containDescribe = true;
             }
 
+            if (postPOJO.getPostLocation().length() > 0) {
+                containDescribe = true;
+            }
+
             if (containDescribe) {
                 profile_description += " is ";
 
@@ -84,11 +90,26 @@ public class PostViewFragment extends Fragment {
                         profile_description += "<b>" + postPOJO.getPostTag().get(0).getFirstName() + " " + postPOJO.getPostTag().get(0).getLastName() + "</b>";
                     }
                 }
+
+                if (postPOJO.getPostLocation().length() > 0) {
+                    profile_description += " at <b>" + postPOJO.getPostLocation() + "</b>";
+                }
             }
             if (profile_description.length() > 0) {
                 profile_description = " - " + profile_description;
             }
-            tv_post_description.setText(Html.fromHtml(profile_description));
+
+            if (postPOJO.getPostDescription().length() > 0) {
+                tv_description.setText(postPOJO.getPostDescription());
+            } else {
+                tv_description.setVisibility(View.GONE);
+            }
+
+            if (profile_description.length() > 0) {
+                tv_post_description.setText(Html.fromHtml(profile_description));
+            } else {
+                tv_post_description.setVisibility(View.GONE);
+            }
 
 
             if (postPOJO.getPostAttachment().size() > 0) {

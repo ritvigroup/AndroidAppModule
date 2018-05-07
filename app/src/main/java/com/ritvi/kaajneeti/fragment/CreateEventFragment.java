@@ -33,6 +33,7 @@ import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.activity.HomeActivity;
+import com.ritvi.kaajneeti.activity.TagPeopleActivity;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
@@ -50,6 +51,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -109,6 +111,10 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
     ImageView iv_end_clock;
     @BindView(R.id.et_description)
     EditText et_description;
+    @BindView(R.id.tv_tag)
+    TextView tv_tag;
+    @BindView(R.id.iv_tag)
+    ImageView iv_tag;
 
 
     boolean start_date = false;
@@ -136,13 +142,13 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
         return view;
     }
 
-    List<UserInfoPOJO> taggeduserInfoPOJOS;
+    List<UserProfilePOJO> taggeduserInfoPOJOS;
     String check_in;
     String privPublic;
     String event_name;
     List<String> mediaFiles;
 
-    public CreateEventFragment(List<UserInfoPOJO> userInfoPOJOS, String check_in, String privPublic, String event_name, List<String> mediaFiles) {
+    public CreateEventFragment(List<UserProfilePOJO> userInfoPOJOS, String check_in, String privPublic, String event_name, List<String> mediaFiles) {
         this.taggeduserInfoPOJOS = userInfoPOJOS;
         this.check_in = check_in;
         this.privPublic = privPublic;
@@ -276,6 +282,14 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
                 return false;
             }
         });
+
+        iv_tag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(new Intent(getActivity(), TagPeopleActivity.class).putExtra("taggedpeople", (Serializable) taggeduserInfoPOJOS), TAG_PEOPLE);
+            }
+        });
+
         tv_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -415,29 +429,20 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
         }
     }
 
-    public void updateProfileStatus() {
-        String profile = "";
-        if (tagging_description.length() == 0) {
-            profile = profile_description;
-        } else {
-            profile = profile_description + " is " + tagging_description;
-        }
-        tv_profile_description.setText(Html.fromHtml(profile));
-    }
 
 
-    public String getTaggedDescription(List<UserInfoPOJO> stringList) {
+    public String getTaggedDescription(List<UserProfilePOJO> stringList) {
         String description = "";
         if (stringList.size() == 1) {
-            UserProfilePOJO userProfilePOJO = UtilityFunction.getUserProfilePOJO(stringList.get(0));
+            UserProfilePOJO userProfilePOJO = stringList.get(0);
             description = " with <b>" + userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName() + "</b> ";
         } else if (stringList.size() == 2) {
-            UserProfilePOJO userProfilePOJO1 = UtilityFunction.getUserProfilePOJO(stringList.get(0));
-            UserProfilePOJO userProfilePOJO2 = UtilityFunction.getUserProfilePOJO(stringList.get(1));
+            UserProfilePOJO userProfilePOJO1 = stringList.get(0);
+            UserProfilePOJO userProfilePOJO2 = stringList.get(1);
             description = " with <b>" + userProfilePOJO1.getFirstName() + " " + userProfilePOJO1.getLastName() + "</b> and <b>" +
                     userProfilePOJO2.getFirstName() + " " + userProfilePOJO2.getLastName() + "</b>";
         } else if (stringList.size() > 2) {
-            UserProfilePOJO userProfilePOJO = UtilityFunction.getUserProfilePOJO(stringList.get(0));
+            UserProfilePOJO userProfilePOJO = stringList.get(0);
             description = " with <b>" + userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName() + "</b> and <b>" + (stringList.size() - 1) + " others";
         }
         return description;
@@ -480,7 +485,7 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
             }
         } else if (requestCode == TAG_PEOPLE) {
             if (resultCode == Activity.RESULT_OK) {
-                taggeduserInfoPOJOS = (List<UserInfoPOJO>) data.getSerializableExtra("taggedpeople");
+                taggeduserInfoPOJOS = (List<UserProfilePOJO>) data.getSerializableExtra("taggedpeople");
 
                 tagging_description = getTaggedDescription(taggeduserInfoPOJOS);
                 updateProfileStatus();
@@ -489,6 +494,18 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
                 //Write your code if there's no result
             }
         }
+    }
+
+
+    public void updateProfileStatus() {
+        String profile = "";
+        if (tagging_description.length() == 0 ) {
+            profile = profile_description;
+        } else {
+            profile = profile_description + " is " + tagging_description;
+        }
+        tv_tag.setText(Html.fromHtml(tagging_description.replace("with ","")));
+        tv_profile_description.setText(Html.fromHtml(profile));
     }
 
 

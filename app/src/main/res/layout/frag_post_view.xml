@@ -32,7 +32,8 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/places_ic_search"
-            android:tint="#FFFFFF" />
+            android:tint="#FFFFFF"
+            android:visibility="gone"/>
 
         <ImageView
             android:layout_width="35dp"
@@ -57,7 +58,17 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Post Description"
+            android:textColor="#FFFFFF"
+            android:layout_marginLeft="15dp"/>
 
         <TextView
             android:id="@+id/tv_post_description"
@@ -66,7 +77,8 @@
             android:text=" -  at Ithumb"
             android:textSize="16sp"
             android:layout_marginLeft="15dp"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="10dp"/>
 
     </LinearLayout>
 

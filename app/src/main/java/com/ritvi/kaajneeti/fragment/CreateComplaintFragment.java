@@ -36,7 +36,9 @@ import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
+import com.ritvi.kaajneeti.activity.AddCommunication;
 import com.ritvi.kaajneeti.activity.ApplicationSubmittedActivity;
+import com.ritvi.kaajneeti.activity.FavoriteLeaderActivity;
 import com.ritvi.kaajneeti.adapter.CustomAutoCompleteAdapter;
 import com.ritvi.kaajneeti.adapter.MediaListAdapter;
 import com.ritvi.kaajneeti.pojo.DepartmentPOJO;
@@ -197,34 +199,46 @@ public class CreateComplaintFragment extends Fragment implements DatePickerDialo
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (leaderPOJOS.size() > 0) {
-                    leader_id = leaderPOJOS.get(i).getUserProfileLeader().getUserProfileId();
+                    leader_id = leaderPOJOS.get(i).getUserProfileId();
                 }
             }
         });
 
+
+
+        iv_favorite_leader_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), FavoriteLeaderActivity.class));
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         callLeaderAPI();
     }
 
     public String leader_id = "";
-    List<UserInfoPOJO> leaderPOJOS = new ArrayList<>();
+    List<UserProfilePOJO> leaderPOJOS = new ArrayList<>();
     CustomAutoCompleteAdapter adapter = null;
 
     public void callLeaderAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
-//        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
-        new WebServiceBaseResponseList<UserInfoPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<UserInfoPOJO>() {
+        new WebServiceBaseResponseList<UserProfilePOJO>(nameValuePairs, getActivity(), new ResponseListCallback<UserProfilePOJO>() {
             @Override
-            public void onGetMsg(ResponseListPOJO<UserInfoPOJO> responseListPOJO) {
+            public void onGetMsg(ResponseListPOJO<UserProfilePOJO> responseListPOJO) {
                 leaderPOJOS.clear();
                 if (responseListPOJO.isSuccess()) {
                     leaderPOJOS.addAll(responseListPOJO.getResultList());
-                    adapter = new CustomAutoCompleteAdapter(getActivity(), (ArrayList<UserInfoPOJO>) leaderPOJOS);
+                    adapter = new CustomAutoCompleteAdapter(getActivity(), (ArrayList<UserProfilePOJO>) leaderPOJOS);
                     auto_fav_list.setAdapter(adapter);
                 }
             }
-        }, UserInfoPOJO.class, "CALL_LEADER_API", true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
+        }, UserProfilePOJO.class, "CALL_LEADER_API", true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
     }
 
     List<DepartmentPOJO> departmentPOJOS = new ArrayList<>();

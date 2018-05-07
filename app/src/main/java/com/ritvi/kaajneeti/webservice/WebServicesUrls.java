@@ -87,4 +87,7 @@ public class WebServicesUrls {
     public static final String CONVERT_RUPEES_TO_POINTS = BASE_URL + "payment/convertRupeeToPoint";
     public static final String SAVE_FRIEND_GROUP = BASE_URL + "friendgroup/saveFriendgroup";
     public static final String GROUP_LIST = BASE_URL + "friendgroup/getMyAllFriendgroup";
+    public static final String ALL_SEARCH_API = BASE_URL + "search/getAllSearch";
+    public static final String UPDATE_GROUP_MEMBERS = BASE_URL + "friendgroup/updateFriendGroup";
+    public static final String SEARCH_FILTERS = BASE_URL + "search/getAllSearchFilterForPeople";
 }

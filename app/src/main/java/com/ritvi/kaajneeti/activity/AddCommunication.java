@@ -26,6 +26,7 @@ import com.ritvi.kaajneeti.fragment.adcommunication.InformationFragment;
 import com.ritvi.kaajneeti.fragment.adcommunication.SuggestionFragment;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.views.CustomViewPager;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
@@ -64,7 +65,7 @@ public class AddCommunication extends LocalizationActivity implements WebService
 
     public String leader_id = "";
 
-    List<UserInfoPOJO> leaderPOJOS = new ArrayList<>();
+    List<UserProfilePOJO> leaderPOJOS = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,7 +99,7 @@ public class AddCommunication extends LocalizationActivity implements WebService
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (leaderPOJOS.size() > 0) {
-                    leader_id = leaderPOJOS.get(i).getUserProfileLeader().getUserProfileId();
+                    leader_id = leaderPOJOS.get(i).getUserProfileId();
                 }
             }
         });
@@ -157,17 +158,17 @@ public class AddCommunication extends LocalizationActivity implements WebService
         nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
 //        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
-        new WebServiceBaseResponseList<UserInfoPOJO>(nameValuePairs, this, new ResponseListCallback<UserInfoPOJO>() {
+        new WebServiceBaseResponseList<UserProfilePOJO>(nameValuePairs, this, new ResponseListCallback<UserProfilePOJO>() {
             @Override
-            public void onGetMsg(ResponseListPOJO<UserInfoPOJO> responseListPOJO) {
+            public void onGetMsg(ResponseListPOJO<UserProfilePOJO> responseListPOJO) {
                 leaderPOJOS.clear();
                 if (responseListPOJO.isSuccess()) {
                     leaderPOJOS.addAll(responseListPOJO.getResultList());
-                    adapter = new CustomAutoCompleteAdapter(AddCommunication.this, (ArrayList<UserInfoPOJO>) leaderPOJOS);
+                    adapter = new CustomAutoCompleteAdapter(AddCommunication.this, (ArrayList<UserProfilePOJO>) leaderPOJOS);
                     auto_fav_list.setAdapter(adapter);
                 }
             }
-        },UserInfoPOJO.class,"CALL_LEADER_API",true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
+        },UserProfilePOJO.class,"CALL_LEADER_API",true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
     }
 
     @Override
@@ -195,12 +196,12 @@ public class AddCommunication extends LocalizationActivity implements WebService
     public void parseALLLeaderResponse(String response) {
         leaderPOJOS.clear();
         try {
-            ResponseListPOJO<UserInfoPOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponseListPOJO<UserInfoPOJO>>() {
+            ResponseListPOJO<UserProfilePOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponseListPOJO<UserProfilePOJO>>() {
             }.getType());
             leaderPOJOS.clear();
             if (responsePOJO.isSuccess()) {
                 leaderPOJOS.addAll(responsePOJO.getResultList());
-                adapter = new CustomAutoCompleteAdapter(this, (ArrayList<UserInfoPOJO>) leaderPOJOS);
+                adapter = new CustomAutoCompleteAdapter(this, (ArrayList<UserProfilePOJO>) leaderPOJOS);
                 auto_fav_list.setAdapter(adapter);
             }
 

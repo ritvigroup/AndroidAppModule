@@ -26,6 +26,7 @@ import com.ritvi.kaajneeti.adapter.TagPeopleAdapter;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -63,7 +64,7 @@ public class TagPeopleActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            peopleTagged.addAll((List<UserInfoPOJO>) bundle.getSerializable("taggedpeople"));
+            peopleTagged.addAll((List<UserProfilePOJO>) bundle.getSerializable("taggedpeople"));
         }
 
         act_search.addTextChangedListener(new TextWatcher() {
@@ -108,21 +109,14 @@ public class TagPeopleActivity extends AppCompatActivity {
         });
     }
 
-    public boolean ifAlreadyTagged(UserInfoPOJO userInfoPOJO) {
-        for (UserInfoPOJO userProfilePOJO : peopleTagged) {
-            String id="";
-            if(userInfoPOJO.getUserProfileCitizen()!=null){
-                id=userInfoPOJO.getUserProfileCitizen().getUserProfileId();
-            }else{
-                id=userInfoPOJO.getUserProfileLeader().getUserProfileId();
+    public boolean ifAlreadyTagged(UserProfilePOJO userInfoPOJO) {
+        for (UserProfilePOJO userProfilePOJO : peopleTagged) {
+            String id = userInfoPOJO.getUserProfileId();
+
+            if (id.equals(userProfilePOJO.getParentUserId())) {
+                return true;
             }
 
-            if (userProfilePOJO.getUserProfileLeader()!=null&&id.equals(userProfilePOJO.getUserProfileLeader().getParentUserId())) {
-                return true;
-            }
-            if (userProfilePOJO.getUserProfileCitizen()!=null&&id.equals(userProfilePOJO.getUserProfileCitizen().getParentUserId())) {
-                return true;
-            }
         }
         return false;
     }
@@ -146,30 +140,28 @@ public class TagPeopleActivity extends AppCompatActivity {
 
 
     CustomAutoCompleteAdapter tagSearchPeopleAdapter;
-    ArrayList<UserInfoPOJO> userProfilePOJOS = new ArrayList<>();
-    List<UserInfoPOJO> peopleTagged = new ArrayList<>();
+    ArrayList<UserProfilePOJO> userProfilePOJOS = new ArrayList<>();
+    List<UserProfilePOJO> peopleTagged = new ArrayList<>();
 
     public void searchUser() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("search", act_search.getText().toString()));
-        new WebServiceBaseResponseList<OutGoingRequestPOJO>(nameValuePairs, this, new ResponseListCallback<OutGoingRequestPOJO>() {
+        new WebServiceBaseResponseList<UserProfilePOJO>(nameValuePairs, this, new ResponseListCallback<UserProfilePOJO>() {
             @Override
-            public void onGetMsg(ResponseListPOJO<OutGoingRequestPOJO> responseListPOJO) {
+            public void onGetMsg(ResponseListPOJO<UserProfilePOJO> responseListPOJO) {
                 userProfilePOJOS.clear();
                 if (responseListPOJO.isSuccess()) {
-                    for(OutGoingRequestPOJO outGoingRequestPOJO:responseListPOJO.getResultList()) {
-                        userProfilePOJOS.add(outGoingRequestPOJO.getUserProfileDetailPOJO().getUserInfoPOJO());
-                    }
-                    Log.d(TagUtils.getTag(),"user size:-"+userProfilePOJOS.size());
+                    userProfilePOJOS.addAll(responseListPOJO.getResultList());
+                    Log.d(TagUtils.getTag(), "user size:-" + userProfilePOJOS.size());
                     tagSearchPeopleAdapter = new CustomAutoCompleteAdapter(TagPeopleActivity.this, userProfilePOJOS);
                     act_search.setAdapter(tagSearchPeopleAdapter);
                 } else {
                     ToastClass.showShortToast(getApplicationContext(), responseListPOJO.getMessage());
                 }
             }
-        },OutGoingRequestPOJO.class,"CALL_SEARCH_PEOPLE_API", false).execute(WebServicesUrls.SEARCH_FOLLOWING_FOLLOWER_FRIENDS);
+        }, UserProfilePOJO.class, "CALL_SEARCH_PEOPLE_API", false).execute(WebServicesUrls.SEARCH_FOLLOWING_FOLLOWER_FRIENDS);
 //        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
 //            @Override
 //            public void onGetMsg(String apicall, String response) {

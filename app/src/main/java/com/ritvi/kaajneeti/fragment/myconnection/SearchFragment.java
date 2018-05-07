@@ -22,6 +22,7 @@ import com.ritvi.kaajneeti.adapter.ViewPagerWithTitleAdapter;
 import com.ritvi.kaajneeti.fragment.search.LeaderSearchFragment;
 import com.ritvi.kaajneeti.pojo.ResponsePOJO;
 import com.ritvi.kaajneeti.pojo.user.SearchUserResultPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.ResponseCallBack;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponse;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -81,6 +82,8 @@ public class SearchFragment extends Fragment {
                     if (et_search.getText().toString().length() > 0) {
                         searchUser();
                     } else {
+                        citizenSearchFragment.setRv_users(new ArrayList<UserProfilePOJO>());
+                        leaderSearchFragment.setRv_users(new ArrayList<UserProfilePOJO>());
                     }
                 }
             });

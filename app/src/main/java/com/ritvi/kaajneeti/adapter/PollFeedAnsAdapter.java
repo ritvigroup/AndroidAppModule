@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.interfaces.PollAnsClickInterface;
 import com.ritvi.kaajneeti.pojo.home.PollAnsPOJO;
 
 import java.util.List;
@@ -24,11 +25,16 @@ public class PollFeedAnsAdapter extends RecyclerView.Adapter<PollFeedAnsAdapter.
     private List<PollAnsPOJO> items;
     Activity activity;
     Fragment fragment;
+    PollAnsClickInterface pollAnsClickInterface;
 
     public PollFeedAnsAdapter(Activity activity, Fragment fragment, List<PollAnsPOJO> items) {
         this.items = items;
         this.activity = activity;
         this.fragment = fragment;
+    }
+
+    public void setOnAnsClicked(PollAnsClickInterface pollAnsClickInterface){
+        this.pollAnsClickInterface=pollAnsClickInterface;
     }
 
     @Override
@@ -65,6 +71,13 @@ public class PollFeedAnsAdapter extends RecyclerView.Adapter<PollFeedAnsAdapter.
         }else{
             holder.tv_poll_media_ans.setVisibility(View.GONE);
         }
+
+        holder.ll_poll_ans.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pollAnsClickInterface.onAnsclicked(items.get(position).getPollAnswerId());
+            }
+        });
 
         holder.tv_poll_media_ans.setText(items.get(position).getPollAnswer());
 

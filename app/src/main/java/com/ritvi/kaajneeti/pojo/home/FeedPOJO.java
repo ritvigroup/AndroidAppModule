@@ -2,6 +2,7 @@ package com.ritvi.kaajneeti.pojo.home;
 
 import com.google.gson.annotations.SerializedName;
 import com.ritvi.kaajneeti.pojo.analyze.ComplaintPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.io.Serializable;
 
@@ -20,6 +21,8 @@ public class FeedPOJO implements Serializable{
     PostPOJO postPOJO;
     @SerializedName("complaintdata")
     ComplaintPOJO complaintPOJO;
+    @SerializedName("profiledata")
+    UserProfilePOJO profiledata;
 
     public String getFeedtype() {
         return feedtype;
@@ -59,5 +62,13 @@ public class FeedPOJO implements Serializable{
 
     public void setComplaintPOJO(ComplaintPOJO complaintPOJO) {
         this.complaintPOJO = complaintPOJO;
+    }
+
+    public UserProfilePOJO getProfiledata() {
+        return profiledata;
+    }
+
+    public void setProfiledata(UserProfilePOJO profiledata) {
+        this.profiledata = profiledata;
     }
 }

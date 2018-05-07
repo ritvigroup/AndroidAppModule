@@ -37,7 +37,8 @@ public class EngagementFragment extends Fragment{
             public void onClick(View view) {
                 if(getActivity() instanceof HomeActivity){
                     HomeActivity homeActivity= (HomeActivity) getActivity();
-                    homeActivity.showPromotionAccountFragment();
+                    PromotionAccountFragment promotionAccountFragment = new PromotionAccountFragment();
+                    homeActivity.addFragmentinFrameHome(promotionAccountFragment,"promotionAccountFragment");
                 }
             }
         });

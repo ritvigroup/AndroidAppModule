@@ -41,7 +41,7 @@ public class GroupListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frag_group, container, false);
+        View view = inflater.inflate(R.layout.frag_group_list, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -79,7 +79,7 @@ public class GroupListFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-        }, GroupPOJO.class, "group_details", true).execute(WebServicesUrls.GROUP_LIST);
+        }, GroupPOJO.class, "group_details", false).execute(WebServicesUrls.GROUP_LIST);
     }
 
     List<GroupPOJO> groupPOJOS = new ArrayList<>();

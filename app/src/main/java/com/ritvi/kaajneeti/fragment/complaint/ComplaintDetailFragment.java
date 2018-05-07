@@ -22,6 +22,7 @@ import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.adapter.EventAttachAdapter;
+import com.ritvi.kaajneeti.fragment.search.SearchFragment;
 import com.ritvi.kaajneeti.pojo.analyze.ComplaintAttachmentPOJO;
 import com.ritvi.kaajneeti.pojo.analyze.ComplaintPOJO;
 import com.ritvi.kaajneeti.pojo.event.EventAttachment;
@@ -155,7 +156,8 @@ public class ComplaintDetailFragment extends Fragment {
             public void onClick(View view) {
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
-                    homeActivity.showSearchFragment();
+                    SearchFragment searchFragment = new SearchFragment();
+                    homeActivity.addFragmentinFrameHome(searchFragment,"searchFragment");
                 }
             }
         });

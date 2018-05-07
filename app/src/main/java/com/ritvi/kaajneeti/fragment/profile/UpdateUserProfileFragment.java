@@ -269,7 +269,8 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
             public void onClick(View view) {
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
-                    homeActivity.showUpdateAddressFragment(user_id, profile_id, null);
+                    UpdateAddressFragment updateAddressFragment = new UpdateAddressFragment(user_id, profile_id, null);
+                    homeActivity.addFragmentinFrameHome(updateAddressFragment,"updateAddressFragment");
                 }
             }
         });
@@ -279,7 +280,9 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
             public void onClick(View view) {
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
-                    homeActivity.showEducationUpdateFragment(user_id, profile_id, null);
+
+                    UpdateEducationFragment updateEducation = new UpdateEducationFragment(user_id, profile_id, null);
+                    homeActivity.addFragmentinFrameHome(updateEducation,"updateEducation");
                 }
             }
         });
@@ -289,7 +292,8 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
             public void onClick(View view) {
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
-                    homeActivity.showUpdateWorkFragment(user_id, profile_id, null);
+                    UpdateWorkFragment updateWorkFragment = new UpdateWorkFragment(user_id, profile_id, null);
+                    homeActivity.addFragmentinFrameHome(updateWorkFragment,"updateWorkFragment");
                 }
             }
         });
@@ -501,7 +505,8 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                 public void onClick(View view) {
                     if (getActivity() instanceof HomeActivity) {
                         HomeActivity homeActivity = (HomeActivity) getActivity();
-                        homeActivity.showUpdateAddressFragment(user_id, profile_id, null);
+                        UpdateAddressFragment updateAddressFragment = new UpdateAddressFragment(user_id, profile_id, null);
+                        homeActivity.addFragmentinFrameHome(updateAddressFragment,"updateAddressFragment");
                     }
                 }
             });
@@ -521,7 +526,8 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                 public void onClick(View view) {
                     if (getActivity() instanceof HomeActivity) {
                         HomeActivity homeActivity = (HomeActivity) getActivity();
-                        homeActivity.showEducationUpdateFragment(user_id, profile_id, null);
+                        UpdateEducationFragment updateEducation = new UpdateEducationFragment(user_id, profile_id, null);
+                        homeActivity.addFragmentinFrameHome(updateEducation,"updateEducation");
                     }
                 }
             });
@@ -541,7 +547,9 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                 public void onClick(View view) {
                     if (getActivity() instanceof HomeActivity) {
                         HomeActivity homeActivity = (HomeActivity) getActivity();
-                        homeActivity.showUpdateWorkFragment(user_id, profile_id, null);
+
+                        UpdateWorkFragment updateWorkFragment = new UpdateWorkFragment(user_id, profile_id, null);
+                        homeActivity.addFragmentinFrameHome(updateWorkFragment,"updateWorkFragment");
                     }
                 }
             });
@@ -616,7 +624,8 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                 public void onClick(View view) {
                     if (getActivity() instanceof HomeActivity) {
                         HomeActivity homeActivity = (HomeActivity) getActivity();
-                        homeActivity.showUpdateAddressFragment(user_id, profile_id, addressPOJO);
+                        UpdateAddressFragment updateAddressFragment = new UpdateAddressFragment(user_id, profile_id, addressPOJO);
+                        homeActivity.addFragmentinFrameHome(updateAddressFragment,"updateAddressFragment");
                     }
                 }
             });
@@ -693,7 +702,8 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                 public void onClick(View view) {
                     if (getActivity() instanceof HomeActivity) {
                         HomeActivity homeActivity = (HomeActivity) getActivity();
-                        homeActivity.showUpdateWorkFragment(user_id, profile_id, workPOJO);
+                        UpdateWorkFragment updateWorkFragment = new UpdateWorkFragment(user_id, profile_id, workPOJO);
+                        homeActivity.addFragmentinFrameHome(updateWorkFragment,"updateWorkFragment");
                     }
                 }
             });
@@ -769,7 +779,8 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                 public void onClick(View view) {
                     if (getActivity() instanceof HomeActivity) {
                         HomeActivity homeActivity = (HomeActivity) getActivity();
-                        homeActivity.showEducationUpdateFragment(user_id, profile_id, educationPOJO);
+                        UpdateEducationFragment updateEducation = new UpdateEducationFragment(user_id, profile_id, educationPOJO);
+                        homeActivity.addFragmentinFrameHome(updateEducation,"updateEducation");
                     }
                 }
             });

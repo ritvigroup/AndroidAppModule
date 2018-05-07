@@ -3,9 +3,10 @@ package com.ritvi.kaajneeti.pojo;
 import com.google.gson.annotations.SerializedName;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class GroupPOJO {
+public class GroupPOJO implements Serializable{
     @SerializedName("FriendGroupId")
     private String friendGroupId;
     @SerializedName("FriendGroupName")

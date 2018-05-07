@@ -46,6 +46,15 @@ public class WebUploadService extends AsyncTask<String, Void, String> {
         this.context=context;
         this.className=className;
         Log.d(TAG, this.toString());
+        try {
+            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream(
+                    (int) reqEntity.getContentLength());
+            reqEntity.writeTo(out);
+            String entityContentAsString = new String(out.toByteArray());
+            Log.e(TagUtils.getTag(), "multipartEntitty:-" + entityContentAsString);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

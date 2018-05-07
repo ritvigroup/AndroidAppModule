@@ -48,6 +48,34 @@
         <item>Private</item>
     </string-array>
 
+    <string-array name="postedby">
+        <item>You</item>
+        <item>Your Friends</item>
+        <item>Group</item>
+    </string-array>
+
+    <string-array name="spinner_post_type">
+        <item>Trending</item>
+        <item>Most Viewed</item>
+    </string-array>
+
+    <string-array name="spinner_engagement">
+        <item>Interested</item>
+        <item>Going</item>
+        <item>May be</item>
+    </string-array>
+
+    <string-array name="spinner_complaint_type">
+        <item>Self</item>
+        <item>Group</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="spinner_complaint_status">
+        <item>Pending</item>
+        <item>Closed</item>
+    </string-array>
+
     <string-array name="comp_type">
         <item>All</item>
         <item>Other</item>

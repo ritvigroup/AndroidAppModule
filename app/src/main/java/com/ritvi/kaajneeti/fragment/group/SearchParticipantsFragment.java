@@ -1,5 +1,6 @@
 package com.ritvi.kaajneeti.fragment.group;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,14 +21,18 @@ import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.adapter.MyFriendListAdapter;
 import com.ritvi.kaajneeti.adapter.ParticipatedAdapter;
+import com.ritvi.kaajneeti.pojo.GroupPOJO;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
+import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
+import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +40,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+@SuppressLint("ValidFragment")
 public class SearchParticipantsFragment extends Fragment {
 
     @BindView(R.id.rv_users)
@@ -51,6 +57,11 @@ public class SearchParticipantsFragment extends Fragment {
     Button btn_create;
 
     private UserProfilePOJO participant;
+    GroupPOJO groupPOJO;
+
+    public SearchParticipantsFragment(GroupPOJO groupPOJO) {
+        this.groupPOJO=groupPOJO;
+    }
 
     @Nullable
     @Override
@@ -67,26 +78,60 @@ public class SearchParticipantsFragment extends Fragment {
         attachParticipantAdapter();
         getAllUsers();
 
-        btn_create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CreateGroup();
-            }
-        });
+        if(groupPOJO!=null&&groupPOJO.getGroupMembers()!=null&&groupPOJO.getGroupMembers().size()>0){
+            btn_create.setText("Update Users");
+            btn_create.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    updateGroup();
+                }
+            });
+        }else{
+            btn_create.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    CreateGroup();
+                }
+            });
+        }
     }
 
-    public void CreateGroup(){
-//        if(participatedUserList.size()>=2) {
-            if (getActivity() instanceof HomeActivity) {
-                HomeActivity homeActivity = (HomeActivity) getActivity();
-                homeActivity.showCreateGroupFragment(participatedUserList);
+    public void updateGroup(){
+        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("group_name",groupPOJO.getFriendGroupName()));
+        nameValuePairs.add(new BasicNameValuePair("group_id",groupPOJO.getFriendGroupId()));
+        for(int i=0;i<participatedUserList.size();i++){
+            nameValuePairs.add(new BasicNameValuePair("group_member["+i+"]",participatedUserList.get(i).getUserProfileId()));
+        }
+        new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                try{
+                    JSONObject jsonObject=new JSONObject(response);
+                    if(jsonObject.optString("status").equalsIgnoreCase("success")){
+                        getActivity().onBackPressed();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
+        },"CALL_UPDATE_USER_API",true).execute(WebServicesUrls.UPDATE_GROUP_MEMBERS);
+    }
+
+    public void CreateGroup() {
+//        if(participatedUserList.size()>=2) {
+        if (getActivity() instanceof HomeActivity) {
+            HomeActivity homeActivity = (HomeActivity) getActivity();
+            CreateGroupFragment createGroupFragment = new CreateGroupFragment(participatedUserList);
+            homeActivity.addFragmentinFrameHome(createGroupFragment, "createGroupFragment");
+        }
 //        }else{
 //            ToastClass.showShortToast(getActivity().getApplicationContext(),"Please select atleast two users");
 //        }
     }
 
-    public void pressBack(){
+    public void pressBack() {
         getActivity().onBackPressed();
     }
 
@@ -100,10 +145,12 @@ public class SearchParticipantsFragment extends Fragment {
                 userProfilePOJOS.clear();
                 if (responseListPOJO.isSuccess()) {
                     userProfilePOJOS.addAll(responseListPOJO.getResultList());
+                    myFriendListAdapter.notifyDataSetChanged();
+
                 } else {
                     ToastClass.showShortToast(getActivity().getApplicationContext(), responseListPOJO.getMessage());
                 }
-                myFriendListAdapter.notifyDataSetChanged();
+
             }
         }, UserProfilePOJO.class, "CALL_ALL_REQUEST_API", false).execute(WebServicesUrls.MY_FRIENDS);
     }
@@ -112,7 +159,7 @@ public class SearchParticipantsFragment extends Fragment {
     MyFriendListAdapter myFriendListAdapter;
 
     public void attachAdapter() {
-        myFriendListAdapter = new MyFriendListAdapter(getActivity(), this, userProfilePOJOS,true);
+        myFriendListAdapter = new MyFriendListAdapter(getActivity(), this, userProfilePOJOS, true,groupPOJO.getGroupMembers());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rv_users.setHasFixedSize(true);
         rv_users.setAdapter(myFriendListAdapter);
@@ -128,12 +175,13 @@ public class SearchParticipantsFragment extends Fragment {
         participatedAdapter.notifyDataSetChanged();
     }
 
-    public void deleteParticipant(UserProfilePOJO userProfilePOJO){
+    public void deleteParticipant(UserProfilePOJO userProfilePOJO) {
         participatedUserList.remove(userProfilePOJO);
         participatedAdapter.notifyDataSetChanged();
     }
 
     ParticipatedAdapter participatedAdapter;
+
     public void attachParticipantAdapter() {
         participatedAdapter = new ParticipatedAdapter(getActivity(), this, participatedUserList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);

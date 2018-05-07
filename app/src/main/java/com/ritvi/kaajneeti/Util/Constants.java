@@ -96,5 +96,17 @@ public class Constants {
     }
 
 
+    public static final String SEARCH_IN_POST="post";
+    public static final String SEARCH_IN_PEOPLE="people";
+    public static final String SEARCH_IN_EVENT="event";
+    public static final String SEARCH_IN_POLL="poll";
+    public static final String SEARCH_IN_COMPLAINT="complaint";
+    public static final String SEARCH_IN_SUGGESTION="suggestion";
+
+
+    public static final String SEARCH_LOCATION="search_location";
+    public static final String SEARCH_WORK="search_work";
+    public static final String SEARCH_QUALIFICATION="search_qualification";
+
 
 }

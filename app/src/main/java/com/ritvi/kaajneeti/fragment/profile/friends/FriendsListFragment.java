@@ -81,7 +81,7 @@ public class FriendsListFragment extends Fragment {
     MyFriendListAdapter myFriendListAdapter;
 
     public void attachAdapter() {
-        myFriendListAdapter = new MyFriendListAdapter(getActivity(), this, userProfilePOJOS, false);
+        myFriendListAdapter = new MyFriendListAdapter(getActivity(), this, userProfilePOJOS, false,null);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rv_friends.setHasFixedSize(true);
         rv_friends.setAdapter(myFriendListAdapter);
