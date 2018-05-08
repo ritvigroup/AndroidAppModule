@@ -76,6 +76,8 @@
                     android:ems="10"
                     android:imeOptions="actionDone"
                     android:inputType="number"
+                    android:layout_gravity="center"
+                    android:gravity="center"
                     android:singleLine="true"
                     android:maxLength="6"
                     android:paddingLeft="35dp"
@@ -107,7 +109,8 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:layout_marginTop="15dp"
-                    android:text="Resend OTP" />
+                    android:text="Resend OTP"
+                    android:textStyle="bold"/>
 
 
                 <Button

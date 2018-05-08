@@ -24,4 +24,7 @@ public class StringUtils {
     public static final String C_PROFILE_DETAIL="c_profile_detail";
     public static final String L_PROFILE_DETAIL="l_profile_detail";
 
+    public static final String FORGOT_SMS_CLASS = "forgot_sms_class";
+    public static final String LOGIN_OTP_CLASS = "login_otp_class";
+
 }

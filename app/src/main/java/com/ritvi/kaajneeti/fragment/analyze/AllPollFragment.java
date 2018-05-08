@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
@@ -42,6 +43,8 @@ public class AllPollFragment extends Fragment {
 
     @BindView(R.id.rv_complaints)
     RecyclerView rv_complaints;
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
 
     @Nullable
     @Override
@@ -65,10 +68,17 @@ public class AllPollFragment extends Fragment {
                 Log.i(TagUtils.getTag(), "keyCode: " + keyCode);
                 if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
                     Log.i(TagUtils.getTag(), "onKey Back listener is working!!!");
-                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    getActivity().onBackPressed();
                     return true;
                 }
                 return false;
+            }
+        });
+
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
             }
         });
     }

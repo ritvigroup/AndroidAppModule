@@ -228,7 +228,7 @@ public class SplashActivity extends LocalizationActivity {
     }
 
     public void proceed() {
-
+        printHashKey();
         getLocation();
 
         if (Pref.GetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, false)) {

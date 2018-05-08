@@ -11,10 +11,12 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -408,6 +410,26 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         }
 
+        pollViewHolder.iv_poll_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final PopupMenu menu = new PopupMenu(activity, view);
+
+                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuitem) {
+                        return false;
+                    }
+                });
+                if(pollPOJO.getProfileDetailPOJO().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())) {
+                    menu.inflate(R.menu.menu_my_feed);
+                }else{
+                    menu.inflate(R.menu.menu_friend_feed);
+                }
+                menu.show();
+            }
+        });
+
 
     }
 
@@ -479,6 +501,27 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         eventViewHolder.tv_profile_name.setText(Html.fromHtml(name));
         eventViewHolder.tv_date.setText(eventPOJO.getAddedOn());
+
+
+        eventViewHolder.iv_event_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final PopupMenu menu = new PopupMenu(activity, view);
+
+                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuitem) {
+                        return false;
+                    }
+                });
+                if(eventPOJO.getEventProfile().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())) {
+                    menu.inflate(R.menu.menu_my_feed);
+                }else{
+                    menu.inflate(R.menu.menu_friend_feed);
+                }
+                menu.show();
+            }
+        });
     }
 
     public void inflatePostData(final PostViewHolder postViewHolder, final PostPOJO postPOJO, int position) {
@@ -575,6 +618,29 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     postViewHolder.cv_profile_pic.callOnClick();
                 }
             });
+
+
+            postViewHolder.iv_post_menu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final PopupMenu menu = new PopupMenu(activity, view);
+
+                    menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuitem) {
+                            return false;
+                        }
+                    });
+                    if(postPOJO.getPostProfile().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())) {
+                        menu.inflate(R.menu.menu_my_feed);
+                    }else{
+                        menu.inflate(R.menu.menu_friend_feed);
+                    }
+                    menu.show();
+                }
+            });
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -643,6 +709,28 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }else{
                 complaintViewHolder.ll_group_complaint_status.setVisibility(View.GONE);
             }
+
+
+            complaintViewHolder.iv_complaint_menu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final PopupMenu menu = new PopupMenu(activity, view);
+
+                    menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuitem) {
+                            return false;
+                        }
+                    });
+                    if(complaintPOJO.getComplaintProfile().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())) {
+                        menu.inflate(R.menu.menu_my_feed);
+                    }else{
+                        menu.inflate(R.menu.menu_friend_feed);
+                    }
+                    menu.show();
+                }
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -671,6 +759,7 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public TextView tv_participated;
         public CircleImageView cv_profile_pic;
         public ImageView iv_poll_image;
+        public ImageView iv_poll_menu;
         public LinearLayout ll_ans;
         public LinearLayout ll_ans_view;
         public LinearLayout ll_already_participated;
@@ -686,6 +775,7 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             tv_date = itemView.findViewById(R.id.tv_date);
             cv_profile_pic = itemView.findViewById(R.id.cv_profile_pic);
             iv_poll_image = itemView.findViewById(R.id.iv_poll_image);
+            iv_poll_menu = itemView.findViewById(R.id.iv_poll_menu);
             tv_participated = itemView.findViewById(R.id.tv_participated);
             rv_ans = itemView.findViewById(R.id.rv_ans);
         }
@@ -696,6 +786,7 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public TextView tv_profile_name;
         public TextView tv_date;
         public ImageView iv_event_image;
+        public ImageView iv_event_menu;
         public ImageView cv_profile_pic;
         public TextView tv_event_date;
         public TextView tv_place;
@@ -709,6 +800,7 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             tv_profile_name = itemView.findViewById(R.id.tv_profile_name);
             tv_date = itemView.findViewById(R.id.tv_date);
             iv_event_image = itemView.findViewById(R.id.iv_event_image);
+            iv_event_menu = itemView.findViewById(R.id.iv_event_menu);
             cv_profile_pic = itemView.findViewById(R.id.cv_profile_pic);
             tv_event_date = itemView.findViewById(R.id.tv_event_date);
             tv_place = itemView.findViewById(R.id.tv_place);
@@ -722,6 +814,7 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public TextView tv_profile_name;
         public TextView tv_date;
         public ImageView iv_feed_image;
+        public ImageView iv_post_menu;
         public TextView tv_description;
         public CircleImageView cv_profile_pic;
         public ViewPager viewPager;
@@ -732,6 +825,7 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             tv_profile_name = itemView.findViewById(R.id.tv_profile_name);
             tv_date = itemView.findViewById(R.id.tv_date);
             iv_feed_image = itemView.findViewById(R.id.iv_feed_image);
+            iv_post_menu = itemView.findViewById(R.id.iv_post_menu);
             tv_description = itemView.findViewById(R.id.tv_description);
             cv_profile_pic = itemView.findViewById(R.id.cv_profile_pic);
             viewPager = itemView.findViewById(R.id.viewPager);
@@ -751,6 +845,7 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public LinearLayout ll_acceptdecline;
         public LinearLayout ll_group_complaint_status;
         public ImageView iv_info;
+        public ImageView iv_complaint_menu;
 
         public ComplaintViewHolder(View itemView) {
             super(itemView);
@@ -767,6 +862,7 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ll_group_complaint_status = itemView.findViewById(R.id.ll_group_complaint_status);
             ll_acceptdecline = itemView.findViewById(R.id.ll_acceptdecline);
             iv_info = itemView.findViewById(R.id.iv_info);
+            iv_complaint_menu = itemView.findViewById(R.id.iv_complaint_menu);
         }
     }
 

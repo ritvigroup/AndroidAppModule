@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,6 +38,8 @@ import butterknife.ButterKnife;
 public class IncomingRequestFragment extends Fragment {
     @BindView(R.id.rv_complaints)
     RecyclerView rv_complaints;
+    @BindView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     boolean is_initialized=false;
     @Nullable
@@ -52,6 +55,13 @@ public class IncomingRequestFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         attachAdapter();
         callAPI();
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                callAPI();
+            }
+        });
     }
 
     public void initialize(){
@@ -70,6 +80,7 @@ public class IncomingRequestFragment extends Fragment {
         new WebServiceBaseResponseList<UserProfilePOJO>(nameValuePairs, getActivity(), new ResponseListCallback<UserProfilePOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<UserProfilePOJO> responseListPOJO) {
+                swipeRefreshLayout.setRefreshing(false);
                 userProfilePOJOS.clear();
                 if (responseListPOJO.isSuccess()) {
                     userProfilePOJOS.addAll(responseListPOJO.getResultList());

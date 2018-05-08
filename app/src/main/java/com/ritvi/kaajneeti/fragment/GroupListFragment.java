@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,7 +38,8 @@ public class GroupListFragment extends Fragment {
     Button btn_add_group;
     @BindView(R.id.rv_group)
     RecyclerView rv_group;
-
+    @BindView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -61,6 +63,13 @@ public class GroupListFragment extends Fragment {
         });
 
         getGrouplist();
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getGrouplist();
+            }
+        });
     }
 
     public void getGrouplist() {
@@ -69,6 +78,7 @@ public class GroupListFragment extends Fragment {
         new WebServiceBaseResponseList<GroupPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<GroupPOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<GroupPOJO> responseListPOJO) {
+                swipeRefreshLayout.setRefreshing(false);
                 try {
                     groupPOJOS.clear();
                     if (responseListPOJO.isSuccess()) {

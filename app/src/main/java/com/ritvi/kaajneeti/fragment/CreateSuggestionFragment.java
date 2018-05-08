@@ -383,7 +383,7 @@ public class CreateSuggestionFragment extends Fragment implements DatePickerDial
                             JSONObject jsonObject = new JSONObject(response);
                             ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
                             if (jsonObject.optString("status").equals("success")) {
-                                startActivity(new Intent(getActivity(), ApplicationSubmittedActivity.class).putExtra("comp_type", "complaint"));
+                                startActivity(new Intent(getActivity(), ApplicationSubmittedActivity.class).putExtra("comp_type", "suggestion"));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();

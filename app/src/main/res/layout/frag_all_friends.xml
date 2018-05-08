@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <EditText
+        android:id="@+id/et_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
@@ -13,7 +14,7 @@
         android:background="@drawable/et_border"
         android:drawablePadding="10dp"
         android:drawableRight="@drawable/places_ic_search"
-        android:hint="OUTGOING FRIENDS"
+        android:hint="Search complain"
         android:minHeight="40dp"
         android:paddingLeft="5dp"
         android:visibility="gone" />
@@ -31,5 +32,4 @@
             android:background="@drawable/et_search_border"
             android:padding="5dp"></android.support.v7.widget.RecyclerView>
     </android.support.v4.widget.SwipeRefreshLayout>
-
 </LinearLayout>

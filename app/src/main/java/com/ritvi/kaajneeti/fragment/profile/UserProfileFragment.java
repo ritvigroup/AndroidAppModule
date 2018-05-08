@@ -159,7 +159,6 @@ public class UserProfileFragment extends Fragment {
         this.profile_id = profile_id;
     }
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

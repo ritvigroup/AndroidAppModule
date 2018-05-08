@@ -1,5 +1,6 @@
 package com.ritvi.kaajneeti.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -10,6 +11,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -31,6 +33,7 @@ import com.ritvi.kaajneeti.MainApplication;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.Pref;
+import com.ritvi.kaajneeti.Util.SetViews;
 import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.activity.Profile.ProfileDescriptionActivity;
@@ -147,8 +150,8 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 //                startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
-                SettingFragment settingFragment=new SettingFragment();
-                addFragmentinFrameHome(settingFragment,"settingFragment");
+                SettingFragment settingFragment = new SettingFragment();
+                addFragmentinFrameHome(settingFragment, "settingFragment");
             }
         });
 
@@ -156,8 +159,8 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 //                SearchFragment searchFragment = new SearchFragment();
-                AllSearchFragment allSearchFragment=new AllSearchFragment();
-                addFragmentinFrameHome(allSearchFragment,"searchFragment");
+                AllSearchFragment allSearchFragment = new AllSearchFragment();
+                addFragmentinFrameHome(allSearchFragment, "searchFragment");
             }
         });
     }
@@ -174,10 +177,10 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    KaajFragment kaajFragment;
-    MyConnectionFragment myConnectionFragment;
-    InvestigateFragment investigateFragment;
-    WithdrawalFragment withdrawalFragment;
+    public KaajFragment kaajFragment;
+    public MyConnectionFragment myConnectionFragment;
+    public InvestigateFragment investigateFragment;
+    public WithdrawalFragment withdrawalFragment;
 
     private void setupViewPager(ViewPager viewPager) {
 
@@ -248,24 +251,8 @@ public class HomeActivity extends AppCompatActivity {
 
         ImageView cv_profile_pic = headerLayout.findViewById(R.id.cv_profile_pic);
 
-        Glide.with(getApplicationContext())
-                .load(Constants.userProfilePOJO.getProfilePhotoPath())
-                .placeholder(R.drawable.ic_default_profile_pic)
-                .error(R.drawable.ic_default_profile_pic)
-                .dontAnimate()
-                .into(cv_profile_pic);
-
-//        cv_profile_pic.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                startActivity(new Intent(HomeActivity.this, ProfilePageActivity.class));
-//                startActivity(new Intent(HomeActivity.this, ProfileDescriptionActivity.class).putExtra("userProfilePOJO", Constants.userProfilePOJO));
-//            }
-//        });
-
-
+        SetViews.setProfilePhoto(getApplicationContext(), Constants.userProfilePOJO.getProfilePhotoPath(), cv_profile_pic);
         setupDrawerToggle();
-//        mDrawer.addDrawerListener(drawerToggle);
         drawerToggle.setDrawerIndicatorEnabled(false);
 
         nvDrawer.setItemIconTintList(null);
@@ -325,27 +312,22 @@ public class HomeActivity extends AppCompatActivity {
 //                startActivity(new Intent(HomeActivity.this, FavoriteLeaderActivity.class));
 //                startActivity(new Intent(HomeActivity.this, PayUMoneyIntegration.class));
                 ContributeFragment contributeFragment = new ContributeFragment();
-                addFragmentinFrameHome(contributeFragment,"contributeFragment");
+                addFragmentinFrameHome(contributeFragment, "contributeFragment");
                 break;
             case R.id.nav_setting:
 //                startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
-                SettingFragment settingFragment=new SettingFragment();
-                addFragmentinFrameHome(settingFragment,"settingFragment");
+                SettingFragment settingFragment = new SettingFragment();
+                addFragmentinFrameHome(settingFragment, "settingFragment");
                 break;
             case R.id.nav_earn:
 //                showEarnFragment();
                 viewPager.setCurrentItem(3);
                 break;
             case R.id.nav_wallet:
-                addFragmentinFrameHome(new WalletFragment(),"Wallet");
+                addFragmentinFrameHome(new WalletFragment(), "Wallet");
                 break;
             case R.id.nav_logout:
-                Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, false);
-                Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED, false);
-                Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_SKIPPED, false);
-                Pref.SetIntPref(getApplicationContext(), StringUtils.USER_TYPE, Constants.USER_TYPE_NONE);
-                startActivity(new Intent(HomeActivity.this, SplashActivity.class));
-                finishAffinity();
+                showLogoutDialog();
                 break;
         }
         mDrawer.closeDrawers();
@@ -374,6 +356,7 @@ public class HomeActivity extends AppCompatActivity {
         transaction.commit();
         fragmentList.add(updateUserProfileFragment);
     }
+
     public void refreshUserProfileEditFragment() {
         if (updateUserProfileFragment != null) {
             updateUserProfileFragment.getAllProfileData();
@@ -381,6 +364,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void refreshUserProfileFragment() {
+        Log.d(TagUtils.getTag(), "profile refresh");
         if (userProfileFragment != null) {
             userProfileFragment.getAllProfileData();
         }
@@ -429,6 +413,30 @@ public class HomeActivity extends AppCompatActivity {
                 .replace(R.id.frame_home, fragment)
                 .addToBackStack(fragment_name)
                 .commit();
+    }
+
+    public void showLogoutDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Logout");
+        alertDialog.setMessage("Do you want to logout?");
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int which) {
+                Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_LOGIN, false);
+                Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_COMPLETED, false);
+                Pref.SetBooleanPref(getApplicationContext(), StringUtils.IS_PROFILE_SKIPPED, false);
+                Pref.SetIntPref(getApplicationContext(), StringUtils.USER_TYPE, Constants.USER_TYPE_NONE);
+                startActivity(new Intent(HomeActivity.this, SplashActivity.class));
+                finishAffinity();
+            }
+        });
+        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertDialog.show();
     }
 
 }

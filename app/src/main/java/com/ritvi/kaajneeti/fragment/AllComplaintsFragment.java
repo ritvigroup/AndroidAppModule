@@ -6,12 +6,15 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.adapter.ViewPagerWithTitleAdapter;
 import com.ritvi.kaajneeti.fragment.analyze.ComplaintListFragment;
 
@@ -44,6 +47,21 @@ public class AllComplaintsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         setupViewPager(viewPager);
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        view.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                Log.i(TagUtils.getTag(), "keyCode: " + keyCode);
+                if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                    Log.i(TagUtils.getTag(), "onKey Back listener is working!!!");
+                    getActivity().onBackPressed();
+                    return true;
+                }
+                return false;
+            }
+        });
+
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -147,7 +147,7 @@
 
             <LinearLayout
                 android:id="@+id/ll_photo"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
@@ -158,7 +158,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="10dp"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/ic_photo_video" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -175,7 +175,7 @@
 
             <LinearLayout
                 android:id="@+id/ll_tag_friends"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
@@ -186,7 +186,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="10dp"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/ic_tag" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -203,7 +203,7 @@
 
             <LinearLayout
                 android:id="@+id/ll_feeling"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
@@ -214,7 +214,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="10dp"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/ic_activity" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -231,7 +231,7 @@
 
             <LinearLayout
                 android:id="@+id/ll_check_in"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
@@ -242,7 +242,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="10dp"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/ic_location" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -259,7 +259,7 @@
 
             <LinearLayout
                 android:id="@+id/ll_complaint"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
@@ -270,7 +270,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="10dp"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/ic_launcher" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -287,7 +287,7 @@
 
             <LinearLayout
                 android:id="@+id/ll_poll"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
@@ -298,7 +298,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="10dp"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/ic_poll" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -315,7 +315,7 @@
 
             <LinearLayout
                 android:id="@+id/ll_event"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
@@ -326,7 +326,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="10dp"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/ic_event" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -343,7 +343,7 @@
 
             <LinearLayout
                 android:id="@+id/ll_suggestion"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
@@ -354,7 +354,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="10dp"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/ic_launcher" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -371,7 +371,7 @@
 
             <LinearLayout
                 android:id="@+id/ll_information"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
@@ -382,7 +382,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="10dp"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@drawable/ic_launcher" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -399,6 +399,7 @@
 
 
         </LinearLayout>
+
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
 </FrameLayout>

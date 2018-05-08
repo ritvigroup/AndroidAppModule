@@ -134,8 +134,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="100dp"
                     android:layout_marginRight="100dp"
-                    android:max="120000"
+                    android:max="60000"
                     android:progress="45" />
+
+                <TextView
+                    android:id="@+id/tv_resend_otp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="RESEND OTP"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
 
                 <Button
                     android:id="@+id/btn_accept"

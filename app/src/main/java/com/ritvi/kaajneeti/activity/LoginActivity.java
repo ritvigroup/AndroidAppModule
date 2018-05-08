@@ -439,7 +439,6 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
                 Log.d(TagUtils.getTag(), "email:-" + acct.getEmail());
                 Log.d(TagUtils.getTag(), "image:-" + acct.getPhotoUrl().toString());
                 Log.d(TagUtils.getTag(), "id:-" + acct.getId());
-
                 saveImageFromUrl("google", acct.getId(), acct.getDisplayName(), acct.getEmail(), acct.getPhotoUrl().toString(), "");
             } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), "Your Google account is not configured with google plus account", Toast.LENGTH_SHORT).show();

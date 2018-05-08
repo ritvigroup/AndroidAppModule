@@ -58,16 +58,22 @@ public class MyConnectionFragment extends Fragment {
         tabs.setupWithViewPager(viewPager);
     }
 
+    public SearchFragment searchFragment;
+    public RequestFragment requestFragment;
+    public ContactFragment contactFragment;
+    public FriendsFragment friendsFragment;
+    public GroupListFragment groupListFragment;
+
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerWithTitleAdapter adapter = new ViewPagerWithTitleAdapter(getChildFragmentManager());
 //        adapter.addFrag(new SuggestionFragment(), "Suggestion");
-        final SearchFragment searchFragment = new SearchFragment();
-        final RequestFragment requestFragment = new RequestFragment();
-        final ContactFragment contactFragment = new ContactFragment();
-        final FriendsFragment friendsFragment = new FriendsFragment();
-        final GroupListFragment groupListFragment = new GroupListFragment();
+//        searchFragment = new SearchFragment();
+        requestFragment = new RequestFragment();
+        contactFragment = new ContactFragment();
+        friendsFragment = new FriendsFragment();
+        groupListFragment = new GroupListFragment();
 
-        adapter.addFrag(searchFragment, "Search");
+//        adapter.addFrag(searchFragment, "Search");
         adapter.addFrag(requestFragment, "Request");
         adapter.addFrag(contactFragment, "Contact");
         adapter.addFrag(friendsFragment, "Connect");

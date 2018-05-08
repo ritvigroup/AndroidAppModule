@@ -4,19 +4,28 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -29,6 +38,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
+import com.ritvi.kaajneeti.Util.FileUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
@@ -51,6 +61,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -73,7 +85,7 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
     private static final int OPEN_MEDIA_PICKER = 1;
     private static final int TAG_PEOPLE = 105;
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 101;
-
+    private static final int CAMERA_REQUEST = 102;
     @BindView(R.id.et_event_name)
     EditText et_event_name;
     @BindView(R.id.tv_profile_description)
@@ -154,8 +166,8 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
         this.privPublic = privPublic;
         this.event_name = event_name;
         this.mediaFiles = mediaFiles;
-        if(mediaFiles.size()>0){
-            cover_image_path=mediaFiles.get(0);
+        if (mediaFiles.size() > 0) {
+            cover_image_path = mediaFiles.get(0);
         }
     }
 
@@ -167,7 +179,7 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
         tagging_description = getTaggedDescription(taggeduserInfoPOJOS);
         updateProfileStatus();
 
-        if(cover_image_path.length()>0){
+        if (cover_image_path.length() > 0) {
             updateCoverImage(cover_image_path);
         }
 
@@ -205,7 +217,31 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
             @Override
             public void onClick(View view) {
                 attach_type = COVER_IMAGE;
-                selectMedia();
+//                selectMedia();
+                final PopupMenu menu = new PopupMenu(getActivity(), view);
+
+                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuitem) {
+                        switch (menuitem.getItemId()) {
+                            case R.id.popup_camera:
+                                startCamera();
+                                break;
+                            case R.id.popup_gallery:
+                                selectMedia();
+                                break;
+                            case R.id.popup_remove:
+                                cover_image_path = "";
+                                Glide.with(getActivity().getApplicationContext())
+                                        .load(R.drawable.ic_default_pic)
+                                        .into(iv_event_image);
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                menu.inflate(R.menu.menu_profile_pic_option);
+                menu.show();
             }
         });
 
@@ -416,6 +452,27 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
         startActivityForResult(intent, OPEN_MEDIA_PICKER);
     }
 
+    String pictureImagePath = "";
+
+    public void startCamera() {
+        String strMyImagePath = Environment.getExternalStorageDirectory() + File.separator + "temp.png";
+
+        pictureImagePath = strMyImagePath;
+        File file = new File(pictureImagePath);
+        Uri outputFileUri = Uri.fromFile(file);
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            cameraIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Uri contentUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getPackageName() + ".fileProvider", file);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
+
+        } else {
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+        }
+        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+    }
+
     public void findPlace() {
         try {
             Intent intent =
@@ -428,7 +485,6 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
             // TODO: Handle the error.
         }
     }
-
 
 
     public String getTaggedDescription(List<UserProfilePOJO> stringList) {
@@ -448,7 +504,7 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
         return description;
     }
 
-    public void updateCoverImage(String cover_image_path){
+    public void updateCoverImage(String cover_image_path) {
         Glide.with(getActivity().getApplicationContext())
                 .load(cover_image_path)
                 .error(R.drawable.ic_default_pic)
@@ -493,18 +549,42 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
             }
+        } else if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            File imgFile = new File(pictureImagePath);
+            if (imgFile.exists()) {
+                Bitmap bmp = BitmapFactory.decodeFile(pictureImagePath);
+                bmp = Bitmap.createScaledBitmap(bmp, bmp.getWidth() / 4, bmp.getHeight() / 4, false);
+                String strMyImagePath = FileUtils.getChatDir();
+                File file_name = new File(strMyImagePath + File.separator + System.currentTimeMillis() + ".png");
+                FileOutputStream fos = null;
+
+                try {
+                    fos = new FileOutputStream(file_name);
+                    Log.d(TagUtils.getTag(), "taking photos");
+                    bmp.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                    fos.flush();
+                    fos.close();
+                    cover_image_path = file_name.toString();
+                    updateCoverImage(cover_image_path);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return;
         }
     }
 
 
     public void updateProfileStatus() {
         String profile = "";
-        if (tagging_description.length() == 0 ) {
+        if (tagging_description.length() == 0) {
             profile = profile_description;
         } else {
             profile = profile_description + " is " + tagging_description;
         }
-        tv_tag.setText(Html.fromHtml(tagging_description.replace("with ","")));
+        tv_tag.setText(Html.fromHtml(tagging_description.replace("with ", "")));
         tv_profile_description.setText(Html.fromHtml(profile));
     }
 

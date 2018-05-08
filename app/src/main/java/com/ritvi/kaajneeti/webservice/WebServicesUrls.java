@@ -19,6 +19,8 @@ public class WebServicesUrls {
     public static final String LOGIN_URL = BASE_URL + "userlogin/loginMobile";
     public static final String VERIFY_LOGIN_OTP = BASE_URL + "userlogin/validateMobileOtp";
     public static final String LOGIN_MPIN = BASE_URL + "userlogin/loginMobileMpin";
+    public static final String FORGOT_MPIN = BASE_URL + "forgot/forgotMobileMpin";
+    public static final String VALIDATE_FORGOT_MPIN = BASE_URL + "forgot/validateResetPasswordCode";
     public static final String LOGIN_WITH_SOCIAL = BASE_URL + "userlogin/loginWithSocial";
     public static final String SAVE_EVENT = BASE_URL + "event/saveMyEvent";
     public static final String POST_COMPLAINT = BASE_URL + "complaint/postMyComplaint";

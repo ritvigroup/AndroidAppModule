@@ -55,8 +55,8 @@ public class ComplaintDetailFragment extends Fragment {
     TextView tv_date;
     @BindView(R.id.tv_name)
     TextView tv_name;
-    @BindView(R.id.tv_father_name)
-    TextView tv_father_name;
+    @BindView(R.id.tv_email)
+    TextView tv_email;
     @BindView(R.id.tv_mobile_number)
     TextView tv_mobile_number;
     @BindView(R.id.tv_profile_name)
@@ -74,6 +74,14 @@ public class ComplaintDetailFragment extends Fragment {
     Button btn_reject;
     @BindView(R.id.tv_privacy)
     TextView tv_privacy;
+    @BindView(R.id.tv_leader_name)
+    TextView tv_leader_name;
+    @BindView(R.id.tv_leader_email)
+    TextView tv_leader_email;
+    @BindView(R.id.tv_bio)
+    TextView tv_bio;
+
+
     @BindView(R.id.btn_track)
     Button btn_track;
 
@@ -133,6 +141,7 @@ public class ComplaintDetailFragment extends Fragment {
             if (userProfilePOJO != null) {
                 tv_name.setText(userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName());
                 tv_mobile_number.setText(userProfilePOJO.getMobile());
+                tv_email.setText(userProfilePOJO.getEmail());
             }
         }
 

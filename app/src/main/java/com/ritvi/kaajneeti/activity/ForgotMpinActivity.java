@@ -11,6 +11,15 @@ import android.widget.EditText;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.ToastClass;
+import com.ritvi.kaajneeti.webservice.WebServiceBase;
+import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
+import com.ritvi.kaajneeti.webservice.WebServicesUrls;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,11 +49,32 @@ public class ForgotMpinActivity extends AppCompatActivity {
                 if(et_login_otp.getText().toString().length()!=10){
                     ToastClass.showShortToast(getApplicationContext(),"Please Enter Valid Mobile Number");
                 }else{
-                    startActivity(new Intent(ForgotMpinActivity.this,ForgotMpinConfirmActivity.class).putExtra("mobile_number","+91"+et_login_otp.getText().toString()));
+                    callForgotMPIN();
                 }
             }
         });
 
+    }
+
+
+    private void callForgotMPIN() {
+        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("mobile","+91"+et_login_otp.getText().toString()));
+        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                try{
+                    JSONObject jsonObject=new JSONObject(response);
+                    if(jsonObject.optString("status").equalsIgnoreCase("success")){
+                        startActivity(new Intent(ForgotMpinActivity.this,ForgotMpinConfirmActivity.class).putExtra("mobile_number","+91"+et_login_otp.getText().toString()));
+                    }else{
+                        ToastClass.showShortToast(getApplicationContext(),jsonObject.optString("message"));
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        },"FORGOT_MPIN",true).execute(WebServicesUrls.FORGOT_MPIN);
     }
 
     @Override

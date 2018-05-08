@@ -42,6 +42,8 @@ public class OtpVerificationActivity extends LocalizationActivity{
     ProgressBar progress_timer;
     @BindView(R.id.et_otp)
     EditText et_otp;
+    @BindView(R.id.tv_resend_otp)
+    TextView tv_resend_otp;
 
     String mobile_number = "";
 
@@ -68,6 +70,12 @@ public class OtpVerificationActivity extends LocalizationActivity{
                 return false;
             }
         });
+        tv_resend_otp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callResendOTPAPI();
+            }
+        });
 
         btn_accept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +91,17 @@ public class OtpVerificationActivity extends LocalizationActivity{
                 finish();
             }
         });
+    }
+
+    private void callResendOTPAPI() {
+//        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
+//        nameValuePairs.add(new BasicNameValuePair("",""));
+//        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
+//            @Override
+//            public void onGetMsg(String apicall, String response) {
+//
+//            }
+//        },"CALL_RESEND_OTP",true).execute(WebServicesUrls.RESE);
     }
 
     public void validateMobileOTP() {
@@ -105,7 +124,11 @@ public class OtpVerificationActivity extends LocalizationActivity{
     @Override
     public void onResume() {
         super.onResume();
-        new CountDownTimer(120000, 1000) {
+        startTimer();
+    }
+    public void startTimer(){
+        tv_resend_otp.setEnabled(false);
+        new CountDownTimer(60000, 1000) {
 
             @Override
             public void onTick(long l) {
@@ -116,9 +139,12 @@ public class OtpVerificationActivity extends LocalizationActivity{
             @Override
             public void onFinish() {
                 progress_timer.setProgress(0);
+                tv_resend_otp.setEnabled(true);
             }
         }.start();
     }
+
+
 
     public void parseOTPVerifiedResponse(String response) {
         try {

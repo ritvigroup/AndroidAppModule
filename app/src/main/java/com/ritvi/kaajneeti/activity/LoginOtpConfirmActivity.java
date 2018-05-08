@@ -1,11 +1,14 @@
 package com.ritvi.kaajneeti.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +24,7 @@ import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.StringUtils;
+import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
@@ -99,17 +103,18 @@ public class LoginOtpConfirmActivity extends AppCompatActivity {
         tv_resend_otp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (is_timer) {
-//                    ToastClass.showShortToast(getApplicationContext(),"");
-                } else {
-                    callResendOtpAPI();
-                }
+//                if (is_timer) {
+////                    ToastClass.showShortToast(getApplicationContext(),"");
+//                } else {
+                callLoginAPI();
+//                }
             }
         });
 
     }
 
     public void startTimer() {
+        tv_resend_otp.setEnabled(false);
         new CountDownTimer(60000, 100) {
 
             @Override
@@ -122,20 +127,29 @@ public class LoginOtpConfirmActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 is_timer = false;
+                tv_resend_otp.setEnabled(true);
             }
         }.start();
     }
 
-    public void callResendOtpAPI() {
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("request_action", "REGENERATE_MOBILE_OTP"));
-        nameValuePairs.add(new BasicNameValuePair("mobile", mobile_number));
+    public void callLoginAPI(){
+        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("mobile",mobile_number));
         new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
             @Override
             public void onGetMsg(String apicall, String response) {
-                parseResendOTP(response);
+                try{
+                    JSONObject jsonObject=new JSONObject(response);
+                    if(jsonObject.optString("status").equalsIgnoreCase("success")){
+                        startTimer();
+                    }else{
+                        ToastClass.showShortToast(getApplicationContext(),jsonObject.optString("message"));
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
-        }, CALL_RESEND_OTP, true).execute(WebServicesUrls.LOGIN_URL);
+        }, Constants.CALL_LOGIN_OTP, true).execute(WebServicesUrls.LOGIN_URL);
     }
 
     public void callOTPAPI() {
@@ -159,18 +173,6 @@ public class LoginOtpConfirmActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void parseResendOTP(String response) {
-        try {
-            JSONObject jsonObject = new JSONObject(response);
-            if (jsonObject.optString("status").equals("success")) {
-                startTimer();
-            }
-            ToastClass.showShortToast(getApplicationContext(), jsonObject.optString("message"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void parseLoginOTPResponse(String response) {
         try {
             JSONObject jsonObject = new JSONObject(response);
@@ -183,10 +185,47 @@ public class LoginOtpConfirmActivity extends AppCompatActivity {
                 Constants.userProfilePOJO = userProfilePOJO;
                 startActivity(new Intent(this, HomeActivity.class));
                 finishAffinity();
+            }else{
+                ToastClass.showShortToast(getApplicationContext(),jsonObject.optString("message'"));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        startTimer();
+        getApplicationContext().registerReceiver(mMessageReceiver, new IntentFilter(StringUtils.LOGIN_OTP_CLASS));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getApplicationContext().unregisterReceiver(mMessageReceiver);
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String result = intent.getStringExtra("message");
+            Log.d(TagUtils.getTag(), "result:-" + result);
+            if (result != null && result.length() > 0) {
+                try {
+                    Log.d(TagUtils.getTag(), "message received:-" + result);
+//                    String[] msgsplit = result.split("c-");
+//                    Log.d(TagUtils.getTag(), "otp:-" + msgsplit[1].trim());
+                    result=result.replace(" is the OTP verifying your mobile with kaajneeti","");
+                    Log.d(TagUtils.getTag(),"otp:-"+result);
+                    et_otp.setText(result);
+                    btn_next.callOnClick();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
 
 }

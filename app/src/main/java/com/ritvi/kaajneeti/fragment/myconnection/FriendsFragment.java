@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,11 +38,12 @@ import butterknife.ButterKnife;
 public class FriendsFragment extends Fragment {
     @BindView(R.id.rv_complaints)
     RecyclerView rv_complaints;
-
+    @BindView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frag_all_report, container, false);
+        View view = inflater.inflate(R.layout.frag_all_friends, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -51,6 +53,14 @@ public class FriendsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         attachAdapter();
         callAPI();
+
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                callAPI();
+            }
+        });
     }
 
     boolean is_initialize = false;
@@ -70,6 +80,7 @@ public class FriendsFragment extends Fragment {
         new WebServiceBaseResponseList<UserProfilePOJO>(nameValuePairs, getActivity(), new ResponseListCallback<UserProfilePOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<UserProfilePOJO> responseListPOJO) {
+                swipeRefreshLayout.setRefreshing(false);
                 userProfilePOJOS.clear();
                 if (responseListPOJO.isSuccess()) {
                     userProfilePOJOS.addAll(responseListPOJO.getResultList());

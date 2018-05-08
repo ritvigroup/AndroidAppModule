@@ -2,12 +2,14 @@ package com.ritvi.kaajneeti.fragment.group;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,7 @@ import android.widget.ImageView;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
+import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.adapter.MyFriendListAdapter;
@@ -121,7 +124,7 @@ public class SearchParticipantsFragment extends Fragment {
 
     public void CreateGroup() {
 //        if(participatedUserList.size()>=2) {
-        if (getActivity() instanceof HomeActivity) {
+        if (getActivity() instanceof HomeActivity && participatedUserList.size()>0) {
             HomeActivity homeActivity = (HomeActivity) getActivity();
             CreateGroupFragment createGroupFragment = new CreateGroupFragment(participatedUserList);
             homeActivity.addFragmentinFrameHome(createGroupFragment, "createGroupFragment");
@@ -132,7 +135,24 @@ public class SearchParticipantsFragment extends Fragment {
     }
 
     public void pressBack() {
-        getActivity().onBackPressed();
+        Log.d(TagUtils.getTag(),"search participant back pressed");
+        new CountDownTimer(200,200){
+
+            @Override
+            public void onTick(long l) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                if(getActivity() instanceof HomeActivity){
+                    HomeActivity homeActivity= (HomeActivity) getActivity();
+                    homeActivity.myConnectionFragment.groupListFragment.getGrouplist();
+                }
+                getActivity().onBackPressed();
+            }
+        }.start();
+
     }
 
     public void getAllUsers() {
@@ -159,7 +179,11 @@ public class SearchParticipantsFragment extends Fragment {
     MyFriendListAdapter myFriendListAdapter;
 
     public void attachAdapter() {
-        myFriendListAdapter = new MyFriendListAdapter(getActivity(), this, userProfilePOJOS, true,groupPOJO.getGroupMembers());
+        if(groupPOJO!=null&&groupPOJO.getGroupMembers()!=null&&groupPOJO.getGroupMembers().size()>0) {
+            myFriendListAdapter = new MyFriendListAdapter(getActivity(), this, userProfilePOJOS, true, groupPOJO.getGroupMembers());
+        }else{
+            myFriendListAdapter = new MyFriendListAdapter(getActivity(), this, userProfilePOJOS, true, null);
+        }
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rv_users.setHasFixedSize(true);
         rv_users.setAdapter(myFriendListAdapter);

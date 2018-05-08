@@ -38,9 +38,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.FileUtils;
+import com.ritvi.kaajneeti.Util.Pref;
+import com.ritvi.kaajneeti.Util.SetViews;
+import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.activity.HomeActivity;
@@ -179,6 +183,9 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
         iv_personal_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ll_work.setVisibility(View.GONE);
+                ll_address.setVisibility(View.GONE);
+                ll_education.setVisibility(View.GONE);
                 if (ll_personal_information.getVisibility() == View.VISIBLE) {
                     ll_personal_information.setVisibility(View.GONE);
                 } else {
@@ -190,6 +197,9 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
         iv_address_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ll_personal_information.setVisibility(View.GONE);
+                ll_work.setVisibility(View.GONE);
+                ll_education.setVisibility(View.GONE);
                 if (ll_address.getVisibility() == View.VISIBLE) {
                     ll_address.setVisibility(View.GONE);
                 } else {
@@ -200,6 +210,9 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
         iv_work_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ll_personal_information.setVisibility(View.GONE);
+                ll_address.setVisibility(View.GONE);
+                ll_education.setVisibility(View.GONE);
                 if (ll_work.getVisibility() == View.VISIBLE) {
                     ll_work.setVisibility(View.GONE);
                 } else {
@@ -210,6 +223,9 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
         iv_education_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ll_personal_information.setVisibility(View.GONE);
+                ll_work.setVisibility(View.GONE);
+                ll_address.setVisibility(View.GONE);
                 if (ll_education.getVisibility() == View.VISIBLE) {
                     ll_education.setVisibility(View.GONE);
                 } else {
@@ -270,7 +286,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
                     UpdateAddressFragment updateAddressFragment = new UpdateAddressFragment(user_id, profile_id, null);
-                    homeActivity.addFragmentinFrameHome(updateAddressFragment,"updateAddressFragment");
+                    homeActivity.addFragmentinFrameHome(updateAddressFragment, "updateAddressFragment");
                 }
             }
         });
@@ -282,7 +298,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                     HomeActivity homeActivity = (HomeActivity) getActivity();
 
                     UpdateEducationFragment updateEducation = new UpdateEducationFragment(user_id, profile_id, null);
-                    homeActivity.addFragmentinFrameHome(updateEducation,"updateEducation");
+                    homeActivity.addFragmentinFrameHome(updateEducation, "updateEducation");
                 }
             }
         });
@@ -293,7 +309,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
                     UpdateWorkFragment updateWorkFragment = new UpdateWorkFragment(user_id, profile_id, null);
-                    homeActivity.addFragmentinFrameHome(updateWorkFragment,"updateWorkFragment");
+                    homeActivity.addFragmentinFrameHome(updateWorkFragment, "updateWorkFragment");
                 }
             }
         });
@@ -314,6 +330,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
         view.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
+                Log.i(TagUtils.getTag(), "keyCode: " + keyCode);
                 if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
                     refreshUpdateProfile();
                     getActivity().onBackPressed();
@@ -322,11 +339,19 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                 return false;
             }
         });
+
     }
 
-    public void refreshUpdateProfile(){
-        if(getActivity() instanceof HomeActivity){
-            HomeActivity homeActivity= (HomeActivity) getActivity();
+    public void hideAllViews() {
+        ll_personal_information.setVisibility(View.GONE);
+        ll_work.setVisibility(View.GONE);
+        ll_address.setVisibility(View.GONE);
+        ll_education.setVisibility(View.GONE);
+    }
+
+    public void refreshUpdateProfile() {
+        if (getActivity() instanceof HomeActivity) {
+            HomeActivity homeActivity = (HomeActivity) getActivity();
             homeActivity.refreshUserProfileFragment();
         }
     }
@@ -340,12 +365,12 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
     private void savePersonalInformation() {
         try {
             MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-            if (image_path_string.length() > 0 && new File(image_path_string).exists()) {
-                FileBody bin1 = new FileBody(new File(image_path_string));
-                reqEntity.addPart("photo", bin1);
-            } else {
-                reqEntity.addPart("photo", new StringBody(""));
-            }
+//            if (image_path_string.length() > 0 && new File(image_path_string).exists()) {
+//                FileBody bin1 = new FileBody(new File(image_path_string));
+//                reqEntity.addPart("photo", bin1);
+//            } else {
+//                reqEntity.addPart("photo", new StringBody(""));
+//            }
 
             String gender = "0";
             switch (rg_gender.getCheckedRadioButtonId()) {
@@ -388,6 +413,17 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
             new WebUploadService(reqEntity, getActivity(), new WebServicesCallBack() {
                 @Override
                 public void onGetMsg(String apicall, String response) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        if (jsonObject.optString("status").equalsIgnoreCase("success")) {
+                            ToastClass.showShortToast(getActivity().getApplicationContext(), "Profile Info Updated");
+                            iv_address_view.callOnClick();
+                        } else {
+                            ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     Log.d(TagUtils.getTag(), apicall + ":-" + response);
                 }
             }, "CALL_SAVE_PROFILE_API", true).execute(WebServicesUrls.UPDATE_PROFILE);
@@ -398,6 +434,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
 
     public void removeProfilePic() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", profile_id));
         nameValuePairs.add(new BasicNameValuePair("user_id", user_id));
         new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
             @Override
@@ -406,8 +443,17 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                     JSONObject jsonObject = new JSONObject(response);
                     if (jsonObject.optString("status").equals("success")) {
                         image_path_string = "";
-                        cv_profile_pic.setBackgroundResource(R.drawable.ic_default_profile_pic);
+                        Glide.with(getActivity().getApplicationContext())
+                                .load(R.drawable.ic_default_profile_pic)
+                                .into(cv_profile_pic);
+                        JSONObject result = jsonObject.optJSONObject("result");
+                        Pref.SetStringPref(getActivity().getApplicationContext(), StringUtils.USER_PROFILE, result.toString());
+                        Constants.userProfilePOJO = new Gson().fromJson(result.toString(), UserProfilePOJO.class);
+                        SetViews.changeProfilePics(getActivity().getApplicationContext(), Constants.userProfilePOJO.getProfilePhotoPath());
                     }
+                    ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -496,7 +542,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
             final View view = inflater.inflate(R.layout.inflate_add_first_view, null);
 
             LinearLayout ll_add = view.findViewById(R.id.ll_add);
-            TextView tv_name= view.findViewById(R.id.tv_name);
+            TextView tv_name = view.findViewById(R.id.tv_name);
 
             tv_name.setText("Add Address");
 
@@ -506,7 +552,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                     if (getActivity() instanceof HomeActivity) {
                         HomeActivity homeActivity = (HomeActivity) getActivity();
                         UpdateAddressFragment updateAddressFragment = new UpdateAddressFragment(user_id, profile_id, null);
-                        homeActivity.addFragmentinFrameHome(updateAddressFragment,"updateAddressFragment");
+                        homeActivity.addFragmentinFrameHome(updateAddressFragment, "updateAddressFragment");
                     }
                 }
             });
@@ -517,7 +563,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
             final View view = inflater.inflate(R.layout.inflate_add_first_view, null);
 
             LinearLayout ll_add = view.findViewById(R.id.ll_add);
-            TextView tv_name= view.findViewById(R.id.tv_name);
+            TextView tv_name = view.findViewById(R.id.tv_name);
 
             tv_name.setText("Add Education");
 
@@ -527,7 +573,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                     if (getActivity() instanceof HomeActivity) {
                         HomeActivity homeActivity = (HomeActivity) getActivity();
                         UpdateEducationFragment updateEducation = new UpdateEducationFragment(user_id, profile_id, null);
-                        homeActivity.addFragmentinFrameHome(updateEducation,"updateEducation");
+                        homeActivity.addFragmentinFrameHome(updateEducation, "updateEducation");
                     }
                 }
             });
@@ -538,7 +584,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
             final View view = inflater.inflate(R.layout.inflate_add_first_view, null);
 
             LinearLayout ll_add = view.findViewById(R.id.ll_add);
-            TextView tv_name= view.findViewById(R.id.tv_name);
+            TextView tv_name = view.findViewById(R.id.tv_name);
 
             tv_name.setText("Add Work");
 
@@ -549,7 +595,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                         HomeActivity homeActivity = (HomeActivity) getActivity();
 
                         UpdateWorkFragment updateWorkFragment = new UpdateWorkFragment(user_id, profile_id, null);
-                        homeActivity.addFragmentinFrameHome(updateWorkFragment,"updateWorkFragment");
+                        homeActivity.addFragmentinFrameHome(updateWorkFragment, "updateWorkFragment");
                     }
                 }
             });
@@ -625,7 +671,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                     if (getActivity() instanceof HomeActivity) {
                         HomeActivity homeActivity = (HomeActivity) getActivity();
                         UpdateAddressFragment updateAddressFragment = new UpdateAddressFragment(user_id, profile_id, addressPOJO);
-                        homeActivity.addFragmentinFrameHome(updateAddressFragment,"updateAddressFragment");
+                        homeActivity.addFragmentinFrameHome(updateAddressFragment, "updateAddressFragment");
                     }
                 }
             });
@@ -703,7 +749,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                     if (getActivity() instanceof HomeActivity) {
                         HomeActivity homeActivity = (HomeActivity) getActivity();
                         UpdateWorkFragment updateWorkFragment = new UpdateWorkFragment(user_id, profile_id, workPOJO);
-                        homeActivity.addFragmentinFrameHome(updateWorkFragment,"updateWorkFragment");
+                        homeActivity.addFragmentinFrameHome(updateWorkFragment, "updateWorkFragment");
                     }
                 }
             });
@@ -780,7 +826,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                     if (getActivity() instanceof HomeActivity) {
                         HomeActivity homeActivity = (HomeActivity) getActivity();
                         UpdateEducationFragment updateEducation = new UpdateEducationFragment(user_id, profile_id, educationPOJO);
-                        homeActivity.addFragmentinFrameHome(updateEducation,"updateEducation");
+                        homeActivity.addFragmentinFrameHome(updateEducation, "updateEducation");
                     }
                 }
             });
@@ -901,6 +947,42 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                     .placeholder(R.drawable.ic_default_profile_pic)
                     .dontAnimate()
                     .into(cv_profile_pic);
+
+
+            try {
+                MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+                if (image_path_string.length() > 0 && new File(image_path_string).exists()) {
+                    FileBody bin1 = new FileBody(new File(image_path_string));
+                    reqEntity.addPart("photo", bin1);
+                } else {
+                    reqEntity.addPart("photo", new StringBody(""));
+                }
+
+                reqEntity.addPart("user_id", new StringBody(user_id));
+                reqEntity.addPart("user_profile_id", new StringBody(profile_id));
+
+                new WebUploadService(reqEntity, getActivity(), new WebServicesCallBack() {
+                    @Override
+                    public void onGetMsg(String apicall, String response) {
+                        Log.d(TagUtils.getTag(), apicall + ":-" + response);
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            if (jsonObject.optString("status").equals("success")) {
+                                Gson gson = new Gson();
+                                Pref.SetStringPref(getActivity().getApplicationContext(), StringUtils.USER_PROFILE, jsonObject.optJSONObject("result").toString());
+                                UserProfilePOJO userProfilePOJO = gson.fromJson(jsonObject.optJSONObject("result").toString(), UserProfilePOJO.class);
+                                SetViews.changeProfilePics(getActivity().getApplicationContext(), userProfilePOJO.getProfilePhotoPath());
+                                Constants.userProfilePOJO = userProfilePOJO;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, "CALL_SAVE_PROFILE_API", true).execute(WebServicesUrls.UPDATE_USER_PROFILE_PHOTO);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

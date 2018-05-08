@@ -444,7 +444,7 @@ public class CreateExpressActivity extends AppCompatActivity {
     public void cancelPost(final Activity activity) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
         alertDialog.setTitle("Warning");
-        alertDialog.setMessage("Do you discard Post?");
+        alertDialog.setMessage("Do you want to discard Post?");
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 startActivity(new Intent(activity, HomeActivity.class));

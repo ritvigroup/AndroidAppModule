@@ -73,7 +73,9 @@
                     android:layout_marginRight="30dp"
                     android:layout_marginTop="30dp"
                     android:inputType="number"
-                    android:paddingLeft="35dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:maxLength="6"
                     android:textSize="18sp" />
 
                 <TextView
@@ -83,6 +85,27 @@
                     android:layout_marginTop="10dp"
                     android:gravity="center"
                     android:text="Enter 6 digit OTP" />
+
+                <ProgressBar
+                    android:id="@+id/progress_timer"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="100dp"
+                    android:layout_marginRight="100dp"
+                    android:max="60000"
+                    android:progress="45"
+                    android:layout_marginTop="15dp"/>
+
+                <TextView
+                    android:id="@+id/tv_resend_otp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="RESEND OTP"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
 
                 <Button
                     android:id="@+id/btn_next"

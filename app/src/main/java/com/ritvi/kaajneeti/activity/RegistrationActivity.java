@@ -107,8 +107,12 @@ public class RegistrationActivity extends LocalizationActivity implements View.O
     }
 
     public void onAcceptPhoneNumber() {
-        if (et_phone_number.getText().toString().length() >= 10) {
+        if (et_phone_number.getText().toString().length() != 10) {
 //            callAPI
+            ToastClass.showShortToast(getApplicationContext(),"Please Enter Correct Mobile Number");
+
+//            startActivity(new Intent(RegistrationActivity.this, OtpVerificationActivity.class));
+        }else{
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("request_action", "REGISTER_MOBILE"));
             nameValuePairs.add(new BasicNameValuePair("device_token", ""));
@@ -120,7 +124,6 @@ public class RegistrationActivity extends LocalizationActivity implements View.O
                 }
             }, Constants.CALL_REGISTER_API, true).execute(WebServicesUrls.REGISTER_URL);
 
-//            startActivity(new Intent(RegistrationActivity.this, OtpVerificationActivity.class));
         }
     }
 
