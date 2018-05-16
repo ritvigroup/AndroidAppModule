@@ -22,6 +22,8 @@ public class ComplaintPOJO implements Serializable {
     private String applicantName;
     @SerializedName("ApplicantFatherName")
     private String applicantFatherName;
+    @SerializedName("ApplicantMobile")
+    private String ApplicantMobile;
     @SerializedName("ComplaintDepartment")
     private String complaintDepartment;
     @SerializedName("DepartmentName")
@@ -58,6 +60,9 @@ public class ComplaintPOJO implements Serializable {
     private List<UserProfilePOJO> complaintMemberPOJOS;
     @SerializedName("ComplaintAttachment")
     private List<ComplaintAttachmentPOJO> complaintAttachments;
+    @SerializedName("ComplaintAssigned")
+    private List<UserProfilePOJO> ComplaintAssigned;
+
 
     public String getComplaintId() {
         return complaintId;
@@ -241,5 +246,21 @@ public class ComplaintPOJO implements Serializable {
 
     public void setComplaintAttachments(List<ComplaintAttachmentPOJO> complaintAttachments) {
         this.complaintAttachments = complaintAttachments;
+    }
+
+    public List<UserProfilePOJO> getComplaintAssigned() {
+        return ComplaintAssigned;
+    }
+
+    public void setComplaintAssigned(List<UserProfilePOJO> complaintAssigned) {
+        ComplaintAssigned = complaintAssigned;
+    }
+
+    public String getApplicantMobile() {
+        return ApplicantMobile;
+    }
+
+    public void setApplicantMobile(String applicantMobile) {
+        ApplicantMobile = applicantMobile;
     }
 }

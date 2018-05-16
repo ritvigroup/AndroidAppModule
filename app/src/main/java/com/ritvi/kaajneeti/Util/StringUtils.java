@@ -1,5 +1,7 @@
 package com.ritvi.kaajneeti.Util;
 
+import java.util.Random;
+
 /**
  * Created by sunil on 26-05-2017.
  */
@@ -26,5 +28,17 @@ public class StringUtils {
 
     public static final String FORGOT_SMS_CLASS = "forgot_sms_class";
     public static final String LOGIN_OTP_CLASS = "login_otp_class";
+
+
+    public static final String ALLOWED_CHARACTERS ="0123456789qwertyuiopasdfghjklzxcvbnm";
+
+    public static String getRandomString(final int sizeOfRandomString)
+    {
+        final Random random=new Random();
+        final StringBuilder sb=new StringBuilder(sizeOfRandomString);
+        for(int i=0;i<sizeOfRandomString;++i)
+            sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
+        return sb.toString();
+    }
 
 }

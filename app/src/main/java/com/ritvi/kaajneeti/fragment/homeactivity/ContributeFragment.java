@@ -12,10 +12,15 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.TagUtils;
+import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.adapter.ViewPagerWithTitleAdapter;
+import com.ritvi.kaajneeti.fragment.contribute.SelectUserForContributionFragment;
+import com.ritvi.kaajneeti.fragment.contribution.AllContributionFragment;
 import com.ritvi.kaajneeti.fragment.contribution.ContributionReceivedFragment;
 import com.ritvi.kaajneeti.fragment.contribution.ContributionSentFragment;
 
@@ -32,6 +37,10 @@ public class ContributeFragment extends Fragment {
     TabLayout tabs;
     @BindView(R.id.viewPager)
     ViewPager viewPager;
+    @BindView(R.id.ll_contribute)
+    LinearLayout ll_contribute;
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
 
     @Nullable
     @Override
@@ -45,18 +54,35 @@ public class ContributeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.setFocusableInTouchMode(true);
-        view.requestFocus();
-        view.setOnKeyListener(new View.OnKeyListener() {
+//        view.setFocusableInTouchMode(true);
+//        view.requestFocus();
+//        view.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                Log.i(TagUtils.getTag(), "keyCode: " + keyCode);
+//                if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+//                    Log.i(TagUtils.getTag(), "onKey Back listener is working!!!");
+//                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+
+        iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                Log.i(TagUtils.getTag(), "keyCode: " + keyCode);
-                if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-                    Log.i(TagUtils.getTag(), "onKey Back listener is working!!!");
-                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    return true;
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
+
+        ll_contribute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getActivity() instanceof HomeActivity) {
+                    HomeActivity homeActivity = (HomeActivity) getActivity();
+                    homeActivity.replaceFragmentinFrameHome(new SelectUserForContributionFragment(), "SelectUserForContributionFragment");
                 }
-                return false;
             }
         });
 
@@ -72,9 +98,11 @@ public class ContributeFragment extends Fragment {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerWithTitleAdapter adapter = new ViewPagerWithTitleAdapter(getChildFragmentManager());
 //        adapter.addFrag(new SuggestionFragment(), "Suggestion");
+        final AllContributionFragment allContributionFragment = new AllContributionFragment();
         final ContributionReceivedFragment receivedFragment = new ContributionReceivedFragment();
         final ContributionSentFragment sentFragment = new ContributionSentFragment();
 
+        adapter.addFrag(allContributionFragment, "All");
         adapter.addFrag(receivedFragment, "Received");
         adapter.addFrag(sentFragment, "Sent");
 

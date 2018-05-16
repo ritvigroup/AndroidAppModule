@@ -75,13 +75,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 @SuppressLint("ValidFragment")
-public class CreateGroupComplaint extends Fragment implements DatePickerDialog.OnDateSetListener{
+public class CreateGroupComplaint extends Fragment implements DatePickerDialog.OnDateSetListener {
 
     static final int OPEN_MEDIA_PICKER = 1;
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 101;
     private static final int TAG_PEOPLE = 105;
+    static final int SELECT_LEADER = 102;
 
-    List<UserProfilePOJO> taggeduserInfoPOJOS=new ArrayList<>();
+    List<UserProfilePOJO> taggeduserInfoPOJOS = new ArrayList<>();
     @BindView(R.id.rv_attachments)
     RecyclerView rv_attachments;
     @BindView(R.id.tv_profile_description)
@@ -110,16 +111,17 @@ public class CreateGroupComplaint extends Fragment implements DatePickerDialog.O
     EditText et_date;
     @BindView(R.id.iv_calendar)
     ImageView iv_calendar;
-    @BindView(R.id.auto_fav_list)
-    AutoCompleteTextView auto_fav_list;
     @BindView(R.id.iv_favorite_leader_add)
     ImageView iv_favorite_leader_add;
+    @BindView(R.id.tv_fav_leader)
+    TextView tv_fav_leader;
+    UserProfilePOJO leaderProfilePOJO;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.frag_group_complaint_add,container,false);
-        ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.frag_group_complaint_add, container, false);
+        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -127,11 +129,11 @@ public class CreateGroupComplaint extends Fragment implements DatePickerDialog.O
     String complaint_name;
     List<String> mediaFiles;
 
-    public CreateGroupComplaint(List<UserProfilePOJO> userInfoPOJOS,List<String> mediaFiles, String privPublic, String complaint_name) {
-        this.taggeduserInfoPOJOS=userInfoPOJOS;
+    public CreateGroupComplaint(List<UserProfilePOJO> userInfoPOJOS, List<String> mediaFiles, String privPublic, String complaint_name) {
+        this.taggeduserInfoPOJOS = userInfoPOJOS;
         this.complaint_name = complaint_name;
         this.privPublic = privPublic;
-        this.mediaFiles=mediaFiles;
+        this.mediaFiles = mediaFiles;
     }
 
     @Override
@@ -151,13 +153,13 @@ public class CreateGroupComplaint extends Fragment implements DatePickerDialog.O
                 .into(cv_profile_pic);
 
 
-        if(privPublic.length()>0){
-            if(privPublic.equalsIgnoreCase("private")){
+        if (privPublic.length() > 0) {
+            if (privPublic.equalsIgnoreCase("private")) {
                 spinner_privpub.setSelection(1);
             }
         }
 
-        if(taggeduserInfoPOJOS.size()>0){
+        if (taggeduserInfoPOJOS.size() > 0) {
             updateTaggingDesc();
         }
 
@@ -207,56 +209,23 @@ public class CreateGroupComplaint extends Fragment implements DatePickerDialog.O
                 dpd.show(getActivity().getFragmentManager(), "Datepickerdialog");
             }
         });
-
-
-        auto_fav_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (leaderPOJOS.size() > 0) {
-                    leader_id = leaderPOJOS.get(i).getUserProfileId();
-                }
-            }
-        });
-
-        callLeaderAPI();
     }
 
-    public String leader_id = "";
-    List<UserProfilePOJO> leaderPOJOS = new ArrayList<>();
-    CustomAutoCompleteAdapter adapter = null;
 
-    public void callLeaderAPI() {
+    List<DepartmentPOJO> departmentPOJOS = new ArrayList<>();
+
+    public void getAllDepartment() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
-//        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
-        new WebServiceBaseResponseList<UserProfilePOJO>(nameValuePairs, getActivity(), new ResponseListCallback<UserProfilePOJO>() {
-            @Override
-            public void onGetMsg(ResponseListPOJO<UserProfilePOJO> responseListPOJO) {
-                leaderPOJOS.clear();
-                if (responseListPOJO.isSuccess()) {
-                    leaderPOJOS.addAll(responseListPOJO.getResultList());
-                    adapter = new CustomAutoCompleteAdapter(getActivity(), (ArrayList<UserProfilePOJO>) leaderPOJOS);
-                    auto_fav_list.setAdapter(adapter);
-                }
-            }
-        }, UserProfilePOJO.class, "CALL_LEADER_API", true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
-    }
-
-    List<DepartmentPOJO> departmentPOJOS=new ArrayList<>();
-
-    public void getAllDepartment(){
-        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userProfilePOJO.getUserProfileId()));
         new WebServiceBaseResponseList<DepartmentPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<DepartmentPOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<DepartmentPOJO> responseListPOJO) {
-                try{
-                    if(responseListPOJO.getResultList().size()>0){
+                try {
+                    if (responseListPOJO.getResultList().size() > 0) {
                         departmentPOJOS.addAll(responseListPOJO.getResultList());
 
-                        List<String> departmentStringList=new ArrayList<>();
-                        for(DepartmentPOJO departmentPOJO:departmentPOJOS){
+                        List<String> departmentStringList = new ArrayList<>();
+                        for (DepartmentPOJO departmentPOJO : departmentPOJOS) {
                             departmentStringList.add(departmentPOJO.getDepartmentName());
                         }
 
@@ -265,11 +234,11 @@ public class CreateGroupComplaint extends Fragment implements DatePickerDialog.O
                                 getActivity(), R.layout.dropsimpledown, departmentStringList);
                         spinner_department.setAdapter(spinnerArrayAdapter);
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        },DepartmentPOJO.class,"CALL_DEPARTMENT_GET_API",true).execute(WebServicesUrls.DEPARTMENT_URL);
+        }, DepartmentPOJO.class, "CALL_DEPARTMENT_GET_API", true).execute(WebServicesUrls.DEPARTMENT_URL);
     }
 
     public void findPlace() {
@@ -291,27 +260,28 @@ public class CreateGroupComplaint extends Fragment implements DatePickerDialog.O
         intent.putExtra("title", "Select media");
         // Mode 1 for both images and videos selection, 2 for images only and 3 for videos!
         intent.putExtra("mode", 1);
-        intent.putExtra("maxSelection", 5-mediaFiles.size()); // Optional
+        intent.putExtra("maxSelection", 5 - mediaFiles.size()); // Optional
         startActivityForResult(intent, OPEN_MEDIA_PICKER);
     }
 
     LatLng latLong;
-    String address="";
+    String address = "";
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==TAG_PEOPLE) {
+        if (requestCode == TAG_PEOPLE) {
             if (resultCode == Activity.RESULT_OK) {
                 taggeduserInfoPOJOS = (List<UserProfilePOJO>) data.getSerializableExtra("taggedpeople");
                 updateTaggingDesc();
             }
-        }else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+        } else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(getActivity(), data);
                 Log.i(TagUtils.getTag(), "Place: " + place.getName());
                 place.getAddress();
-                latLong=place.getLatLng();
-                address=place.getAddress().toString();
+                latLong = place.getLatLng();
+                address = place.getAddress().toString();
                 et_location.setText((String) place.getName());
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
@@ -321,12 +291,22 @@ public class CreateGroupComplaint extends Fragment implements DatePickerDialog.O
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 // The user canceled the operation.
             }
-        }else if (requestCode == OPEN_MEDIA_PICKER) {
+        } else if (requestCode == OPEN_MEDIA_PICKER) {
             // Make sure the request was successful
             if (resultCode == Activity.RESULT_OK && data != null) {
                 ArrayList<String> selectionResult = data.getStringArrayListExtra("result");
                 mediaFiles.addAll(selectionResult);
                 mediaListAdapter.notifyDataSetChanged();
+            }
+        } else if (requestCode == SELECT_LEADER) {
+            // Make sure the request was successful
+            if (resultCode == Activity.RESULT_OK) {
+                leaderProfilePOJO = (UserProfilePOJO) data.getSerializableExtra("userprofile");
+
+                tv_fav_leader.setText(leaderProfilePOJO.getFirstName() + " " + leaderProfilePOJO.getLastName());
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
             }
         }
     }
@@ -342,92 +322,97 @@ public class CreateGroupComplaint extends Fragment implements DatePickerDialog.O
         rv_attachments.setItemAnimator(new DefaultItemAnimator());
     }
 
-    public void updateTaggingDesc(){
-        String users="";
-        for(int i=0;i<taggeduserInfoPOJOS.size();i++){
-            UserProfilePOJO userProfilePOJO=taggeduserInfoPOJOS.get(i);
-            if(i==(taggeduserInfoPOJOS.size()-1)){
-                users+=userProfilePOJO.getFirstName()+" "+userProfilePOJO.getLastName();
-            }else{
-                users+=userProfilePOJO.getFirstName()+" "+userProfilePOJO.getLastName()+",";
+    public void updateTaggingDesc() {
+        String users = "";
+        for (int i = 0; i < taggeduserInfoPOJOS.size(); i++) {
+            UserProfilePOJO userProfilePOJO = taggeduserInfoPOJOS.get(i);
+            if (i == (taggeduserInfoPOJOS.size() - 1)) {
+                users += userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName();
+            } else {
+                users += userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName() + ",";
             }
         }
 
         tv_tag.setText(users);
     }
 
-    public void saveComplaint(){
+    public void saveComplaint() {
         try {
-            if(leader_id.length()>0) {
-                MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+            if (leaderProfilePOJO != null) {
 
-                reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePOJO.getUserProfileId()));
-                reqEntity.addPart("complaint_subject", new StringBody(et_subject.getText().toString()));
-                reqEntity.addPart("complaint_description", new StringBody(et_description.getText().toString()));
-                UserProfilePOJO userProfilePOJO = Constants.userProfilePOJO;
-                reqEntity.addPart("applicant_name", new StringBody(userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName()));
-                reqEntity.addPart("applicant_father_name", new StringBody(""));
-                reqEntity.addPart("applicant_mobile", new StringBody(userProfilePOJO.getMobile()));
-                reqEntity.addPart("assign_to_profile_id", new StringBody(leader_id));
-                reqEntity.addPart("complaint_type_id", new StringBody("3"));
-                reqEntity.addPart("schedule_date", new StringBody(UtilityFunction.getConvertedDate(et_date.getText().toString())));
-                if (spinner_privpub.getSelectedItemPosition() == 0) {
-                    reqEntity.addPart("privacy", new StringBody("1"));
-                } else {
-                    reqEntity.addPart("privacy", new StringBody("0"));
-                }
-                reqEntity.addPart("address", new StringBody(address));
-                reqEntity.addPart("place", new StringBody(et_location.getText().toString()));
-                if (latLong != null) {
-                    reqEntity.addPart("latitude", new StringBody(String.valueOf(latLong.latitude)));
-                    reqEntity.addPart("longitude", new StringBody(String.valueOf(latLong.longitude)));
-                } else {
-                    reqEntity.addPart("latitude", new StringBody(""));
-                    reqEntity.addPart("longitude", new StringBody(""));
-                }
+                if (taggeduserInfoPOJOS != null && taggeduserInfoPOJOS.size() > 0) {
+                    MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-                if (departmentPOJOS.size() > 0) {
-                    reqEntity.addPart("department", new StringBody(departmentPOJOS.get(spinner_department.getSelectedItemPosition()).getDepartmentId()));
-                } else {
-                    reqEntity.addPart("department", new StringBody(""));
-                }
-
-                for (int i = 0; i < taggeduserInfoPOJOS.size(); i++) {
-                    UserProfilePOJO userProfilePOJO1 = taggeduserInfoPOJOS.get(i);
-                    Log.d(TagUtils.getTag(),"tagged user profile id:-"+userProfilePOJO1.getUserProfileId());
-                    reqEntity.addPart("complaint_member[" + i + "]", new StringBody(userProfilePOJO1.getUserProfileId()));
-                }
-
-                int count = 0;
-
-                for (String file_path : mediaFiles) {
-                    reqEntity.addPart("file[" + (count) + "]", new FileBody(new File(file_path)));
-                    reqEntity.addPart("thumb[" + (count) + "]", new StringBody(""));
-                }
-
-                for (int i = 0; i < mediaFiles.size(); i++) {
-                    reqEntity.addPart("file[" + (i) + "]", new FileBody(new File(mediaFiles.get(i))));
-                    reqEntity.addPart("thumb[" + (i) + "]", new StringBody(""));
-                }
-
-
-                new WebUploadService(reqEntity, getActivity(), new WebServicesCallBack() {
-                    @Override
-                    public void onGetMsg(String apicall, String response) {
-                        Log.d(TagUtils.getTag(), apicall + " :- " + response);
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
-                            if (jsonObject.optString("status").equals("success")) {
-                                startActivity(new Intent(getActivity(), ApplicationSubmittedActivity.class).putExtra("comp_type", "complaint"));
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePOJO.getUserProfileId()));
+                    reqEntity.addPart("complaint_subject", new StringBody(et_subject.getText().toString()));
+                    reqEntity.addPart("complaint_description", new StringBody(et_description.getText().toString()));
+                    UserProfilePOJO userProfilePOJO = Constants.userProfilePOJO;
+                    reqEntity.addPart("applicant_name", new StringBody(userProfilePOJO.getFirstName() + " " + userProfilePOJO.getLastName()));
+                    reqEntity.addPart("applicant_father_name", new StringBody(""));
+                    reqEntity.addPart("applicant_mobile", new StringBody(userProfilePOJO.getMobile()));
+                    reqEntity.addPart("assign_to_profile_id", new StringBody(leaderProfilePOJO.getUserProfileId()));
+                    reqEntity.addPart("complaint_type_id", new StringBody("2"));
+                    reqEntity.addPart("schedule_date", new StringBody(UtilityFunction.getConvertedDate(et_date.getText().toString())));
+                    if (spinner_privpub.getSelectedItemPosition() == 0) {
+                        reqEntity.addPart("privacy", new StringBody("1"));
+                    } else {
+                        reqEntity.addPart("privacy", new StringBody("0"));
                     }
-                }, "CREATE_EVENT", true).execute(WebServicesUrls.POST_COMPLAINT);
-            }else{
-                ToastClass.showShortToast(getActivity().getApplicationContext(),"Please Select Leader First");
+                    reqEntity.addPart("address", new StringBody(address));
+                    reqEntity.addPart("place", new StringBody(et_location.getText().toString()));
+                    if (latLong != null) {
+                        reqEntity.addPart("latitude", new StringBody(String.valueOf(latLong.latitude)));
+                        reqEntity.addPart("longitude", new StringBody(String.valueOf(latLong.longitude)));
+                    } else {
+                        reqEntity.addPart("latitude", new StringBody(""));
+                        reqEntity.addPart("longitude", new StringBody(""));
+                    }
+
+                    if (departmentPOJOS.size() > 0) {
+                        reqEntity.addPart("department", new StringBody(departmentPOJOS.get(spinner_department.getSelectedItemPosition()).getDepartmentId()));
+                    } else {
+                        reqEntity.addPart("department", new StringBody(""));
+                    }
+
+                    for (int i = 0; i < taggeduserInfoPOJOS.size(); i++) {
+                        UserProfilePOJO userProfilePOJO1 = taggeduserInfoPOJOS.get(i);
+                        Log.d(TagUtils.getTag(), "tagged user profile id:-" + userProfilePOJO1.getUserProfileId());
+                        reqEntity.addPart("complaint_member[" + i + "]", new StringBody(userProfilePOJO1.getUserProfileId()));
+                    }
+
+                    int count = 0;
+
+                    for (String file_path : mediaFiles) {
+                        reqEntity.addPart("file[" + (count) + "]", new FileBody(new File(file_path)));
+                        reqEntity.addPart("thumb[" + (count) + "]", new StringBody(""));
+                    }
+
+                    for (int i = 0; i < mediaFiles.size(); i++) {
+                        reqEntity.addPart("file[" + (i) + "]", new FileBody(new File(mediaFiles.get(i))));
+                        reqEntity.addPart("thumb[" + (i) + "]", new StringBody(""));
+                    }
+
+
+                    new WebUploadService(reqEntity, getActivity(), new WebServicesCallBack() {
+                        @Override
+                        public void onGetMsg(String apicall, String response) {
+                            Log.d(TagUtils.getTag(), apicall + " :- " + response);
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
+                                if (jsonObject.optString("status").equals("success")) {
+                                    startActivity(new Intent(getActivity(), ApplicationSubmittedActivity.class).putExtra("comp_type", "complaint"));
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, "CREATE_EVENT", true).execute(WebServicesUrls.POST_COMPLAINT);
+                } else {
+                    ToastClass.showShortToast(getActivity().getApplicationContext(),"Please Select Complaint Members");
+                }
+            } else {
+                ToastClass.showShortToast(getActivity().getApplicationContext(), "Please Select Leader First");
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

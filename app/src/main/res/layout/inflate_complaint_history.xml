@@ -21,11 +21,12 @@
             android:background="#757575"
             android:layout_gravity="center"/>
 
-        <View
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/cv_profile_pic"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/timelinecircle"/>
+            android:src="@drawable/ic_default_profile_pic"/>
 
     </FrameLayout>
 

@@ -22,8 +22,10 @@ import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
+import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.adapter.PaymentListAdapter;
 import com.ritvi.kaajneeti.adapter.PaymentTransAdapter;
+import com.ritvi.kaajneeti.fragment.wallet.WalletAmountFragment;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.ResponsePOJO;
 import com.ritvi.kaajneeti.pojo.payment.PaymentDetailPOJO;
@@ -56,12 +58,14 @@ public class WalletFragment extends Fragment {
 
     @BindView(R.id.rv_transactions)
     RecyclerView rv_transactions;
-    @BindView(R.id.tv_topup)
-    TextView tv_topup;
     @BindView(R.id.tv_amount)
     TextView tv_amount;
     @BindView(R.id.tv_convert_to_point)
     TextView tv_convert_to_point;
+    @BindView(R.id.ll_add)
+    LinearLayout ll_add;
+    @BindView(R.id.iv_back)
+    LinearLayout iv_back;
 
     List<PaymentTransPOJO> paymentTransPOJOS = new ArrayList<>();
 
@@ -77,10 +81,14 @@ public class WalletFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tv_topup.setOnClickListener(new View.OnClickListener() {
+        ll_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showpaymentDialog();
+//                showpaymentDialog();
+                if(getActivity() instanceof HomeActivity){
+                    HomeActivity homeActivity= (HomeActivity) getActivity();
+                    homeActivity.replaceFragmentinFrameHome(new WalletAmountFragment(),"WalletAmountFragment");
+                }
             }
         });
         attachAdapter();
@@ -90,6 +98,13 @@ public class WalletFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 showConvertDialog();
+            }
+        });
+
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
             }
         });
     }

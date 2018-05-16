@@ -22,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.github.tamir7.contacts.Contacts;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -36,10 +35,10 @@ import com.ritvi.kaajneeti.Util.Pref;
 import com.ritvi.kaajneeti.Util.SetViews;
 import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
-import com.ritvi.kaajneeti.activity.Profile.ProfileDescriptionActivity;
 import com.ritvi.kaajneeti.adapter.ViewPagerAdapter;
 import com.ritvi.kaajneeti.fragment.complaint.ComplaintTrackFragment;
 import com.ritvi.kaajneeti.fragment.group.SearchParticipantsFragment;
+import com.ritvi.kaajneeti.fragment.help.HelpSupportFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.ContributeFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.InvestigateFragment;
 import com.ritvi.kaajneeti.fragment.homeactivity.KaajFragment;
@@ -151,7 +150,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
 //                startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
                 SettingFragment settingFragment = new SettingFragment();
-                addFragmentinFrameHome(settingFragment, "settingFragment");
+                replaceFragmentinFrameHome(settingFragment, "settingFragment");
             }
         });
 
@@ -160,7 +159,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
 //                SearchFragment searchFragment = new SearchFragment();
                 AllSearchFragment allSearchFragment = new AllSearchFragment();
-                addFragmentinFrameHome(allSearchFragment, "searchFragment");
+                replaceFragmentinFrameHome(allSearchFragment, "searchFragment");
             }
         });
     }
@@ -312,62 +311,67 @@ public class HomeActivity extends AppCompatActivity {
 //                startActivity(new Intent(HomeActivity.this, FavoriteLeaderActivity.class));
 //                startActivity(new Intent(HomeActivity.this, PayUMoneyIntegration.class));
                 ContributeFragment contributeFragment = new ContributeFragment();
-                addFragmentinFrameHome(contributeFragment, "contributeFragment");
+                replaceFragmentinFrameHome(contributeFragment, "contributeFragment");
                 break;
             case R.id.nav_setting:
 //                startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
                 SettingFragment settingFragment = new SettingFragment();
-                addFragmentinFrameHome(settingFragment, "settingFragment");
+                replaceFragmentinFrameHome(settingFragment, "settingFragment");
                 break;
             case R.id.nav_earn:
 //                showEarnFragment();
                 viewPager.setCurrentItem(3);
                 break;
             case R.id.nav_wallet:
-                addFragmentinFrameHome(new WalletFragment(), "Wallet");
+                replaceFragmentinFrameHome(new WalletFragment(), "WalletFragment");
                 break;
             case R.id.nav_logout:
                 showLogoutDialog();
+                break;
+            case R.id.nav_help:
+                replaceFragmentinFrameHome(new HelpSupportFragment(), "HelpSupportFragment");
                 break;
         }
         mDrawer.closeDrawers();
     }
 
-    UserProfileFragment userProfileFragment;
+//    UserProfileFragment userProfileFragment;
 
     public void showUserProfileFragment(String user_id, String user_profile_id) {
-        userProfileFragment = new UserProfileFragment(user_id, user_profile_id);
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.frame_home, userProfileFragment, "userProfileFragment");
-        transaction.addToBackStack(null);
-        transaction.commit();
-        fragmentList.add(userProfileFragment);
+//        userProfileFragment = new UserProfileFragment(user_id, user_profile_id);
+//        FragmentManager manager = getSupportFragmentManager();
+//        FragmentTransaction transaction = manager.beginTransaction();
+//        transaction.replace(R.id.frame_home, userProfileFragment, "userProfileFragment");
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+//        fragmentList.add(userProfileFragment);
+        replaceFragmentinFrameHome(new UserProfileFragment(user_id,user_profile_id),"UserProfileFragment");
     }
 
-    UpdateUserProfileFragment updateUserProfileFragment;
+//    UpdateUserProfileFragment updateUserProfileFragment;
 
     public void showProfileEditFragment(String user_id, String user_profile_id) {
-        updateUserProfileFragment = new UpdateUserProfileFragment(user_id, user_profile_id);
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.frame_home, updateUserProfileFragment, "updateUserProfileFragment");
-        transaction.addToBackStack(null);
-        transaction.commit();
-        fragmentList.add(updateUserProfileFragment);
+//        updateUserProfileFragment = new UpdateUserProfileFragment(user_id, user_profile_id);
+//        FragmentManager manager = getSupportFragmentManager();
+//        FragmentTransaction transaction = manager.beginTransaction();
+//        transaction.replace(R.id.frame_home, updateUserProfileFragment, "updateUserProfileFragment");
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+//        fragmentList.add(updateUserProfileFragment);
+        replaceFragmentinFrameHome(new UpdateUserProfileFragment(user_id,user_profile_id),"UpdateUserProfileFragment");
     }
 
     public void refreshUserProfileEditFragment() {
-        if (updateUserProfileFragment != null) {
-            updateUserProfileFragment.getAllProfileData();
-        }
+//        if (updateUserProfileFragment != null) {
+//            updateUserProfileFragment.getAllProfileData();
+//        }
     }
 
     public void refreshUserProfileFragment() {
-        Log.d(TagUtils.getTag(), "profile refresh");
-        if (userProfileFragment != null) {
-            userProfileFragment.getAllProfileData();
-        }
+//        Log.d(TagUtils.getTag(), "profile refresh");
+//        if (userProfileFragment != null) {
+//            userProfileFragment.getAllProfileData();
+//        }
     }
 
 
@@ -377,7 +381,7 @@ public class HomeActivity extends AppCompatActivity {
         complaintTrackFragment = new ComplaintTrackFragment(complaintPOJO);
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.frame_home, complaintTrackFragment, "complaintTrackFragment");
+        transaction.replace(R.id.frame_home, complaintTrackFragment, "complaintTrackFragment");
         transaction.addToBackStack(null);
         transaction.commit();
         fragmentList.add(complaintTrackFragment);
@@ -395,22 +399,22 @@ public class HomeActivity extends AppCompatActivity {
         searchParticipantsFragment = new SearchParticipantsFragment(null);
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.frame_home, searchParticipantsFragment, "searchParticipantsFragment");
+        transaction.replace(R.id.frame_home, searchParticipantsFragment, "searchParticipantsFragment");
         transaction.addToBackStack(null);
         transaction.commit();
         fragmentList.add(searchParticipantsFragment);
     }
 
-    public void addFragmentinFrameHome(Fragment fragment, String fragment_name) {
+    public void replaceFragmentinFrameHome(Fragment fragment, String fragment_name) {
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.frame_home, fragment)
+                .replace(R.id.frame_home, fragment)
                 .addToBackStack(fragment_name)
                 .commit();
     }
 
-    public void replaceFragmentinFrameHome(Fragment fragment, String fragment_name) {
+    public void addFragmentinFrameHome(Fragment fragment, String fragment_name) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.frame_home, fragment)
+                .add(R.id.frame_home, fragment)
                 .addToBackStack(fragment_name)
                 .commit();
     }

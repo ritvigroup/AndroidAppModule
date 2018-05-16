@@ -38,6 +38,7 @@ import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.activity.ApplicationSubmittedActivity;
 import com.ritvi.kaajneeti.activity.FavoriteLeaderActivity;
+import com.ritvi.kaajneeti.activity.SelectFavoriteLeaderActivity;
 import com.ritvi.kaajneeti.activity.TagPeopleActivity;
 import com.ritvi.kaajneeti.adapter.CustomAutoCompleteAdapter;
 import com.ritvi.kaajneeti.adapter.MediaListAdapter;
@@ -83,7 +84,7 @@ public class CreateGroupComplaintFragment extends Fragment implements DatePicker
     static final int OPEN_MEDIA_PICKER = 1;
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 101;
     private static final int TAG_PEOPLE = 105;
-
+    static final int SELECT_LEADER = 102;
     @BindView(R.id.rv_attachments)
     RecyclerView rv_attachments;
     @BindView(R.id.tv_profile_description)
@@ -112,12 +113,9 @@ public class CreateGroupComplaintFragment extends Fragment implements DatePicker
     EditText et_date;
     @BindView(R.id.iv_calendar)
     ImageView iv_calendar;
-    @BindView(R.id.auto_fav_list)
-    AutoCompleteTextView auto_fav_list;
-    @BindView(R.id.iv_favorite_leader_add)
-    ImageView iv_favorite_leader_add;
-
-
+    @BindView(R.id.tv_fav_leader)
+    TextView tv_fav_leader;
+    UserProfilePOJO leaderProfilePOJO;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -214,47 +212,16 @@ public class CreateGroupComplaintFragment extends Fragment implements DatePicker
             }
         });
 
-
-        auto_fav_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (leaderPOJOS.size() > 0) {
-                    leader_id = leaderPOJOS.get(i).getUserProfileId();
-                }
-            }
-        });
-
-        iv_favorite_leader_add.setOnClickListener(new View.OnClickListener() {
+        tv_fav_leader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), FavoriteLeaderActivity.class));
+                Intent i = new Intent(getActivity(), SelectFavoriteLeaderActivity.class);
+                startActivityForResult(i, SELECT_LEADER);
             }
         });
 
-        callLeaderAPI();
     }
 
-    public String leader_id = "";
-    List<UserProfilePOJO> leaderPOJOS = new ArrayList<>();
-    CustomAutoCompleteAdapter adapter = null;
-
-    public void callLeaderAPI() {
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
-//        new WebServiceBase(nameValuePairs, this, this, CALL_ALL_LEADER, true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
-        new WebServiceBaseResponseList<UserProfilePOJO>(nameValuePairs, getActivity(), new ResponseListCallback<UserProfilePOJO>() {
-            @Override
-            public void onGetMsg(ResponseListPOJO<UserProfilePOJO> responseListPOJO) {
-                leaderPOJOS.clear();
-                if (responseListPOJO.isSuccess()) {
-                    leaderPOJOS.addAll(responseListPOJO.getResultList());
-                    adapter = new CustomAutoCompleteAdapter(getActivity(), (ArrayList<UserProfilePOJO>) leaderPOJOS);
-                    auto_fav_list.setAdapter(adapter);
-                }
-            }
-        }, UserProfilePOJO.class, "CALL_LEADER_API", true).execute(WebServicesUrls.GET_MY_FAVORITE_LEADER);
-    }
 
     List<DepartmentPOJO> departmentPOJOS=new ArrayList<>();
 
@@ -341,6 +308,16 @@ public class CreateGroupComplaintFragment extends Fragment implements DatePicker
                 mediaFiles.addAll(selectionResult);
                 mediaListAdapter.notifyDataSetChanged();
             }
+        } else if (requestCode == SELECT_LEADER) {
+            // Make sure the request was successful
+            if(resultCode == Activity.RESULT_OK){
+                leaderProfilePOJO= (UserProfilePOJO) data.getSerializableExtra("userprofile");
+
+                tv_fav_leader.setText(leaderProfilePOJO.getFirstName()+" "+leaderProfilePOJO.getLastName());
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
         }
     }
 
@@ -370,7 +347,7 @@ public class CreateGroupComplaintFragment extends Fragment implements DatePicker
     }
     public void saveComplaint(){
         try {
-            if(leader_id.length()>0) {
+            if(leaderProfilePOJO!=null) {
                 MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
@@ -383,8 +360,8 @@ public class CreateGroupComplaintFragment extends Fragment implements DatePicker
                 reqEntity.addPart("applicant_father_name", new StringBody(""));
                 reqEntity.addPart("applicant_mobile", new StringBody(userProfilePOJO.getMobile()));
                 reqEntity.addPart("applicant_email", new StringBody(userProfilePOJO.getEmail()));
-                reqEntity.addPart("assign_to_profile_id", new StringBody(leader_id));
-                reqEntity.addPart("complaint_type_id", new StringBody("3"));
+                reqEntity.addPart("assign_to_profile_id", new StringBody(leaderProfilePOJO.getUserProfileId()));
+                reqEntity.addPart("complaint_type_id", new StringBody("2"));
                 reqEntity.addPart("schedule_date", new StringBody(UtilityFunction.getConvertedDate(et_date.getText().toString())));
                 if (spinner_privpub.getSelectedItemPosition() == 0) {
                     reqEntity.addPart("privacy", new StringBody("1"));

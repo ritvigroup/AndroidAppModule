@@ -9,10 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.activity.HomeActivity;
+import com.ritvi.kaajneeti.fragment.profile.UserProfileFragment;
 import com.ritvi.kaajneeti.pojo.complaint.ComplaintHistoryPOJO;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by sunil on 03-11-2017.
@@ -51,6 +56,22 @@ public class ComplaintHistoryAdapter extends RecyclerView.Adapter<ComplaintHisto
             holder.tv_attachments.setVisibility(View.GONE);
         }
 
+        Glide.with(activity.getApplicationContext())
+                .load(items.get(position).getComplaintHistoryProfile().getProfilePhotoPath())
+                .placeholder(R.drawable.ic_default_profile_pic)
+                .error(R.drawable.ic_default_profile_pic)
+                .dontAnimate()
+                .into(holder.cv_profile_pic);
+
+        holder.cv_profile_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(activity instanceof HomeActivity){
+                    HomeActivity homeActivity= (HomeActivity) activity;
+                    homeActivity.replaceFragmentinFrameHome(new UserProfileFragment(items.get(position).getComplaintHistoryProfile().getUserId(),items.get(position).getComplaintHistoryProfile().getUserProfileId()),"userProfileFragment");
+                }
+            }
+        });
 
         holder.itemView.setTag(items.get(position));
     }
@@ -62,7 +83,7 @@ public class ComplaintHistoryAdapter extends RecyclerView.Adapter<ComplaintHisto
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tv_title, tv_description, tv_date, tv_profile_user,tv_attachments;
-
+        public CircleImageView cv_profile_pic;
         public ViewHolder(View itemView) {
             super(itemView);
             tv_title = itemView.findViewById(R.id.tv_title);
@@ -70,6 +91,7 @@ public class ComplaintHistoryAdapter extends RecyclerView.Adapter<ComplaintHisto
             tv_date = itemView.findViewById(R.id.tv_date);
             tv_profile_user = itemView.findViewById(R.id.tv_profile_user);
             tv_attachments = itemView.findViewById(R.id.tv_attachments);
+            cv_profile_pic = itemView.findViewById(R.id.cv_profile_pic);
         }
     }
 }

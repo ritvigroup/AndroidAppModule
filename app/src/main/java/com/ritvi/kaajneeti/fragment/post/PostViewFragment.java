@@ -129,7 +129,7 @@ public class PostViewFragment extends Fragment {
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                getActivity().onBackPressed();
             }
         });
 

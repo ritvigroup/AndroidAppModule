@@ -11,6 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.activity.FavoriteLeaderActivity;
+import com.ritvi.kaajneeti.activity.SelectFavoriteLeaderActivity;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
@@ -47,12 +49,15 @@ public class FavoriteLeaderAdapter extends RecyclerView.Adapter<FavoriteLeaderAd
         holder.tv_leader_name.setText(items.get(position).getFirstName()+" "+items.get(position).getLastName());
         holder.tv_leader_email.setText(items.get(position).getEmail());
 
-//        holder.ll_leader.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showLeaderProfile(items.get(position));
-//            }
-//        });
+        holder.ll_leader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(activity instanceof SelectFavoriteLeaderActivity){
+                    SelectFavoriteLeaderActivity favoriteLeaderActivity= (SelectFavoriteLeaderActivity) activity;
+                    favoriteLeaderActivity.selectLeader(items.get(position));
+                }
+            }
+        });
 
         holder.itemView.setTag(items.get(position));
     }

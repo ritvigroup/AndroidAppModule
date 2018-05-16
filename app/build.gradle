@@ -102,5 +102,6 @@ dependencies {
     implementation project(':multiple-media-picker')
     compile 'com.afollestad:easyvideoplayer:0.3.0'
     compile 'org.adw.library:discrete-seekbar:1.0.1'
+    compile 'com.github.gcacace:signature-pad:1.2.1'
 }
 apply plugin: 'com.google.gms.google-services'

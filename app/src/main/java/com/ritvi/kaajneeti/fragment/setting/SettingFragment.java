@@ -29,7 +29,7 @@ import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SettingFragment extends Fragment{
+public class SettingFragment extends Fragment {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -43,26 +43,27 @@ public class SettingFragment extends Fragment{
     LinearLayout ll_change_language;
     @BindView(R.id.ll_notification)
     LinearLayout ll_notification;
-    @BindView(R.id.ll_aadhar)
-    LinearLayout ll_aadhar;
-    @BindView(R.id.ll_identity)
-    LinearLayout ll_identity;
-    @BindView(R.id.ll_profile_update)
-    LinearLayout ll_profile_update;
+    @BindView(R.id.ll_account_setting)
+    LinearLayout ll_account_setting;
+    @BindView(R.id.ll_app_setting)
+    LinearLayout ll_app_setting;
+
     @BindView(R.id.ic_back)
     ImageView ic_back;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.frag_setting,container,false);
-        ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.frag_setting, container, false);
+        ButterKnife.bind(this, view);
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+
         ll_rate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,39 +84,44 @@ public class SettingFragment extends Fragment{
                     i.setType("text/plain");
                     i.putExtra(Intent.EXTRA_SUBJECT, "Kaajneeti");
                     String sAux = "\nGet All the political updates\n\n";
-                    sAux = sAux + "https://play.google.com/store/apps/details?id="+getActivity().getPackageName()+" \n\n";
+                    sAux = sAux + "https://play.google.com/store/apps/details?id=" + getActivity().getPackageName() + " \n\n";
                     i.putExtra(Intent.EXTRA_TEXT, sAux);
                     startActivity(Intent.createChooser(i, "choose one"));
-                } catch(Exception e) {
+                } catch (Exception e) {
                     //e.toString();
                 }
             }
         });
 
-        ll_aadhar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(),AadharIntegrationActivity.class));
-            }
-        });
-
-        ll_profile_update.setOnClickListener(new View.OnClickListener() {
+        ll_account_setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(getActivity() instanceof HomeActivity){
                     HomeActivity homeActivity= (HomeActivity) getActivity();
-                    UserProfilePOJO profilePOJO= Constants.userProfilePOJO;
-                    homeActivity.showUserProfileFragment(profilePOJO.getUserId(),profilePOJO.getUserProfileId());
+                    homeActivity.replaceFragmentinFrameHome(new AccountSettingFragment(),"AccountSettingFragment");
+                }
+            }
+        });
+        ll_app_setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(getActivity() instanceof HomeActivity){
+                    HomeActivity homeActivity= (HomeActivity) getActivity();
+                    homeActivity.replaceFragmentinFrameHome(new AppSettingFragment(),"AppSettingFragment");
                 }
             }
         });
 
-        ll_identity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showProfileIdentityDialog();
-            }
-        });
+//        ll_profile_update.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(getActivity() instanceof HomeActivity){
+//                    HomeActivity homeActivity= (HomeActivity) getActivity();
+//                    UserProfilePOJO profilePOJO= Constants.userProfilePOJO;
+//                    homeActivity.showUserProfileFragment(profilePOJO.getUserId(),profilePOJO.getUserProfileId());
+//                }
+//            }
+//        });
 
         ll_theme.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,7 +139,7 @@ public class SettingFragment extends Fragment{
 
     }
 
-    public void showProfileIdentityDialog(){
+    public void showProfileIdentityDialog() {
         final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_DeviceDefault_Light_Dialog);
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -145,7 +151,7 @@ public class SettingFragment extends Fragment{
         Window window = dialog.getWindow();
         window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        ImageView iv_close=dialog.findViewById(R.id.iv_close);
+        ImageView iv_close = dialog.findViewById(R.id.iv_close);
         iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -158,14 +164,14 @@ public class SettingFragment extends Fragment{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             getActivity().onBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void ShowThemeDialog(){
-        final Dialog dialog1 = new Dialog(getActivity(),android.R.style.Theme_DeviceDefault_Dialog);
+    public void ShowThemeDialog() {
+        final Dialog dialog1 = new Dialog(getActivity(), android.R.style.Theme_DeviceDefault_Dialog);
         dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog1.setContentView(R.layout.dialog_theme);
         dialog1.setTitle("Default Location");
@@ -173,28 +179,17 @@ public class SettingFragment extends Fragment{
         dialog1.setCancelable(true);
 
 
-        TextView tv_blue= (TextView) dialog1.findViewById(R.id.tv_blue);
-        TextView tv_red= (TextView) dialog1.findViewById(R.id.tv_red);
-        TextView tv_green= (TextView) dialog1.findViewById(R.id.tv_green);
-        TextView tv_orange= (TextView) dialog1.findViewById(R.id.tv_orange);
-        TextView tv_pink= (TextView) dialog1.findViewById(R.id.tv_pink);
-        TextView tv_indigo= (TextView) dialog1.findViewById(R.id.tv_indigo);
-        TextView tv_brown= (TextView) dialog1.findViewById(R.id.tv_brown);
-        TextView tv_blue_grey= (TextView) dialog1.findViewById(R.id.tv_blue_grey);
-        TextView tv_falcon= (TextView) dialog1.findViewById(R.id.tv_falcon);
-        TextView tv_light_blue= (TextView) dialog1.findViewById(R.id.tv_light_blue);
-        Button cancel= (Button) dialog1.findViewById(R.id.cancel);
-
-//        tv_blue.setOnClickListener(this);
-//        tv_red.setOnClickListener(this);
-//        tv_green.setOnClickListener(this);
-//        tv_orange.setOnClickListener(this);
-//        tv_pink.setOnClickListener(this);
-//        tv_indigo.setOnClickListener(this);
-//        tv_brown.setOnClickListener(this);
-//        tv_blue_grey.setOnClickListener(this);
-//        tv_falcon.setOnClickListener(this);
-//        tv_light_blue.setOnClickListener(this);
+        TextView tv_blue = (TextView) dialog1.findViewById(R.id.tv_blue);
+        TextView tv_red = (TextView) dialog1.findViewById(R.id.tv_red);
+        TextView tv_green = (TextView) dialog1.findViewById(R.id.tv_green);
+        TextView tv_orange = (TextView) dialog1.findViewById(R.id.tv_orange);
+        TextView tv_pink = (TextView) dialog1.findViewById(R.id.tv_pink);
+        TextView tv_indigo = (TextView) dialog1.findViewById(R.id.tv_indigo);
+        TextView tv_brown = (TextView) dialog1.findViewById(R.id.tv_brown);
+        TextView tv_blue_grey = (TextView) dialog1.findViewById(R.id.tv_blue_grey);
+        TextView tv_falcon = (TextView) dialog1.findViewById(R.id.tv_falcon);
+        TextView tv_light_blue = (TextView) dialog1.findViewById(R.id.tv_light_blue);
+        Button cancel = (Button) dialog1.findViewById(R.id.cancel);
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override

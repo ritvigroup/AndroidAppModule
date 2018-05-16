@@ -47,6 +47,7 @@ import com.ritvi.kaajneeti.fragment.CreateGroupComplaintFragment;
 import com.ritvi.kaajneeti.fragment.CreateInformationFragment;
 import com.ritvi.kaajneeti.fragment.CreatePollFragment;
 import com.ritvi.kaajneeti.fragment.CreateSuggestionFragment;
+import com.ritvi.kaajneeti.fragment.complaint.CreateOtherComplaintFragment;
 import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
@@ -294,7 +295,7 @@ public class CreateExpressActivity extends AppCompatActivity {
                             dialog1.dismiss();
                             break;
                         case R.id.rb_other:
-                            createSelfComplaint();
+                            createOtherComplaint();
                             dialog1.dismiss();
                             break;
                         case R.id.rb_group:
@@ -315,10 +316,19 @@ public class CreateExpressActivity extends AppCompatActivity {
     }
 
     public void createSelfComplaint() {
-        CreateComplaintFragment createPollFragment = new CreateComplaintFragment(mediaList, spinner_privpub.getSelectedItem().toString(), et_whats.getText().toString());
+        CreateComplaintFragment createComplaintFragment = new CreateComplaintFragment(mediaList, spinner_privpub.getSelectedItem().toString(), et_whats.getText().toString());
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.frame_main, createPollFragment, "createPollFragment");
+        transaction.add(R.id.frame_main, createComplaintFragment, "createComplaintFragment");
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void createOtherComplaint() {
+        CreateOtherComplaintFragment createOtherComplaintFragment= new CreateOtherComplaintFragment(mediaList, spinner_privpub.getSelectedItem().toString(), et_whats.getText().toString());
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.frame_main,createOtherComplaintFragment, "createOtherComplaintFragment");
         transaction.addToBackStack(null);
         transaction.commit();
     }

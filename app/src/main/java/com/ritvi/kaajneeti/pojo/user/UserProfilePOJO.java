@@ -21,6 +21,8 @@ public class UserProfilePOJO implements Serializable {
     private String middleName;
     @SerializedName("LastName")
     private String lastName;
+    @SerializedName("UserTypeId")
+    private String userTypeId;
     @SerializedName("DateOfBirth")
     private String dateOfBirth;
     @SerializedName("Gender")
@@ -91,6 +93,11 @@ public class UserProfilePOJO implements Serializable {
     private Integer follower;
     @SerializedName("MyFavouriteLeader")
     private Integer MyFavouriteLeader;
+    @SerializedName("AcceptedYesNo")
+    private String AcceptedYesNo;
+    @SerializedName("AcceptedOn")
+    private String AcceptedOn;
+
     private boolean is_checked;
     private int selected_position;
 
@@ -436,5 +443,29 @@ public class UserProfilePOJO implements Serializable {
 
     public void setMyFavouriteLeader(Integer myFavouriteLeader) {
         MyFavouriteLeader = myFavouriteLeader;
+    }
+
+    public String getUserTypeId() {
+        return userTypeId;
+    }
+
+    public void setUserTypeId(String userTypeId) {
+        this.userTypeId = userTypeId;
+    }
+
+    public String getAcceptedYesNo() {
+        return AcceptedYesNo;
+    }
+
+    public void setAcceptedYesNo(String acceptedYesNo) {
+        AcceptedYesNo = acceptedYesNo;
+    }
+
+    public String getAcceptedOn() {
+        return AcceptedOn;
+    }
+
+    public void setAcceptedOn(String acceptedOn) {
+        AcceptedOn = acceptedOn;
     }
 }

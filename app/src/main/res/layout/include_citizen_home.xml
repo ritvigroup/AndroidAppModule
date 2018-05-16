@@ -34,6 +34,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
+                    android:layout_marginLeft="7dp"
                     android:gravity="center_vertical">
 
 

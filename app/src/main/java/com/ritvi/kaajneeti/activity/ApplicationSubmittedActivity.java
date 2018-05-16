@@ -2,6 +2,8 @@ package com.ritvi.kaajneeti.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.akexorcist.localizationactivity.ui.LocalizationActivity;
@@ -16,6 +18,8 @@ public class ApplicationSubmittedActivity extends LocalizationActivity {
     TextView tv_complaint_id;
     @BindView(R.id.tv_comp_submitted)
     TextView tv_comp_submitted;
+    @BindView(R.id.ll_complaint)
+    LinearLayout ll_complaint;
 
     String comp_type;
 
@@ -48,6 +52,13 @@ public class ApplicationSubmittedActivity extends LocalizationActivity {
             }
 //            tv_complaint_id.setText("Complaint ID : "+bundle.getString("complaint_id"));
         }
+
+        ll_complaint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
     }
 
     @Override

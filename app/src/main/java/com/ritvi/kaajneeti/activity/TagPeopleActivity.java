@@ -3,6 +3,7 @@ package com.ritvi.kaajneeti.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,20 +14,20 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
-import com.ritvi.kaajneeti.adapter.CustomAutoCompleteAdapter;
+import com.ritvi.kaajneeti.adapter.AlreadyTaggedPeopleAdapter;
 import com.ritvi.kaajneeti.adapter.TagPeopleAdapter;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
-import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
-import com.ritvi.kaajneeti.pojo.user.UserInfoPOJO;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.testing.PayUMoneyIntegration;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -43,15 +44,20 @@ import butterknife.ButterKnife;
 
 public class TagPeopleActivity extends AppCompatActivity {
 
-    @BindView(R.id.act_search)
-    AutoCompleteTextView act_search;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
+    @BindView(R.id.et_search)
+    EditText et_search;
     @BindView(R.id.iv_search_close)
     ImageView iv_search_close;
+    @BindView(R.id.tv_done)
+    TextView tv_done;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
     @BindView(R.id.rv_tag_people)
     RecyclerView rv_tag_people;
-
+    @BindView(R.id.rv_tagged_people)
+    RecyclerView rv_tagged_people;
+    List<UserProfilePOJO> taggedUserProfilePOJOS=new ArrayList<>();
+    List<UserProfilePOJO> searchUserProfilePOJOS=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,10 +70,10 @@ public class TagPeopleActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            peopleTagged.addAll((List<UserProfilePOJO>) bundle.getSerializable("taggedpeople"));
+            taggedUserProfilePOJOS.addAll((List<UserProfilePOJO>) bundle.getSerializable("taggedpeople"));
         }
 
-        act_search.addTextChangedListener(new TextWatcher() {
+        et_search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -80,37 +86,88 @@ public class TagPeopleActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (act_search.getText().toString().length() > 0) {
+                if (et_search.getText().toString().length() > 0) {
                     iv_search_close.setVisibility(View.VISIBLE);
-                    searchUser();
                 } else {
                     iv_search_close.setVisibility(View.GONE);
                 }
+
+                searchUser();
             }
         });
 
         iv_search_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                act_search.setText("");
+                et_search.setText("");
             }
         });
-        attachactAdapter();
-        attachAdapter();
-        act_search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        tv_done.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (!ifAlreadyTagged(userProfilePOJOS.get(i))) {
-                    peopleTagged.add(userProfilePOJOS.get(i));
-                    tagPeopleAdapter.notifyDataSetChanged();
-                    act_search.setText("");
-                }
+            public void onClick(View view) {
+                onBackPressed();
             }
         });
+
+        attachAlreadyTaggedAdapter();
+        attachAdapter();
+        searchUser();
+    }
+
+    public void removeUser(UserProfilePOJO userProfilePOJO) {
+        int position=-1;
+        for(int i=0;i<taggedUserProfilePOJOS.size();i++){
+            UserProfilePOJO userProfilePOJO1=taggedUserProfilePOJOS.get(i);
+            if(userProfilePOJO1.getUserProfileId().equalsIgnoreCase(userProfilePOJO.getUserProfileId())){
+                position=i;
+            }
+        }
+        if(position!=-1){
+            taggedUserProfilePOJOS.remove(position);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    alreadyTaggedPeopleAdapter.notifyDataSetChanged();
+                    userProfileAdapter.notifyDataSetChanged();
+                }
+            },500);
+
+        }
+    }
+    public void addUser(UserProfilePOJO userProfilePOJO) {
+        boolean is_present=false;
+        for(int i=0;i<taggedUserProfilePOJOS.size();i++){
+            UserProfilePOJO userProfilePOJO1=taggedUserProfilePOJOS.get(i);
+            if(userProfilePOJO1.getUserProfileId().equalsIgnoreCase(userProfilePOJO.getUserProfileId())){
+                is_present=true;
+            }
+        }
+        if(!is_present){
+            taggedUserProfilePOJOS.add(userProfilePOJO);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    alreadyTaggedPeopleAdapter.notifyDataSetChanged();
+                    userProfileAdapter.notifyDataSetChanged();
+                }
+            },500);
+        }
+        Log.d(TagUtils.getTag(),"already tagged people:-"+taggedUserProfilePOJOS.size());
+    }
+    AlreadyTaggedPeopleAdapter alreadyTaggedPeopleAdapter;
+    public void attachAlreadyTaggedAdapter() {
+        alreadyTaggedPeopleAdapter = new AlreadyTaggedPeopleAdapter(this, null, taggedUserProfilePOJOS);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        rv_tagged_people.setHasFixedSize(true);
+        rv_tagged_people.setAdapter(alreadyTaggedPeopleAdapter);
+        rv_tagged_people.setLayoutManager(linearLayoutManager);
+        rv_tagged_people.setItemAnimator(new DefaultItemAnimator());
     }
 
     public boolean ifAlreadyTagged(UserProfilePOJO userInfoPOJO) {
-        for (UserProfilePOJO userProfilePOJO : peopleTagged) {
+        for (UserProfilePOJO userProfilePOJO : taggedUserProfilePOJOS) {
             String id = userInfoPOJO.getUserProfileId();
 
             if (id.equals(userProfilePOJO.getParentUserId())) {
@@ -121,66 +178,40 @@ public class TagPeopleActivity extends AppCompatActivity {
         return false;
     }
 
-    TagPeopleAdapter tagPeopleAdapter;
+    TagPeopleAdapter userProfileAdapter;
 
     public void attachAdapter() {
-        tagPeopleAdapter = new TagPeopleAdapter(this, null, peopleTagged);
+        userProfileAdapter = new TagPeopleAdapter(this, null, searchUserProfilePOJOS,taggedUserProfilePOJOS);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rv_tag_people.setHasFixedSize(true);
-        rv_tag_people.setAdapter(tagPeopleAdapter);
+        rv_tag_people.setAdapter(userProfileAdapter);
         rv_tag_people.setLayoutManager(linearLayoutManager);
         rv_tag_people.setItemAnimator(new DefaultItemAnimator());
-
     }
-
-    public void attachactAdapter() {
-        tagSearchPeopleAdapter = new CustomAutoCompleteAdapter(TagPeopleActivity.this, userProfilePOJOS);
-        act_search.setAdapter(tagSearchPeopleAdapter);
-    }
-
-
-    CustomAutoCompleteAdapter tagSearchPeopleAdapter;
-    ArrayList<UserProfilePOJO> userProfilePOJOS = new ArrayList<>();
-    List<UserProfilePOJO> peopleTagged = new ArrayList<>();
 
     public void searchUser() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
-        nameValuePairs.add(new BasicNameValuePair("search", act_search.getText().toString()));
+        nameValuePairs.add(new BasicNameValuePair("search", et_search.getText().toString()));
         new WebServiceBaseResponseList<UserProfilePOJO>(nameValuePairs, this, new ResponseListCallback<UserProfilePOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<UserProfilePOJO> responseListPOJO) {
-                userProfilePOJOS.clear();
+                searchUserProfilePOJOS.clear();
                 if (responseListPOJO.isSuccess()) {
-                    userProfilePOJOS.addAll(responseListPOJO.getResultList());
-                    Log.d(TagUtils.getTag(), "user size:-" + userProfilePOJOS.size());
-                    tagSearchPeopleAdapter = new CustomAutoCompleteAdapter(TagPeopleActivity.this, userProfilePOJOS);
-                    act_search.setAdapter(tagSearchPeopleAdapter);
+                    searchUserProfilePOJOS.addAll(responseListPOJO.getResultList());
                 } else {
                     ToastClass.showShortToast(getApplicationContext(), responseListPOJO.getMessage());
                 }
+                userProfileAdapter.notifyDataSetChanged();
             }
         }, UserProfilePOJO.class, "CALL_SEARCH_PEOPLE_API", false).execute(WebServicesUrls.SEARCH_FOLLOWING_FOLLOWER_FRIENDS);
-//        new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
-//            @Override
-//            public void onGetMsg(String apicall, String response) {
-//                try {
-//                    ResponsePOJO<SearchUserResultPOJO> responsePOJO = new Gson().fromJson(response, new TypeToken<ResponsePOJO<SearchUserResultPOJO>>() {
-//                    }.getType());
-//
-////                    tagSearchPeopleAdapter.notifyDataSetChanged();
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, "CALL_SEARCH_PEOPLE_API", false).execute(WebServicesUrls.SEARCH_USER_PROFILE);
     }
 
     @Override
     public void onBackPressed() {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("taggedpeople", (Serializable) peopleTagged);
+        returnIntent.putExtra("taggedpeople", (Serializable) taggedUserProfilePOJOS);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
@@ -188,7 +219,7 @@ public class TagPeopleActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            onBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }

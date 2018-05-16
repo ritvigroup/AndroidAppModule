@@ -65,7 +65,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
                     bundle.putSerializable("group",items.get(position));
                     fragment.setArguments(bundle);
 
-                    homeActivity.addFragmentinFrameHome(fragment,"Group Fragment");
+                    homeActivity.replaceFragmentinFrameHome(fragment,"Group Fragment");
                 }
             }
         });

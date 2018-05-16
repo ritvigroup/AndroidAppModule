@@ -56,23 +56,23 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.ViewHold
                     switch (items.get(position).getType().toLowerCase()) {
                         case "connect":
                             FriendsListFragment friendsListFragment = new FriendsListFragment();
-                            homeActivity.addFragmentinFrameHome(friendsListFragment,"friendsListFragment");
+                            homeActivity.replaceFragmentinFrameHome(friendsListFragment,"friendsListFragment");
                             break;
                         case "event":
                             AllEventFragment allEventFragment = new AllEventFragment();
-                            homeActivity.addFragmentinFrameHome(allEventFragment,"allEventFragment");
+                            homeActivity.replaceFragmentinFrameHome(allEventFragment,"allEventFragment");
                             break;
                         case "poll":
                             AllPollFragment allPollFragment = new AllPollFragment();
-                            homeActivity.addFragmentinFrameHome(allPollFragment,"allPollFragment");
+                            homeActivity.replaceFragmentinFrameHome(allPollFragment,"allPollFragment");
                             break;
                         case "post":
                             ALLPostListFragment allPostListFragment = new ALLPostListFragment();
-                            homeActivity.addFragmentinFrameHome(allPostListFragment,"allPostListFragment");
+                            homeActivity.replaceFragmentinFrameHome(allPostListFragment,"allPostListFragment");
                             break;
                         case "complaint":
                             AllComplaintsFragment complaintListFragment = new AllComplaintsFragment();
-                            homeActivity.addFragmentinFrameHome(complaintListFragment,"complaintListFragment");
+                            homeActivity.replaceFragmentinFrameHome(complaintListFragment,"complaintListFragment");
                             break;
                     }
                 }

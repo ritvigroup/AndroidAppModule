@@ -30,6 +30,7 @@ import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.fragment.complaint.ComplaintDetailFragment;
 import com.ritvi.kaajneeti.fragment.post.EventViewFragment;
 import com.ritvi.kaajneeti.fragment.post.PostViewFragment;
+import com.ritvi.kaajneeti.fragment.post.ViewPostFragment;
 import com.ritvi.kaajneeti.interfaces.OnLoadMoreListener;
 import com.ritvi.kaajneeti.interfaces.PollAnsClickInterface;
 import com.ritvi.kaajneeti.pojo.analyze.ComplaintPOJO;
@@ -474,7 +475,7 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 if (activity instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) activity;
                     EventViewFragment eventViewFragment = new EventViewFragment(eventPOJO);
-                    homeActivity.addFragmentinFrameHome(eventViewFragment, "eventViewFragment");
+                    homeActivity.replaceFragmentinFrameHome(eventViewFragment, "eventViewFragment");
                 }
             }
         });
@@ -595,11 +596,17 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             postViewHolder.ll_news_feed.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+//                    if (activity instanceof HomeActivity) {
+//                        HomeActivity homeActivity = (HomeActivity) activity;
+//                        PostViewFragment postViewFragment = new PostViewFragment(postPOJO);
+//                        homeActivity.replaceFragmentinFrameHome(postViewFragment, "postViewFragment");
+//                    }
                     if (activity instanceof HomeActivity) {
                         HomeActivity homeActivity = (HomeActivity) activity;
-                        PostViewFragment postViewFragment = new PostViewFragment(postPOJO);
-                        homeActivity.addFragmentinFrameHome(postViewFragment, "postViewFragment");
+                        ViewPostFragment postViewFragment = new ViewPostFragment(postPOJO);
+                        homeActivity.replaceFragmentinFrameHome(postViewFragment, "postViewFragment");
                     }
+
                 }
             });
 
@@ -675,7 +682,7 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     if (activity instanceof HomeActivity) {
                         HomeActivity homeActivity = (HomeActivity) activity;
                         ComplaintDetailFragment complaintDetailFragment = new ComplaintDetailFragment(complaintPOJO);
-                        homeActivity.addFragmentinFrameHome(complaintDetailFragment, "complaintDetailFragment");
+                        homeActivity.replaceFragmentinFrameHome(complaintDetailFragment, "complaintDetailFragment");
                     }
                 }
             });
@@ -704,11 +711,17 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
 
 
-            if(complaintPOJO.getComplaintTypeId().equalsIgnoreCase("2")){
-                complaintViewHolder.ll_group_complaint_status.setVisibility(View.VISIBLE);
-            }else{
-                complaintViewHolder.ll_group_complaint_status.setVisibility(View.GONE);
-            }
+//            if(complaintPOJO.getComplaintTypeId().equalsIgnoreCase("2")){
+//                if(complaintPOJO.getComplaintProfile().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())){
+//                    complaintViewHolder.ll_group_complaint_status.setVisibility(View.GONE);
+//                }else {
+//                    complaintViewHolder.ll_group_complaint_status.setVisibility(View.VISIBLE);
+//                }
+//            }else{
+//                complaintViewHolder.ll_group_complaint_status.setVisibility(View.GONE);
+//            }
+
+            complaintViewHolder.ll_group_complaint_status.setVisibility(View.GONE);
 
 
             complaintViewHolder.iv_complaint_menu.setOnClickListener(new View.OnClickListener() {

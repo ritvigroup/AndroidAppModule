@@ -38,7 +38,7 @@ public class EngagementFragment extends Fragment{
                 if(getActivity() instanceof HomeActivity){
                     HomeActivity homeActivity= (HomeActivity) getActivity();
                     PromotionAccountFragment promotionAccountFragment = new PromotionAccountFragment();
-                    homeActivity.addFragmentinFrameHome(promotionAccountFragment,"promotionAccountFragment");
+                    homeActivity.replaceFragmentinFrameHome(promotionAccountFragment,"promotionAccountFragment");
                 }
             }
         });

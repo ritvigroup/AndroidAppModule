@@ -72,6 +72,7 @@ public class WebServicesUrls {
     public static final String GET_MY_ALL_ASSOCIATED_COMPLAINT = BASE_URL + "complaint/getAllComplaintWhereMyselfAssociated";
     public static final String UPDATE_COMPLAINT_INVITATION = BASE_URL + "complaint/updateComplaintInvitations";
     public static final String DELETE_COMPLAINT_INVITATION = BASE_URL + "complaint/rejectComplaintInvitations";
+    public static final String GET_COMPLAINT_DETAIL = BASE_URL + "complaint/getComplaintDetail";
     public static final String SAVE_POLL_ANS = BASE_URL + "poll/participatePollWithAnswer";
     public static final String FULL_PROFILE_URL = BASE_URL + "userprofile/getMoreDetailAboutFriendUserProfile";
     public static final String REMOVE_PROFILE_PIC = BASE_URL + "userprofile/removeUserProfilePicture";

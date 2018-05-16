@@ -8,6 +8,9 @@
         android:id="@+id/btn_payment_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Payment Name"/>
+        android:text="Payment Name"
+        android:background="@color/colorPrimary"
+        android:textColor="#FFFFFF"
+        android:layout_margin="5dp"/>
 
 </LinearLayout>

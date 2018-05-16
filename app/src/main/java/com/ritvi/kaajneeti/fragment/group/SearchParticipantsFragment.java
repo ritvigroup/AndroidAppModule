@@ -127,7 +127,7 @@ public class SearchParticipantsFragment extends Fragment {
         if (getActivity() instanceof HomeActivity && participatedUserList.size()>0) {
             HomeActivity homeActivity = (HomeActivity) getActivity();
             CreateGroupFragment createGroupFragment = new CreateGroupFragment(participatedUserList);
-            homeActivity.addFragmentinFrameHome(createGroupFragment, "createGroupFragment");
+            homeActivity.replaceFragmentinFrameHome(createGroupFragment, "createGroupFragment");
         }
 //        }else{
 //            ToastClass.showShortToast(getActivity().getApplicationContext(),"Please select atleast two users");

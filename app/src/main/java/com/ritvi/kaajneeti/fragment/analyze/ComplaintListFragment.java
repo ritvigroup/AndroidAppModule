@@ -66,6 +66,7 @@ public class ComplaintListFragment extends Fragment {
 
         if (is_group) {
             callMyAssociatedComplaintsAPI();
+            spinner_comp_type.setVisibility(View.GONE);
         } else {
             callAPI();
         }
@@ -88,22 +89,7 @@ public class ComplaintListFragment extends Fragment {
         spinner_comp_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                complaintPOJOS.clear();
-                switch (i) {
-                    case 0:
-                        complaintPOJOS.addAll(masterPOJOS);
-                        break;
-                    case 1:
-                        complaintPOJOS.addAll(getComplaintList("1"));
-                        break;
-                    case 2:
-                        complaintPOJOS.addAll(getComplaintList("3"));
-                        break;
-                    case 3:
-                        complaintPOJOS.addAll(getComplaintList("2"));
-                        break;
-                }
-                homeFeedAdapter.notifyDataSetChanged();
+                refreshList(i);
             }
 
             @Override
@@ -112,6 +98,25 @@ public class ComplaintListFragment extends Fragment {
             }
         });
 
+    }
+
+    public void refreshList(int spinnerPosition){
+        complaintPOJOS.clear();
+        switch (spinnerPosition) {
+            case 0:
+                complaintPOJOS.addAll(masterPOJOS);
+                break;
+            case 1:
+                complaintPOJOS.addAll(getComplaintList("1"));
+                break;
+            case 2:
+                complaintPOJOS.addAll(getComplaintList("3"));
+                break;
+            case 3:
+                complaintPOJOS.addAll(getComplaintList("2"));
+                break;
+        }
+        homeFeedAdapter.notifyDataSetChanged();
     }
 
 
@@ -166,10 +171,11 @@ public class ComplaintListFragment extends Fragment {
             @Override
             public void onGetMsg(ResponseListPOJO<FeedPOJO> responseListPOJO) {
                 complaintPOJOS.clear();
+                masterPOJOS.clear();
                 try {
                     if (responseListPOJO.isSuccess()) {
                         masterPOJOS.addAll(responseListPOJO.getResultList());
-                        complaintPOJOS.addAll(responseListPOJO.getResultList());
+                        refreshList(spinner_comp_type.getSelectedItemPosition());
                     } else {
                         ToastClass.showShortToast(getActivity().getApplicationContext(), responseListPOJO.getMessage());
                     }

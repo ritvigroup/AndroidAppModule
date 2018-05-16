@@ -45,11 +45,10 @@
                 android:text="Email" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/iv_delete"
+        <CheckBox
+            android:id="@+id/checked_user"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:src="@drawable/ic_dialog_close_light"
             android:layout_marginRight="10dp"/>
     </LinearLayout>
 

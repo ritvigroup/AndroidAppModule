@@ -56,37 +56,37 @@ public class AnalyzeCategoryAdapter extends RecyclerView.Adapter<AnalyzeCategory
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
                         AllComplaintsFragment complaintListFragment = new AllComplaintsFragment();
-                        homeActivity.addFragmentinFrameHome(complaintListFragment,"complaintListFragment");
+                        homeActivity.replaceFragmentinFrameHome(complaintListFragment,"complaintListFragment");
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Suggestions")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
                         SuggestionListFragment suggestionListFragment = new SuggestionListFragment();
-                        homeActivity.addFragmentinFrameHome(suggestionListFragment,"suggestionListFragment");
+                        homeActivity.replaceFragmentinFrameHome(suggestionListFragment,"suggestionListFragment");
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Informations")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
                         InformationListFragment informationListFragment = new InformationListFragment();
-                        homeActivity.addFragmentinFrameHome(informationListFragment,"informationListFragment");
+                        homeActivity.replaceFragmentinFrameHome(informationListFragment,"informationListFragment");
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Post")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
                         ALLPostListFragment allPostListFragment = new ALLPostListFragment();
-                        homeActivity.addFragmentinFrameHome(allPostListFragment,"allPostListFragment");
+                        homeActivity.replaceFragmentinFrameHome(allPostListFragment,"allPostListFragment");
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Event")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
                         AllEventFragment allEventFragment = new AllEventFragment();
-                        homeActivity.addFragmentinFrameHome(allEventFragment,"allEventFragment");
+                        homeActivity.replaceFragmentinFrameHome(allEventFragment,"allEventFragment");
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Poll")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
                         AllPollFragment allPollFragment = new AllPollFragment();
-                        homeActivity.addFragmentinFrameHome(allPollFragment,"allPollFragment");
+                        homeActivity.replaceFragmentinFrameHome(allPollFragment,"allPollFragment");
                     }
                 }
             }

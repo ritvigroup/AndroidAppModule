@@ -98,7 +98,7 @@ public class EventViewFragment extends Fragment {
                 if(getActivity() instanceof HomeActivity){
                     HomeActivity homeActivity= (HomeActivity) getActivity();
                     EngagementFragment engagementFragment = new EngagementFragment();
-                    homeActivity.addFragmentinFrameHome(engagementFragment,"engagementFragment");
+                    homeActivity.replaceFragmentinFrameHome(engagementFragment,"engagementFragment");
                 }
             }
         });

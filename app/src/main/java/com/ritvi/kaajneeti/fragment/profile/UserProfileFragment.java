@@ -42,6 +42,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.google.zxing.BarcodeFormat;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.FileUtils;
@@ -55,6 +57,7 @@ import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.adapter.FriendGridAdapter;
 import com.ritvi.kaajneeti.adapter.HomeFeedAdapter;
 import com.ritvi.kaajneeti.adapter.SummaryAdapter;
+import com.ritvi.kaajneeti.fragment.contribute.ContributeAmountFragment;
 import com.ritvi.kaajneeti.fragment.search.SearchFragment;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.ResponsePOJO;
@@ -147,6 +150,12 @@ public class UserProfileFragment extends Fragment {
     RecyclerView rv_activity;
     @BindView(R.id.frame_search)
     FrameLayout frame_search;
+    @BindView(R.id.iv_leader_icon)
+    ImageView iv_leader_icon;
+    @BindView(R.id.ll_contribute)
+    LinearLayout ll_contribute;
+    @BindView(R.id.iv_qr_code)
+    ImageView iv_qr_code;
 
     private static final int PICK_IMAGE_REQUEST = 101;
     private static final int CAMERA_REQUEST = 102;
@@ -187,6 +196,13 @@ public class UserProfileFragment extends Fragment {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
                     homeActivity.showProfileEditFragment(user_id, profile_id);
                 }
+            }
+        });
+
+        iv_qr_code.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showQrCode();
             }
         });
 
@@ -246,13 +262,42 @@ public class UserProfileFragment extends Fragment {
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
                     SearchFragment searchFragment = new SearchFragment();
-                    homeActivity.addFragmentinFrameHome(searchFragment,"searchFragment");
+                    homeActivity.replaceFragmentinFrameHome(searchFragment, "searchFragment");
                 }
             }
         });
-        int minHeight=UtilityFunction.convertedDP(getActivity().getApplicationContext(),UtilityFunction.screenDimensions(getActivity().getApplicationContext())[0]);
+        int minHeight = UtilityFunction.convertedDP(getActivity().getApplicationContext(), UtilityFunction.screenDimensions(getActivity().getApplicationContext())[0]);
         rv_post.setMinimumHeight(minHeight);
 
+    }
+
+    private void showQrCode() {
+        final Dialog dialog1 = new Dialog(getActivity(), android.R.style.Theme_DeviceDefault_Light_Dialog);
+        dialog1.setCancelable(true);
+        dialog1.setContentView(R.layout.dialog_qr_code);
+        dialog1.setTitle("");
+        dialog1.show();
+        dialog1.setCancelable(true);
+        Window window = dialog1.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        Button btn_close=dialog1.findViewById(R.id.btn_close);
+        ImageView iv_qr_code=dialog1.findViewById(R.id.iv_qr_code);
+
+        btn_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog1.dismiss();
+            }
+        });
+
+        try {
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(user_id+","+profile_id, BarcodeFormat.QR_CODE, 400, 400);
+            iv_qr_code.setImageBitmap(bitmap);
+        } catch(Exception e) {
+
+        }
     }
 
 
@@ -427,19 +472,42 @@ public class UserProfileFragment extends Fragment {
             }
             if (fullProfilePOJO.getFriendsProfilePOJOS().size() > 0) {
 
-                int friend_list_size=fullProfilePOJO.getFriendsProfilePOJOS().size();
-                if(friend_list_size<=3){
-                    rv_friends.setMinimumHeight(UtilityFunction.convertDpToPx(getActivity().getApplicationContext(),150));
-                }else if(friend_list_size>3&&friend_list_size<=6){
-                    rv_friends.setMinimumHeight(UtilityFunction.convertDpToPx(getActivity().getApplicationContext(),300));
-                }else{
-                    rv_friends.setMinimumHeight(UtilityFunction.convertDpToPx(getActivity().getApplicationContext(),450));
-                }
-
+                int friend_list_size = fullProfilePOJO.getFriendsProfilePOJOS().size();
+//                if(friend_list_size<=3){
+//                    rv_friends.setMinimumHeight(UtilityFunction.convertDpToPx(getActivity().getApplicationContext(),150));
+//                }else if(friend_list_size>3&&friend_list_size<=6){
+//                    rv_friends.setMinimumHeight(UtilityFunction.convertDpToPx(getActivity().getApplicationContext(),300));
+//                }else{
+//                    rv_friends.setMinimumHeight(UtilityFunction.convertDpToPx(getActivity().getApplicationContext(),450));
+//                }
+                friendProfilePOJOS.clear();
                 friendProfilePOJOS.addAll(fullProfilePOJO.getFriendsProfilePOJOS());
                 attachFriendAdapter();
             }
 
+            if (fullProfilePOJO.getProfilePOJO().getUserTypeId() != null) {
+                if (fullProfilePOJO.getProfilePOJO().getUserTypeId().equalsIgnoreCase("2")) {
+                    iv_leader_icon.setVisibility(View.VISIBLE);
+                } else {
+                    iv_leader_icon.setVisibility(View.GONE);
+                }
+            }
+
+            if (fullProfilePOJO.getProfilePOJO().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())) {
+                ll_contribute.setVisibility(View.GONE);
+            } else {
+                ll_contribute.setVisibility(View.VISIBLE);
+            }
+
+            ll_contribute.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (getActivity() instanceof HomeActivity) {
+                        HomeActivity homeActivity = (HomeActivity) getActivity();
+                        homeActivity.replaceFragmentinFrameHome(new ContributeAmountFragment(fullProfilePOJO.getProfilePOJO()), "ContributeAmountFragment");
+                    }
+                }
+            });
 
             tv_bio.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -460,6 +528,7 @@ public class UserProfileFragment extends Fragment {
         rv_friends.setHasFixedSize(true);
         rv_friends.setAdapter(friendGridAdapter);
         rv_friends.setLayoutManager(gridLayoutManager);
+        rv_friends.setNestedScrollingEnabled(false);
         rv_friends.setItemAnimator(new DefaultItemAnimator());
     }
 
@@ -584,7 +653,7 @@ public class UserProfileFragment extends Fragment {
     public void attachAdapter() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rv_post.setLayoutManager(linearLayoutManager);
-        homeFeedAdapter = new HomeFeedAdapter(rv_post,getActivity(), this, feedPOJOS, getChildFragmentManager());
+        homeFeedAdapter = new HomeFeedAdapter(rv_post, getActivity(), this, feedPOJOS, getChildFragmentManager());
         rv_post.setHasFixedSize(true);
         rv_post.setAdapter(homeFeedAdapter);
         rv_post.setItemAnimator(new DefaultItemAnimator());
@@ -700,16 +769,16 @@ public class UserProfileFragment extends Fragment {
                     @Override
                     public void onGetMsg(String apicall, String response) {
                         Log.d(TagUtils.getTag(), apicall + ":-" + response);
-                        try{
-                            JSONObject jsonObject=new JSONObject(response);
-                            if(jsonObject.optString("status").equals("success")){
-                                Gson gson=new Gson();
-                                Pref.SetStringPref(getActivity().getApplicationContext(), StringUtils.USER_PROFILE,jsonObject.optJSONObject("result").toString());
-                                UserProfilePOJO userProfilePOJO=gson.fromJson(jsonObject.optJSONObject("result").toString(),UserProfilePOJO.class);
-                                SetViews.changeProfilePics(getActivity().getApplicationContext(),userProfilePOJO.getProfilePhotoPath());
-                                Constants.userProfilePOJO=userProfilePOJO;
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            if (jsonObject.optString("status").equals("success")) {
+                                Gson gson = new Gson();
+                                Pref.SetStringPref(getActivity().getApplicationContext(), StringUtils.USER_PROFILE, jsonObject.optJSONObject("result").toString());
+                                UserProfilePOJO userProfilePOJO = gson.fromJson(jsonObject.optJSONObject("result").toString(), UserProfilePOJO.class);
+                                SetViews.changeProfilePics(getActivity().getApplicationContext(), userProfilePOJO.getProfilePhotoPath());
+                                Constants.userProfilePOJO = userProfilePOJO;
                             }
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 

@@ -12,7 +12,34 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
-        app:title="Tag People"></android.support.v7.widget.Toolbar>
+        app:title="Tag People">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tag People"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/tv_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DONE"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="7dp"/>
+
+        </FrameLayout>
+
+    </android.support.v7.widget.Toolbar>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -24,8 +51,8 @@
             android:layout_gravity="center_vertical"
             android:src="@drawable/places_ic_search"/>
 
-        <AutoCompleteTextView
-            android:id="@+id/act_search"
+        <EditText
+            android:id="@+id/et_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="30dp"
@@ -42,6 +69,11 @@
             android:visibility="gone" />
 
     </FrameLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_tagged_people"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_tag_people"

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -64,6 +63,10 @@ public class ComplaintTrackFragment extends Fragment{
     RecyclerView rv_complaints;
     @BindView(R.id.tv_reply)
     TextView tv_reply;
+    @BindView(R.id.tv_not_acknowledge)
+    TextView tv_not_acknowledge;
+    @BindView(R.id.ll_track)
+    LinearLayout ll_track;
 
     ComplaintPOJO complaintPOJO;
     public ComplaintTrackFragment(ComplaintPOJO complaintPOJO){
@@ -97,7 +100,7 @@ public class ComplaintTrackFragment extends Fragment{
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
                     SearchFragment searchFragment = new SearchFragment();
-                    homeActivity.addFragmentinFrameHome(searchFragment,"searchFragment");
+                    homeActivity.replaceFragmentinFrameHome(searchFragment,"searchFragment");
                 }
             }
         });
@@ -110,7 +113,7 @@ public class ComplaintTrackFragment extends Fragment{
                 if(getActivity() instanceof HomeActivity){
                     HomeActivity homeActivity= (HomeActivity) getActivity();
                     CreateComplaintReplyFragment complaintReplyFragment = new CreateComplaintReplyFragment(complaintPOJO);
-                    homeActivity.addFragmentinFrameHome(complaintReplyFragment,"complaintReplyFragment");
+                    homeActivity.replaceFragmentinFrameHome(complaintReplyFragment,"complaintReplyFragment");
                 }
             }
         });

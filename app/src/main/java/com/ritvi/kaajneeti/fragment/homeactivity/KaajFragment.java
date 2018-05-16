@@ -202,6 +202,7 @@ public class KaajFragment extends Fragment {
                     check_scroll = true;
                     is_apicalled = true;
 //                    getAllData(true);
+                    getAllData(true,0);
                 }
             });
         }

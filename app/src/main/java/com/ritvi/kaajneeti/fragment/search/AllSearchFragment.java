@@ -109,7 +109,7 @@ public class AllSearchFragment extends Fragment {
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
                     SearchActivityShowFragment searchActivityShowFragment = new SearchActivityShowFragment(Constants.SEARCH_IN_PEOPLE, et_search.getText().toString(), null);
-                    homeActivity.addFragmentinFrameHome(searchActivityShowFragment, "searchActivityShowFragment");
+                    homeActivity.replaceFragmentinFrameHome(searchActivityShowFragment, "searchActivityShowFragment");
                 }
             }
         });
@@ -120,7 +120,7 @@ public class AllSearchFragment extends Fragment {
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
                     SearchPostShowFragment searchPostShowFragment = new SearchPostShowFragment(Constants.SEARCH_IN_POST, et_search.getText().toString(), null);
-                    homeActivity.addFragmentinFrameHome(searchPostShowFragment, "searchPostShowFragment");
+                    homeActivity.replaceFragmentinFrameHome(searchPostShowFragment, "searchPostShowFragment");
                 }
             }
         });
@@ -131,7 +131,7 @@ public class AllSearchFragment extends Fragment {
                 if (getActivity() instanceof HomeActivity) {
                     HomeActivity homeActivity = (HomeActivity) getActivity();
                     SearchEventShowFragment searchEventShowFragment = new SearchEventShowFragment(Constants.SEARCH_IN_EVENT, et_search.getText().toString(), null);
-                    homeActivity.addFragmentinFrameHome(searchEventShowFragment, "searchEventShowFragment");
+                    homeActivity.replaceFragmentinFrameHome(searchEventShowFragment, "searchEventShowFragment");
                 }
             }
         });
@@ -258,7 +258,7 @@ public class AllSearchFragment extends Fragment {
                     } else {
                         searchPostShowFragment = new SearchPostShowFragment(search_in, et_search.getText().toString(), null);
                     }
-                    homeActivity.addFragmentinFrameHome(searchPostShowFragment, "searchPostShowFragment");
+                    homeActivity.replaceFragmentinFrameHome(searchPostShowFragment, "searchPostShowFragment");
                     break;
                 case Constants.SEARCH_IN_PEOPLE:
                     SearchActivityShowFragment searchActivityShowFragment;
@@ -267,7 +267,7 @@ public class AllSearchFragment extends Fragment {
                     } else {
                         searchActivityShowFragment = new SearchActivityShowFragment(search_in, et_search.getText().toString(), null);
                     }
-                    homeActivity.addFragmentinFrameHome(searchActivityShowFragment, "searchActivityShowFragment");
+                    homeActivity.replaceFragmentinFrameHome(searchActivityShowFragment, "searchActivityShowFragment");
                     break;
                 case Constants.SEARCH_IN_EVENT:
                     SearchEventShowFragment searchEventShowFragment;
@@ -276,7 +276,7 @@ public class AllSearchFragment extends Fragment {
                     } else {
                         searchEventShowFragment = new SearchEventShowFragment(search_in, et_search.getText().toString(), null);
                     }
-                    homeActivity.addFragmentinFrameHome(searchEventShowFragment, "searchEventShowFragment");
+                    homeActivity.replaceFragmentinFrameHome(searchEventShowFragment, "searchEventShowFragment");
                     break;
                 case Constants.SEARCH_IN_POLL:
                     SearchPollShowFragment searchPollShowFragment;
@@ -285,7 +285,7 @@ public class AllSearchFragment extends Fragment {
                     } else {
                         searchPollShowFragment = new SearchPollShowFragment(search_in, et_search.getText().toString(), null);
                     }
-                    homeActivity.addFragmentinFrameHome(searchPollShowFragment, "searchPollShowFragment");
+                    homeActivity.replaceFragmentinFrameHome(searchPollShowFragment, "searchPollShowFragment");
                     break;
                 case Constants.SEARCH_IN_COMPLAINT:
                     SearchComplaintShowFragment searchComplaintShowFragment;
@@ -294,7 +294,7 @@ public class AllSearchFragment extends Fragment {
                     } else {
                         searchComplaintShowFragment = new SearchComplaintShowFragment(search_in, et_search.getText().toString(), null);
                     }
-                    homeActivity.addFragmentinFrameHome(searchComplaintShowFragment, "searchComplaintShowFragment");
+                    homeActivity.replaceFragmentinFrameHome(searchComplaintShowFragment, "searchComplaintShowFragment");
                     break;
             }
         }

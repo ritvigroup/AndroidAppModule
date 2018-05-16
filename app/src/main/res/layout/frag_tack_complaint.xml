@@ -9,6 +9,7 @@
     tools:context="com.ritvi.kaajneeti.activity.ViewComplaintActivity">
 
     <LinearLayout
+        android:id="@+id/ll_track"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -98,4 +99,14 @@
 
         </LinearLayout>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_not_acknowledge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="17sp"
+        android:text="Leader has acknowledge the complaint"/>
 </FrameLayout>

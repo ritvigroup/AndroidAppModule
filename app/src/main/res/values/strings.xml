@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Kaajneeti</string>
 
-    <string name="facebook_app_id">1042450195892927</string>
-    <string name="fb_login_protocol_scheme">fb1042450195892927</string>
+    <string name="facebook_app_id">186581788824110</string>
+    <string name="fb_login_protocol_scheme">fb186581788824110</string>
 
     <string name="google_places_api_key">AIzaSyD_0g_gaQzNYafcBCKn1ErgLePEp2d-OGU</string>
 

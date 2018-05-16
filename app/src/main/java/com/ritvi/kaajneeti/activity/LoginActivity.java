@@ -42,6 +42,7 @@ import com.ritvi.kaajneeti.Util.StringUtils;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
+import com.ritvi.kaajneeti.testing.TwitterTestActivity;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -91,12 +92,9 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
     ImageView iv_facebook_login;
     @BindView(R.id.iv_google_login)
     ImageView iv_google_login;
-    @BindView(R.id.twitterLogin)
-    TwitterLoginButton twitterLoginButton;
+
     @BindView(R.id.tv_new_user)
     TextView tv_new_user;
-    @BindView(R.id.iv_twitter_login)
-    ImageView iv_twitter_login;
     @BindView(R.id.btn_login)
     Button btn_login;
     @BindView(R.id.et_mobile_number)
@@ -107,15 +105,18 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
     TextView tv_login_otp;
     @BindView(R.id.tv_forgot_mpin)
     TextView tv_forgot_mpin;
+
     @BindView(R.id.login_button)
-    TwitterLoginButton tw_login_button;
+    TwitterLoginButton twitterLoginButton;
+    @BindView(R.id.iv_twitter_login)
+    ImageView iv_twitter_login;
 
     GoogleApiClient mGoogleApiClient;
     GoogleSignInOptions gso;
     CallbackManager callbackManager;
 
     private int RC_SIGN_IN = 100;
-
+    TwitterAuthClient mTwitterAuthClient= new TwitterAuthClient();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,61 +148,6 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
         ButterKnife.bind(this);
 
         initializeGoogleSignIn();
-
-        tw_login_button.setCallback(new Callback<TwitterSession>() {
-            @Override
-            public void success(Result<TwitterSession> result) {
-                Log.e("result", "result " + result);
-                TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
-                AccountService accountService = twitterApiClient.getAccountService();
-                Call<User> call = accountService.verifyCredentials(true, true);
-                call.enqueue(new Callback<User>() {
-                    @Override
-                    public void success(Result<User> result) {
-                        //here we go User details
-                        Log.d(TagUtils.getTag(), "result user " + result);
-
-                        Log.d(TagUtils.getTag(), "id:-" + result.data.id);
-                        Log.d(TagUtils.getTag(), "name:-" + result.data.name);
-                        Log.d(TagUtils.getTag(), "email:-" + result.data.email);
-                        Log.d(TagUtils.getTag(), "description:-" + result.data.description);
-                        Log.d(TagUtils.getTag(), "image url:-" + result.data.profileImageUrl);
-                    }
-
-                    @Override
-                    public void failure(TwitterException exception) {
-                        exception.printStackTrace();
-                    }
-                });
-            }
-
-            @Override
-            public void failure(TwitterException exception) {
-                // Do something on failure
-                exception.printStackTrace();
-            }
-        });
-
-        iv_twitter_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                TwitterAuthClient mTwitterAuthClient = new TwitterAuthClient();
-                mTwitterAuthClient.authorize(LoginActivity.this, new Callback<TwitterSession>() {
-
-                    @Override
-                    public void success(Result<TwitterSession> twitterSessionResult) {
-                        // Success
-                        login(twitterSessionResult);
-                    }
-
-                    @Override
-                    public void failure(TwitterException e) {
-                        e.printStackTrace();
-                        Log.d(TagUtils.getTag(), "twitter error:-" + e.toString());
-                    }
-                });
-            }
-        });
 
         iv_facebook_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -257,6 +203,43 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
                 startActivity(new Intent(LoginActivity.this, ForgotMpinActivity.class));
             }
         });
+
+        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                //If login succeeds passing the Calling the login method and passing Result object
+                login(result);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                //If failure occurs while login handle it here
+                Log.d("TwitterKit", "Login with Twitter failure", exception);
+            }
+        });
+
+        iv_twitter_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                twitterLoginButton.getCallback();
+//                twitterLoginButton.callOnClick();
+                mTwitterAuthClient.authorize(LoginActivity.this, new com.twitter.sdk.android.core.Callback<TwitterSession>() {
+
+                    @Override
+                    public void success(Result<TwitterSession> twitterSessionResult) {
+                        // Success
+                        login(twitterSessionResult);
+                    }
+
+                    @Override
+                    public void failure(TwitterException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        });
+
+
     }
 
     public void callLoginAPI() {
@@ -281,24 +264,27 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
     public void login(Result<TwitterSession> result) {
 
         final TwitterSession session = result.data;
-
-        TwitterAuthToken authToken = session.getAuthToken();
-        String token = authToken.token;
-        String secret = authToken.secret;
+        final String username = session.getUserName();
         final TwitterAuthClient authClient = new TwitterAuthClient();
-        Call<User> userResult = Twitter.getApiClient(session).getAccountService().verifyCredentials(true, false);
-        userResult.enqueue(new Callback<User>() {
+        TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
+        AccountService accountService = twitterApiClient.getAccountService();
+        Call<User> call = accountService.verifyCredentials(true, true);
+        call.enqueue(new Callback<User>() {
             @Override
             public void success(Result<User> result) {
-                final User user = result.data;
-                String user_name = user.email;
-                String description = user.description;
-                int followersCount = user.followersCount;
-                Log.d(TagUtils.getTag(), "name:-" + user.name);
-                Log.d(TagUtils.getTag(), "description:-" + user.description);
-                final String profileImage = user.profileImageUrl.replace("_normal", "");
-                Log.d(TagUtils.getTag(), "profile image:-" + profileImage);
+                //here we go User details
+                Log.d(TagUtils.getTag(), "result user " + result);
 
+                final String id=String.valueOf(result.data.id);
+                final String name=result.data.name;
+                String email=result.data.email;
+                String description=result.data.description;
+                final String profileImageUrl=result.data.profileImageUrl;
+                Log.d(TagUtils.getTag(), "id:-" + id);
+                Log.d(TagUtils.getTag(), "name:-" + name);
+                Log.d(TagUtils.getTag(), "email:-" + email);
+                Log.d(TagUtils.getTag(), "description:-" + description);
+                Log.d(TagUtils.getTag(), "image url:-" + profileImageUrl);
 
                 authClient.requestEmail(session, new Callback<String>() {
                     @Override
@@ -307,7 +293,7 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
                         String email = result.data;
                         Log.d(TagUtils.getTag(), "email:-" + email);
 
-                        saveImageFromUrl("twitter", String.valueOf(user.id), user.name, email, profileImage, "");
+                        saveImageFromUrl("twitter", String.valueOf(id), name, email, profileImageUrl, "");
 
                     }
 
@@ -321,12 +307,11 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
 
             @Override
             public void failure(TwitterException exception) {
-                Log.d("sunil", "failed");
+                exception.printStackTrace();
             }
         });
-//        TwitterAuthClient authClient = new TwitterAuthClient();
 
-
+//        saveImageFromUrl("twitter", String.valueOf(user.id), user.name, email, profileImage, "");
     }
 
     public void GoogleIntegration() {
@@ -353,6 +338,7 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
 
 
     public void FbIntegration() {
+        LoginManager.getInstance().logOut();
         LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "user_friends", "email"));
     }
 
@@ -384,14 +370,14 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
                         }
 
 
-                        Log.d(TagUtils.getTag(), "name:-" + json.getString("name"));
-                        Log.d(TagUtils.getTag(), "link:-" + json.getString("link"));
-                        Log.d(TagUtils.getTag(), "id:-" + json.getString("id"));
-                        Log.d(TagUtils.getTag(), "email:-" + json.getString("email"));
+//                        Log.d(TagUtils.getTag(), "name:-" + json.getString("name"));
+//                        Log.d(TagUtils.getTag(), "link:-" + json.getString("link"));
+//                        Log.d(TagUtils.getTag(), "id:-" + json.getString("id"));
+//                        Log.d(TagUtils.getTag(), "email:-" + json.getString("email"));
                         String profile_url = "https://graph.facebook.com/" + json.getString("id") + "/picture?type=large";
                         Log.d(TagUtils.getTag(), "facebook profile url:-" + profile_url);
 
-                        saveImageFromUrl("facebook", id, name, email, profile_url, phone);
+                        saveImageFromUrl("facebook", id, name, email, "", phone);
 
                     }
 
@@ -425,6 +411,7 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
             //Calling a new function to handle signin
             handleSignInResult(result);
         }
+        twitterLoginButton.onActivityResult(requestCode, resultCode, data);
 //        tw_login_button.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -452,7 +439,7 @@ public class LoginActivity extends LocalizationActivity implements GoogleApiClie
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        ToastClass.showShortToast(getApplicationContext(),"Connection Failed");
     }
 
     public void parseLoginResponse(String response) {

@@ -208,12 +208,6 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <com.twitter.sdk.android.core.identity.TwitterLoginButton
-                android:id="@+id/twitterLogin"
-                android:layout_width="311dp"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
