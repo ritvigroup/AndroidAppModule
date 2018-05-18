@@ -35,6 +35,15 @@
                 android:textSize="20sp"
                 android:layout_gravity="center"/>
 
+            <ImageView
+                android:id="@+id/iv_add_therapist"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_plus_black"
+                android:tint="#FFFFFF"
+                android:layout_gravity="right|center"
+                android:layout_marginRight="7dp"/>
+
         </FrameLayout>
 
     </android.support.v7.widget.Toolbar>

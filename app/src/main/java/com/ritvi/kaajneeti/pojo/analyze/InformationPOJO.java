@@ -2,6 +2,7 @@ package com.ritvi.kaajneeti.pojo.analyze;
 
 import com.google.gson.annotations.SerializedName;
 import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -44,7 +45,7 @@ public class InformationPOJO implements Serializable {
     @SerializedName("UpdatedOnTime")
     private String updatedOnTime;
     @SerializedName("InformationProfile")
-    private OutGoingRequestPOJO informationProfile;
+    private UserProfilePOJO informationProfile;
     @SerializedName("InformationAttachment")
     private List<InformationAttachmentPOJO> informationAttachment;
 
@@ -176,11 +177,11 @@ public class InformationPOJO implements Serializable {
         this.updatedOnTime = updatedOnTime;
     }
 
-    public OutGoingRequestPOJO getInformationProfile() {
+    public UserProfilePOJO getInformationProfile() {
         return informationProfile;
     }
 
-    public void setInformationProfile(OutGoingRequestPOJO informationProfile) {
+    public void setInformationProfile(UserProfilePOJO informationProfile) {
         this.informationProfile = informationProfile;
     }
 

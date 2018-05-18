@@ -84,6 +84,32 @@ public class UtilityFunction {
         }
         return "";
     }
+    public static String getServerConvertedFullDate(String date){
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date d = sdf.parse(date);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+            String formatted_date = simpleDateFormat.format(d);
+            return formatted_date;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String[] getDateValues(String date){
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date d = sdf.parse(date);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+            String formatted_date=simpleDateFormat.format(d);
+            String[] dateValues={formatted_date.split("-")[0],formatted_date.split("-")[1],formatted_date.split("-")[2]};
+            return dateValues;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public static String getProfileID(UserInfoPOJO userInfoPOJO){
         if(userInfoPOJO.getUserProfileCitizen()!=null){

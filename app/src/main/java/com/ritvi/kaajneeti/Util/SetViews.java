@@ -3,6 +3,7 @@ package com.ritvi.kaajneeti.Util;
 import android.content.Context;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ritvi.kaajneeti.R;
@@ -13,6 +14,7 @@ import java.util.Set;
 public class SetViews {
 
     static Set<ImageView> imageViews = new HashSet<>();
+    static Set<TextView> textViews = new HashSet<>();
 
     public static void setProfilePhoto(Context context, String profilePhoto, ImageView profileImageView) {
         if (profilePhoto.equals(Constants.userProfilePOJO.getProfilePhotoPath())) {
@@ -25,6 +27,14 @@ public class SetViews {
                 .error(R.drawable.ic_default_profile_pic)
                 .dontAnimate()
                 .into(profileImageView);
+    }
+
+    public static void setProfileName(String profilename, TextView textView) {
+        if (profilename.equals(Constants.userProfilePOJO.getFirstName()+" "+Constants.userProfilePOJO.getLastName())) {
+            textViews.add(textView);
+            Log.d(TagUtils.getTag(), "added");
+        }
+        textView.setText(profilename);
     }
 
 
@@ -40,6 +50,17 @@ public class SetViews {
                             .into(imageView);
                 }
             }
+        }
+        changeProfileNames();
+    }
+
+    public static void changeProfileNames(){
+        try {
+            for (TextView textView : textViews) {
+                textView.setText(Constants.userProfilePOJO.getFirstName() + " " + Constants.userProfilePOJO.getLastName());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

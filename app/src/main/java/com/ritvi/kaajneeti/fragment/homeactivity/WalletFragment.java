@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -65,7 +66,7 @@ public class WalletFragment extends Fragment {
     @BindView(R.id.ll_add)
     LinearLayout ll_add;
     @BindView(R.id.iv_back)
-    LinearLayout iv_back;
+    ImageView iv_back;
 
     List<PaymentTransPOJO> paymentTransPOJOS = new ArrayList<>();
 

@@ -345,8 +345,8 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
             reqEntity.addPart("event_description", new StringBody(et_description.getText().toString()));
             reqEntity.addPart("event_location", new StringBody(tv_location.getText().toString()));
 
-            String start_date = getFormattedDate(et_start_date.getText().toString() + " " + et_start_time.getText().toString());
-            String end_date = getFormattedDate(et_end_date.getText().toString() + " " + et_end_time.getText().toString());
+            String start_date = getFormattedDate(et_start_date.getText().toString());
+            String end_date = getFormattedDate(et_end_date.getText().toString());
 
             Log.d(TagUtils.getTag(), "start_date:-" + start_date);
             Log.d(TagUtils.getTag(), "end_date:-" + end_date);
@@ -356,6 +356,15 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
             reqEntity.addPart("EveryYear", new StringBody(""));
             reqEntity.addPart("EveryMonth", new StringBody(""));
             reqEntity.addPart("event_attendee", new StringBody(""));
+
+            if(spinner_privpub.getSelectedItemPosition()==0) {
+                reqEntity.addPart("privacy", new StringBody("1"));
+            }else{
+                reqEntity.addPart("privacy", new StringBody("0"));
+            }
+
+
+
 
             boolean is_cover_set = false;
             int count = 0;
@@ -403,11 +412,11 @@ public class CreateEventFragment extends Fragment implements DatePickerDialog.On
 
     public String getFormattedDate(String date) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
             Date d = sdf.parse(date);
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String formated_date = simpleDateFormat.format(d);
-            return formated_date + ":00";
+            return formated_date;
         } catch (Exception e) {
             return "";
         }

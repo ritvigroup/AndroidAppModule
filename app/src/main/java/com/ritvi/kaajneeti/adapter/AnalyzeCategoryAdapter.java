@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.fragment.AllComplaintsFragment;
 import com.ritvi.kaajneeti.fragment.analyze.ALLPostListFragment;
@@ -55,7 +56,7 @@ public class AnalyzeCategoryAdapter extends RecyclerView.Adapter<AnalyzeCategory
                 if(items.get(position).getType().equalsIgnoreCase("Complaints")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
-                        AllComplaintsFragment complaintListFragment = new AllComplaintsFragment();
+                        AllComplaintsFragment complaintListFragment = new AllComplaintsFragment(Constants.userProfilePOJO.getUserId(),Constants.userProfilePOJO.getUserProfileId());
                         homeActivity.replaceFragmentinFrameHome(complaintListFragment,"complaintListFragment");
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Suggestions")){
@@ -73,19 +74,19 @@ public class AnalyzeCategoryAdapter extends RecyclerView.Adapter<AnalyzeCategory
                 }else if(items.get(position).getType().equalsIgnoreCase("Post")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
-                        ALLPostListFragment allPostListFragment = new ALLPostListFragment();
+                        ALLPostListFragment allPostListFragment = new ALLPostListFragment(Constants.userProfilePOJO.getUserId(),Constants.userProfilePOJO.getUserProfileId());
                         homeActivity.replaceFragmentinFrameHome(allPostListFragment,"allPostListFragment");
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Event")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
-                        AllEventFragment allEventFragment = new AllEventFragment();
+                        AllEventFragment allEventFragment = new AllEventFragment(Constants.userProfilePOJO.getUserId(),Constants.userProfilePOJO.getUserProfileId());
                         homeActivity.replaceFragmentinFrameHome(allEventFragment,"allEventFragment");
                     }
                 }else if(items.get(position).getType().equalsIgnoreCase("Poll")){
                     if(fragment instanceof InvestigateFragment){
                         HomeActivity homeActivity= (HomeActivity) activity;
-                        AllPollFragment allPollFragment = new AllPollFragment();
+                        AllPollFragment allPollFragment = new AllPollFragment(Constants.userProfilePOJO.getUserId(),Constants.userProfilePOJO.getUserProfileId());
                         homeActivity.replaceFragmentinFrameHome(allPollFragment,"allPollFragment");
                     }
                 }

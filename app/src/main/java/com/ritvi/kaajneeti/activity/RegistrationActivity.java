@@ -117,6 +117,7 @@ public class RegistrationActivity extends LocalizationActivity implements View.O
             nameValuePairs.add(new BasicNameValuePair("request_action", "REGISTER_MOBILE"));
             nameValuePairs.add(new BasicNameValuePair("device_token", ""));
             nameValuePairs.add(new BasicNameValuePair("mobile", "+91" + et_phone_number.getText().toString()));
+            nameValuePairs.add(new BasicNameValuePair("login_type", "1"));
             new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
                 @Override
                 public void onGetMsg(String apicall, String response) {

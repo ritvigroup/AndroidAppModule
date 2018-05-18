@@ -276,7 +276,17 @@ public class CreatePollFragment extends Fragment {
             }
 
             if(all_images_present){
-                createPoll();
+                boolean all_ans_filled=true;
+                for(PollMediaAns pollMediaAns:pollMediaAnsList){
+                    if(pollMediaAns.getAns().length()==0){
+                        all_ans_filled=false;
+                    }
+                }
+                if(all_ans_filled) {
+                    createPoll();
+                }else{
+                    ToastClass.showShortToast(getActivity().getApplicationContext(),"Please Enter All Ans Text");
+                }
             }else{
                 ToastClass.showShortToast(getActivity().getApplicationContext(),"Please select all images");
             }
@@ -302,10 +312,10 @@ public class CreatePollFragment extends Fragment {
             MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
             reqEntity.addPart("user_profile_id", new StringBody(Constants.userProfilePOJO.getUserProfileId()));
             reqEntity.addPart("poll_question", new StringBody(et_whats.getText().toString()));
-            if (spinner_privpub.getSelectedItemPosition() == 1) {
-                reqEntity.addPart("poll_privacy", new StringBody("1"));
+            if (spinner_privpub.getSelectedItemPosition() == 0) {
+                reqEntity.addPart("privacy", new StringBody("1"));
             } else {
-                reqEntity.addPart("poll_privacy", new StringBody("0"));
+                reqEntity.addPart("privacy", new StringBody("0"));
             }
             reqEntity.addPart("valid_from_date", new StringBody(UtilityFunction.getCurrentDate()));
             reqEntity.addPart("valid_end_date", new StringBody("2018-05-30"));

@@ -2,6 +2,7 @@ package com.ritvi.kaajneeti.pojo.analyze;
 
 import com.google.gson.annotations.SerializedName;
 import com.ritvi.kaajneeti.pojo.user.OutGoingRequestPOJO;
+import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  */
 
 public class SuggestionPOJO implements Serializable {
+
     @SerializedName("SuggestionId")
     private String suggestionId;
     @SerializedName("SuggestionUniqueId")
@@ -27,6 +29,14 @@ public class SuggestionPOJO implements Serializable {
     private String applicantEmail;
     @SerializedName("ApplicantAadhaarNumber")
     private String applicantAadhaarNumber;
+    @SerializedName("ApplicantAddress")
+    private String applicantAddress;
+    @SerializedName("ApplicantPlace")
+    private String applicantPlace;
+    @SerializedName("SuggestionLatitude")
+    private String suggestionLatitude;
+    @SerializedName("SuggestionLongitude")
+    private String suggestionLongitude;
     @SerializedName("SuggestionSubject")
     private String suggestionSubject;
     @SerializedName("SuggestionDescription")
@@ -42,9 +52,13 @@ public class SuggestionPOJO implements Serializable {
     @SerializedName("UpdatedOnTime")
     private String updatedOnTime;
     @SerializedName("SuggestionProfile")
-    private OutGoingRequestPOJO suggestionProfile;
+    private UserProfilePOJO suggestionProfile;
+    @SerializedName("SuggestionAssigned")
+    private List<UserProfilePOJO> SuggestionAssignedList;
     @SerializedName("SuggestionAttachment")
     private List<SuggestionAttachmentPOJO> suggestionAttachment;
+    @SerializedName("CountSuggestionHistory")
+    private Integer countSuggestionHistory;
 
     public String getSuggestionId() {
         return suggestionId;
@@ -110,6 +124,38 @@ public class SuggestionPOJO implements Serializable {
         this.applicantAadhaarNumber = applicantAadhaarNumber;
     }
 
+    public String getApplicantAddress() {
+        return applicantAddress;
+    }
+
+    public void setApplicantAddress(String applicantAddress) {
+        this.applicantAddress = applicantAddress;
+    }
+
+    public String getApplicantPlace() {
+        return applicantPlace;
+    }
+
+    public void setApplicantPlace(String applicantPlace) {
+        this.applicantPlace = applicantPlace;
+    }
+
+    public String getSuggestionLatitude() {
+        return suggestionLatitude;
+    }
+
+    public void setSuggestionLatitude(String suggestionLatitude) {
+        this.suggestionLatitude = suggestionLatitude;
+    }
+
+    public String getSuggestionLongitude() {
+        return suggestionLongitude;
+    }
+
+    public void setSuggestionLongitude(String suggestionLongitude) {
+        this.suggestionLongitude = suggestionLongitude;
+    }
+
     public String getSuggestionSubject() {
         return suggestionSubject;
     }
@@ -166,11 +212,11 @@ public class SuggestionPOJO implements Serializable {
         this.updatedOnTime = updatedOnTime;
     }
 
-    public OutGoingRequestPOJO getSuggestionProfile() {
+    public UserProfilePOJO getSuggestionProfile() {
         return suggestionProfile;
     }
 
-    public void setSuggestionProfile(OutGoingRequestPOJO suggestionProfile) {
+    public void setSuggestionProfile(UserProfilePOJO suggestionProfile) {
         this.suggestionProfile = suggestionProfile;
     }
 
@@ -180,5 +226,21 @@ public class SuggestionPOJO implements Serializable {
 
     public void setSuggestionAttachment(List<SuggestionAttachmentPOJO> suggestionAttachment) {
         this.suggestionAttachment = suggestionAttachment;
+    }
+
+    public Integer getCountSuggestionHistory() {
+        return countSuggestionHistory;
+    }
+
+    public void setCountSuggestionHistory(Integer countSuggestionHistory) {
+        this.countSuggestionHistory = countSuggestionHistory;
+    }
+
+    public List<UserProfilePOJO> getSuggestionAssignedList() {
+        return SuggestionAssignedList;
+    }
+
+    public void setSuggestionAssignedList(List<UserProfilePOJO> suggestionAssignedList) {
+        SuggestionAssignedList = suggestionAssignedList;
     }
 }

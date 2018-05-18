@@ -1,5 +1,6 @@
 package com.ritvi.kaajneeti.fragment.profile.friends;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,11 +32,21 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+@SuppressLint("ValidFragment")
 public class FriendsListFragment extends Fragment {
     @BindView(R.id.rv_friends)
     RecyclerView rv_friends;
     @BindView(R.id.iv_back)
     ImageView iv_back;
+
+    String user_id;
+    String profile_id;
+
+    public FriendsListFragment(String user_id,String profile_id){
+        this.user_id=user_id;
+        this.profile_id=profile_id;
+    }
+
 
     @Nullable
     @Override
@@ -61,8 +72,8 @@ public class FriendsListFragment extends Fragment {
 
     public void getAllUsers() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
-        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("user_id", user_id));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", profile_id));
         new WebServiceBaseResponseList<UserProfilePOJO>(nameValuePairs, getActivity(), new ResponseListCallback<UserProfilePOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<UserProfilePOJO> responseListPOJO) {

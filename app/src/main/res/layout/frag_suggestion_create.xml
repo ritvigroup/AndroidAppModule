@@ -118,8 +118,8 @@
                 android:layout_margin="10dp">
 
 
-                <AutoCompleteTextView
-                    android:id="@+id/auto_fav_list"
+                <TextView
+                    android:id="@+id/tv_fav_leader"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
@@ -136,6 +136,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|center"
                     android:layout_marginRight="5dp"
+                    android:visibility="gone"
                     android:src="@drawable/ic_plus_black" />
 
 

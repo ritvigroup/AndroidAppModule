@@ -61,6 +61,7 @@ import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 import com.ritvi.kaajneeti.webservice.WebUploadService;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import com.yalantis.ucrop.UCrop;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -156,6 +157,8 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
     CircleImageView cv_profile_pic;
     @BindView(R.id.iv_profile_image_edit)
     ImageView iv_profile_image_edit;
+    @BindView(R.id.iv_close)
+    ImageView iv_close;
 
 
     String user_id;
@@ -179,6 +182,13 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+        iv_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                savePersonalInformation(true);
+            }
+        });
 
         iv_personal_view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,7 +247,7 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
         btn_save_personal_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                savePersonalInformation();
+                savePersonalInformation(false);
             }
         });
         iv_calendar.setOnClickListener(new View.OnClickListener() {
@@ -362,15 +372,9 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
         Log.d(TagUtils.getTag(), "update profile");
     }
 
-    private void savePersonalInformation() {
+    private void savePersonalInformation(final boolean exit) {
         try {
             MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-//            if (image_path_string.length() > 0 && new File(image_path_string).exists()) {
-//                FileBody bin1 = new FileBody(new File(image_path_string));
-//                reqEntity.addPart("photo", bin1);
-//            } else {
-//                reqEntity.addPart("photo", new StringBody(""));
-//            }
 
             String gender = "0";
             switch (rg_gender.getCheckedRadioButtonId()) {
@@ -417,7 +421,14 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                         JSONObject jsonObject = new JSONObject(response);
                         if (jsonObject.optString("status").equalsIgnoreCase("success")) {
                             ToastClass.showShortToast(getActivity().getApplicationContext(), "Profile Info Updated");
+                            Pref.SetStringPref(getActivity().getApplicationContext(),StringUtils.USER_PROFILE,jsonObject.optJSONObject("result").optJSONObject("UserProfileCitizen").toString());
+                            UserProfilePOJO userProfilePOJO=new Gson().fromJson(jsonObject.optJSONObject("result").optJSONObject("UserProfileCitizen").toString(),UserProfilePOJO.class);
+                            Constants.userProfilePOJO=userProfilePOJO;
+                            SetViews.changeProfileNames();
                             iv_address_view.callOnClick();
+                            if(exit){
+                                getActivity().onBackPressed();
+                            }
                         } else {
                             ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
                         }
@@ -904,7 +915,8 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                 if (selectedImagePath != null && selectedImagePath != "") {
                     image_path_string = selectedImagePath;
                     Log.d(TagUtils.getTag(), "selected path:-" + selectedImagePath);
-                    setProfilePic();
+//                    setProfilePic();
+                    cropProfilePic(image_path_string);
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Selected File is Corrupted", Toast.LENGTH_LONG).show();
                 }
@@ -928,7 +940,8 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                     fos.flush();
                     fos.close();
                     image_path_string = file_name.toString();
-                    setProfilePic();
+//                    setProfilePic();
+                    cropProfilePic(image_path_string);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (Exception e) {
@@ -936,10 +949,26 @@ public class UpdateUserProfileFragment extends Fragment implements DatePickerDia
                 }
             }
             return;
+        }if (resultCode == Activity.RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            final Uri resultUri = UCrop.getOutput(data);
+            setProfilePic(resultUri.getPath());
         }
     }
 
-    public void setProfilePic() {
+
+    public void cropProfilePic(String source) {
+        if (new File(source).exists()) {
+            Uri uri = Uri.fromFile(new File(source));
+            String destPath = FileUtils.getPhotoFolder() + File.separator + System.currentTimeMillis() + ".png";
+            Uri destUri = Uri.fromFile(new File(destPath));
+            UCrop.of(uri, destUri)
+                    .start(getActivity());
+        } else {
+            ToastClass.showShortToast(getActivity().getApplicationContext(), "File is corrupted");
+        }
+    }
+
+    public void setProfilePic(String image_path_string) {
         if (image_path_string.length() > 0 && new File(image_path_string).exists()) {
             Glide.with(getActivity().getApplicationContext())
                     .load(image_path_string)

@@ -11,7 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.activity.ViewSuggestionActivity;
+import com.ritvi.kaajneeti.fragment.suggestion.SuggestionViewFragment;
 import com.ritvi.kaajneeti.pojo.analyze.SuggestionPOJO;
 
 import java.util.List;
@@ -33,7 +35,7 @@ public class SuggestionAnalyzeAdapter extends RecyclerView.Adapter<SuggestionAna
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.inflate_complaint_analyze_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.inflate_suggestion_analyze_item, parent, false);
         return new ViewHolder(v);
     }
 
@@ -46,9 +48,13 @@ public class SuggestionAnalyzeAdapter extends RecyclerView.Adapter<SuggestionAna
         holder.ll_analyze.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(activity, ViewSuggestionActivity.class);
-                intent.putExtra("suggestion",items.get(position));
-                activity.startActivity(intent);
+//                Intent intent=new Intent(activity, ViewSuggestionActivity.class);
+//                intent.putExtra("suggestion",items.get(position));
+//                activity.startActivity(intent);
+                if(activity instanceof HomeActivity){
+                    HomeActivity homeActivity= (HomeActivity) activity;
+                    homeActivity.replaceFragmentinFrameHome(new SuggestionViewFragment(items.get(position)),"SuggestionViewFragment");
+                }
             }
         });
 

@@ -1,5 +1,6 @@
 package com.ritvi.kaajneeti.fragment.analyze;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,12 +40,21 @@ import butterknife.ButterKnife;
  * Created by sunil on 31-03-2018.
  */
 
+@SuppressLint("ValidFragment")
 public class AllPollFragment extends Fragment {
 
     @BindView(R.id.rv_complaints)
     RecyclerView rv_complaints;
     @BindView(R.id.iv_back)
     ImageView iv_back;
+
+    String user_id;
+    String profile_id;
+
+    public AllPollFragment(String user_id,String profile_id){
+        this.user_id=user_id;
+        this.profile_id=profile_id;
+    }
 
     @Nullable
     @Override
@@ -86,6 +96,7 @@ public class AllPollFragment extends Fragment {
     public void callAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("friend_profile_id",profile_id));
 
         new WebServiceBaseResponseList<FeedPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<FeedPOJO>() {
             @Override

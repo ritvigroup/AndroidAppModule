@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.activity.HomeActivity;
+import com.ritvi.kaajneeti.fragment.information.InformationViewFragment;
 import com.ritvi.kaajneeti.pojo.analyze.InformationPOJO;
 
 import java.util.List;
@@ -31,7 +33,7 @@ public class InformationAnalyzeAdapter extends RecyclerView.Adapter<InformationA
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.inflate_complaint_analyze_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.inflate_information_item, parent, false);
         return new ViewHolder(v);
     }
 
@@ -47,6 +49,10 @@ public class InformationAnalyzeAdapter extends RecyclerView.Adapter<InformationA
 //                Intent intent=new Intent(activity, ViewComplaintActivity.class);
 //                intent.putExtra("complaint",items.get(position));
 //                activity.startActivity(intent);
+                if(activity instanceof HomeActivity){
+                    HomeActivity homeActivity= (HomeActivity) activity;
+                    homeActivity.replaceFragmentinFrameHome(new InformationViewFragment(items.get(position)),"InformationViewFragment");
+                }
             }
         });
 

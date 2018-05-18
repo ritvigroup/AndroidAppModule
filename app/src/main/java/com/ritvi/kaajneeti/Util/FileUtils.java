@@ -31,6 +31,15 @@ public class FileUtils {
         return f.toString();
     }
 
+    public static String getPhotoFolder() {
+        File f = new File(getBaseFilePath() + File.separator + "photo");
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+
+        return f.toString();
+    }
+
     public static String getSocialDir() {
         File f = new File(getBaseFilePath() + File.separator + "social");
         if (!f.exists()) {
@@ -80,6 +89,7 @@ public class FileUtils {
             return null;
         }
     }
+
     public static String getThumbPath() {
         try {
             String base_path = getBaseFilePath();

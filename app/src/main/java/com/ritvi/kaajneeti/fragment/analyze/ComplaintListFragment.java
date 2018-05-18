@@ -46,9 +46,10 @@ public class ComplaintListFragment extends Fragment {
     Spinner spinner_comp_type;
 
     boolean is_group;
-
-    public ComplaintListFragment(boolean is_group) {
+    String profile_id;
+    public ComplaintListFragment(boolean is_group,String profile_id) {
         this.is_group = is_group;
+        this.profile_id = profile_id;
     }
 
     @Nullable
@@ -143,6 +144,7 @@ public class ComplaintListFragment extends Fragment {
     public void callMyAssociatedComplaintsAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("friend_profile_id",profile_id));
         new WebServiceBaseResponseList<FeedPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<FeedPOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO<FeedPOJO> responseListPOJO) {
@@ -165,6 +167,7 @@ public class ComplaintListFragment extends Fragment {
     public void callAPI() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("friend_profile_id",profile_id));
 
         new WebServiceBaseResponseList<FeedPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<FeedPOJO>() {
 

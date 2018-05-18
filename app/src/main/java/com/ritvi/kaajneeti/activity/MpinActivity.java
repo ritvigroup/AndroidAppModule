@@ -100,6 +100,7 @@ public class MpinActivity extends LocalizationActivity {
         nameValuePairs.add(new BasicNameValuePair("mobile", mobile_number));
         nameValuePairs.add(new BasicNameValuePair("mpin", et_confirm_mpin.getText().toString()));
         nameValuePairs.add(new BasicNameValuePair("mpin_confirm", et_confirm_mpin.getText().toString()));
+        nameValuePairs.add(new BasicNameValuePair("login_type", "1"));
         new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
             @Override
             public void onGetMsg(String apicall, String response) {

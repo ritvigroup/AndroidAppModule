@@ -1,5 +1,6 @@
 package com.ritvi.kaajneeti.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import butterknife.ButterKnife;
  * Created by sunil on 17-04-2018.
  */
 
+@SuppressLint("ValidFragment")
 public class AllComplaintsFragment extends Fragment {
 
     @BindView(R.id.tabs)
@@ -33,6 +35,15 @@ public class AllComplaintsFragment extends Fragment {
     ViewPager viewPager;
     @BindView(R.id.iv_back)
     ImageView iv_back;
+
+
+    String user_id;
+    String profile_id;
+
+    public AllComplaintsFragment(String user_id,String profile_id){
+        this.user_id=user_id;
+        this.profile_id=profile_id;
+    }
 
     @Nullable
     @Override
@@ -76,8 +87,8 @@ public class AllComplaintsFragment extends Fragment {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerWithTitleAdapter adapter = new ViewPagerWithTitleAdapter(getChildFragmentManager());
 
-        selfcomplaintListFragment = new ComplaintListFragment(false);
-        associatedcomplaintListFragment = new ComplaintListFragment(true);
+        selfcomplaintListFragment = new ComplaintListFragment(false,profile_id);
+        associatedcomplaintListFragment = new ComplaintListFragment(true,profile_id);
 
         adapter.addFrag(selfcomplaintListFragment, "My Complaints");
         adapter.addFrag(associatedcomplaintListFragment, "Associated");

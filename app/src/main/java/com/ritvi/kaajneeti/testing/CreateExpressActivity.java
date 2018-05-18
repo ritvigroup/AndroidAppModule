@@ -399,6 +399,11 @@ public class CreateExpressActivity extends AppCompatActivity {
             }
 
             int count = 0;
+            if(spinner_privpub.getSelectedItemPosition()==0){
+                reqEntity.addPart("privacy", new StringBody("1"));
+            }else{
+                reqEntity.addPart("privacy", new StringBody("0"));
+            }
 
 //            for (EventAttachment eventAttachment : attachFragment.getEventAttachments()) {
             for (String file_path : mediaList) {

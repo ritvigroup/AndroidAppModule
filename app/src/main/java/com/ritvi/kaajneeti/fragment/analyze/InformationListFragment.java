@@ -48,7 +48,7 @@ public class InformationListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frag_complaint_list, container, false);
+        View view = inflater.inflate(R.layout.frag_information_list, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -67,7 +67,7 @@ public class InformationListFragment extends Fragment {
                 Log.i(TagUtils.getTag(), "keyCode: " + keyCode);
                 if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
                     Log.i(TagUtils.getTag(), "onKey Back listener is working!!!");
-                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    getActivity().onBackPressed();
                     return true;
                 }
                 return false;

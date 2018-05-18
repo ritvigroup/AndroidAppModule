@@ -110,6 +110,7 @@ public class OtpVerificationActivity extends LocalizationActivity{
             nameValuePairs.add(new BasicNameValuePair("device_token", ""));
             nameValuePairs.add(new BasicNameValuePair("mobile", mobile_number));
             nameValuePairs.add(new BasicNameValuePair("otp", et_otp.getText().toString()));
+            nameValuePairs.add(new BasicNameValuePair("login_type", "1"));
             new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
                 @Override
                 public void onGetMsg(String apicall, String response) {

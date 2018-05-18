@@ -145,7 +145,7 @@ public class WalletAmountFragment extends Fragment{
         nameValuePairs.add(new BasicNameValuePair("transaction_shipping_amount", amount));
         nameValuePairs.add(new BasicNameValuePair("transaction_status", "1"));
         nameValuePairs.add(new BasicNameValuePair("debit_or_credit", "1"));
-        nameValuePairs.add(new BasicNameValuePair("comments", "Contribution"));
+        nameValuePairs.add(new BasicNameValuePair("comments", "Adding money"));
         new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
             @Override
             public void onGetMsg(String apicall, String response) {

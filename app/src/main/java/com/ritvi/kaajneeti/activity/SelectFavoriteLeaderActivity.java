@@ -9,6 +9,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,10 +39,14 @@ public class SelectFavoriteLeaderActivity extends AppCompatActivity {
 
     @BindView(R.id.rv_favorite_leader)
     RecyclerView rv_favorite_leader;
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
     @BindView(R.id.et_search)
     EditText et_search;
     @BindView(R.id.iv_search_close)
     ImageView iv_search_close;
+    @BindView(R.id.iv_add_therapist)
+    ImageView iv_add_therapist;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +75,26 @@ public class SelectFavoriteLeaderActivity extends AppCompatActivity {
                 callLeaderAPI();
             }
         });
+
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        iv_add_therapist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SelectFavoriteLeaderActivity.this, AllLeaderActivity.class));
+            }
+        });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         callLeaderAPI();
     }
 
@@ -105,5 +132,26 @@ public class SelectFavoriteLeaderActivity extends AppCompatActivity {
         returnIntent.putExtra("userprofile",userProfilePOJO);
         setResult(Activity.RESULT_OK,returnIntent);
         finish();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_favorite_leader, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.menu_all:
+                startActivity(new Intent(SelectFavoriteLeaderActivity.this, AllLeaderActivity.class));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

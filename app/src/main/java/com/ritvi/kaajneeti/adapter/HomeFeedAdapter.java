@@ -1,6 +1,7 @@
 package com.ritvi.kaajneeti.adapter;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -26,8 +27,10 @@ import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.SetViews;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.Util.ToastClass;
+import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.fragment.complaint.ComplaintDetailFragment;
+import com.ritvi.kaajneeti.fragment.poll.PollAnalyzeFragment;
 import com.ritvi.kaajneeti.fragment.post.EventViewFragment;
 import com.ritvi.kaajneeti.fragment.post.PostViewFragment;
 import com.ritvi.kaajneeti.fragment.post.ViewPostFragment;
@@ -48,6 +51,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -419,12 +423,20 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuitem) {
+                        switch (menuitem.getItemId()) {
+                            case R.id.popup_analyze:
+                                if (activity instanceof HomeActivity) {
+                                    HomeActivity homeActivity = (HomeActivity) activity;
+                                    homeActivity.replaceFragmentinFrameHome(new PollAnalyzeFragment(pollPOJO), "PollAnalyzeFragment");
+                                }
+                                break;
+                        }
                         return false;
                     }
                 });
-                if(pollPOJO.getProfileDetailPOJO().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())) {
-                    menu.inflate(R.menu.menu_my_feed);
-                }else{
+                if (pollPOJO.getProfileDetailPOJO().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())) {
+                    menu.inflate(R.menu.menu_my_poll_feed);
+                } else {
                     menu.inflate(R.menu.menu_friend_feed);
                 }
                 menu.show();
@@ -496,7 +508,20 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         });
 
-        eventViewHolder.tv_event_date.setText(eventPOJO.getStartDate() + "-" + eventPOJO.getEndDate());
+        try {
+            String startDate = UtilityFunction.getServerConvertedFullDate(eventPOJO.getStartDate().split(" ")[0]);
+            String endDate = UtilityFunction.getServerConvertedFullDate(eventPOJO.getEndDate().split(" ")[0]);
+
+            eventViewHolder.tv_event_date.setText(startDate + "  to " + endDate);
+
+            String[] dateValues = UtilityFunction.getDateValues(eventPOJO.getStartDate().split(" ")[0]);
+            eventViewHolder.tv_month.setText(dateValues[1]);
+            eventViewHolder.tv_day.setText(dateValues[0]);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            eventViewHolder.tv_event_date.setText(eventPOJO.getStartDate() + "  to " + eventPOJO.getEndDate());
+        }
         eventViewHolder.tv_place.setText(eventPOJO.getEventLocation());
 //        eventViewHolder.tv_month.setText(eventPOJO.getEveryMonth());
 
@@ -515,14 +540,90 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         return false;
                     }
                 });
-                if(eventPOJO.getEventProfile().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())) {
+                if (eventPOJO.getEventProfile().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())) {
                     menu.inflate(R.menu.menu_my_feed);
-                }else{
+                } else {
                     menu.inflate(R.menu.menu_friend_feed);
                 }
                 menu.show();
             }
         });
+
+        eventViewHolder.ll_going.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callEventInterestAPI(eventPOJO, eventViewHolder, "1");
+            }
+        });
+
+        eventViewHolder.ll_not_going.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callEventInterestAPI(eventPOJO, eventViewHolder, "2");
+            }
+        });
+
+        eventViewHolder.ll_may_be.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callEventInterestAPI(eventPOJO, eventViewHolder, "3");
+            }
+        });
+
+        switch (eventPOJO.getMeInterested()) {
+            case 1:
+                eventViewHolder.tv_going.setTextColor(Color.parseColor("#00bcd4"));
+                eventViewHolder.tv_not_going.setTextColor(Color.parseColor("#BDBDBD"));
+                eventViewHolder.tv_may_be.setTextColor(Color.parseColor("#BDBDBD"));
+                break;
+            case 2:
+                eventViewHolder.tv_going.setTextColor(Color.parseColor("#BDBDBD"));
+                eventViewHolder.tv_not_going.setTextColor(Color.parseColor("#00bcd4"));
+                eventViewHolder.tv_may_be.setTextColor(Color.parseColor("#BDBDBD"));
+                break;
+            case 3:
+                eventViewHolder.tv_going.setTextColor(Color.parseColor("#BDBDBD"));
+                eventViewHolder.tv_not_going.setTextColor(Color.parseColor("#BDBDBD"));
+                eventViewHolder.tv_may_be.setTextColor(Color.parseColor("#00bcd4"));
+                break;
+        }
+    }
+
+    public void callEventInterestAPI(EventPOJO eventPOJO, final EventViewHolder eventViewHolder, final String interest_type) {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("event_id", eventPOJO.getEventId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("interest_type", interest_type));
+        new WebServiceBase(nameValuePairs, activity, new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.optString("status").equals("success")) {
+                        switch (interest_type) {
+                            case "1":
+                                eventViewHolder.tv_going.setTextColor(Color.parseColor("#00bcd4"));
+                                eventViewHolder.tv_not_going.setTextColor(Color.parseColor("#BDBDBD"));
+                                eventViewHolder.tv_may_be.setTextColor(Color.parseColor("#BDBDBD"));
+                                break;
+                            case "2":
+                                eventViewHolder.tv_going.setTextColor(Color.parseColor("#BDBDBD"));
+                                eventViewHolder.tv_not_going.setTextColor(Color.parseColor("#00bcd4"));
+                                eventViewHolder.tv_may_be.setTextColor(Color.parseColor("#BDBDBD"));
+                                break;
+                            case "3":
+                                eventViewHolder.tv_going.setTextColor(Color.parseColor("#BDBDBD"));
+                                eventViewHolder.tv_not_going.setTextColor(Color.parseColor("#BDBDBD"));
+                                eventViewHolder.tv_may_be.setTextColor(Color.parseColor("#00bcd4"));
+                                break;
+                        }
+                    }
+                    ToastClass.showShortToast(activity.getApplicationContext(),jsonObject.optString("message"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "CALL_EVENT_INTEREST_UPDATE", true).execute(WebServicesUrls.EVENT_INTEREST_UPDATE);
     }
 
     public void inflatePostData(final PostViewHolder postViewHolder, final PostPOJO postPOJO, int position) {
@@ -635,12 +736,17 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem menuitem) {
+                            switch (menuitem.getItemId()) {
+                                case R.id.popup_analyze:
+
+                                    break;
+                            }
                             return false;
                         }
                     });
-                    if(postPOJO.getPostProfile().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())) {
+                    if (postPOJO.getPostProfile().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())) {
                         menu.inflate(R.menu.menu_my_feed);
-                    }else{
+                    } else {
                         menu.inflate(R.menu.menu_friend_feed);
                     }
                     menu.show();
@@ -735,9 +841,9 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             return false;
                         }
                     });
-                    if(complaintPOJO.getComplaintProfile().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())) {
+                    if (complaintPOJO.getComplaintProfile().getUserProfileId().equalsIgnoreCase(Constants.userProfilePOJO.getUserProfileId())) {
                         menu.inflate(R.menu.menu_my_feed);
-                    }else{
+                    } else {
                         menu.inflate(R.menu.menu_friend_feed);
                     }
                     menu.show();
@@ -805,7 +911,13 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public TextView tv_place;
         public TextView tv_month;
         public TextView tv_day;
+        public TextView tv_may_be;
+        public TextView tv_not_going;
+        public TextView tv_going;
         public LinearLayout ll_event;
+        public LinearLayout ll_going;
+        public LinearLayout ll_not_going;
+        public LinearLayout ll_may_be;
 
         public EventViewHolder(View itemView) {
             super(itemView);
@@ -819,7 +931,13 @@ public class HomeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             tv_place = itemView.findViewById(R.id.tv_place);
             tv_month = itemView.findViewById(R.id.tv_month);
             tv_day = itemView.findViewById(R.id.tv_day);
+            tv_may_be = itemView.findViewById(R.id.tv_may_be);
+            tv_not_going = itemView.findViewById(R.id.tv_not_going);
+            tv_going = itemView.findViewById(R.id.tv_going);
             ll_event = itemView.findViewById(R.id.ll_event);
+            ll_going = itemView.findViewById(R.id.ll_going);
+            ll_not_going = itemView.findViewById(R.id.ll_not_going);
+            ll_may_be = itemView.findViewById(R.id.ll_may_be);
         }
     }
 

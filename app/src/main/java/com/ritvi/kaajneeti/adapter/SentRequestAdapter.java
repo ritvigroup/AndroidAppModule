@@ -141,6 +141,14 @@ public class SentRequestAdapter extends RecyclerView.Adapter<SentRequestAdapter.
             }
         });
 
+        holder.iv_leader_icon.setVisibility(View.GONE);
+
+        if(items.get(position).getUserTypeId().equals("2")){
+            holder.iv_leader_icon.setVisibility(View.VISIBLE);
+        }else{
+            holder.iv_leader_icon.setVisibility(View.GONE);
+        }
+
 //        holder.itemView.setTag(items.get(position));
     }
 
@@ -253,6 +261,7 @@ public class SentRequestAdapter extends RecyclerView.Adapter<SentRequestAdapter.
         public LinearLayout ll_follow;
         public LinearLayout ll_cancel;
         public LinearLayout ll_unfriend;
+        public ImageView iv_leader_icon;
         public Button btn_accept, btn_reject_friend, btn_follow, btn_cancel_request, btn_unfriend;
 
         public ViewHolder(View itemView) {
@@ -269,6 +278,7 @@ public class SentRequestAdapter extends RecyclerView.Adapter<SentRequestAdapter.
             ll_follow = itemView.findViewById(R.id.ll_follow);
             ll_cancel = itemView.findViewById(R.id.ll_cancel);
             ll_unfriend = itemView.findViewById(R.id.ll_unfriend);
+            iv_leader_icon = itemView.findViewById(R.id.iv_leader_icon);
             btn_unfriend = itemView.findViewById(R.id.btn_unfriend);
             btn_cancel_request = itemView.findViewById(R.id.btn_cancel_request);
         }

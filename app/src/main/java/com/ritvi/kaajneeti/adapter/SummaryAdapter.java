@@ -29,10 +29,14 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.ViewHold
     Activity activity;
     Fragment fragment;
 
-    public SummaryAdapter(Activity activity, Fragment fragment, List<SummaryPOJO> items) {
+    String user_id;
+    String profile_id;
+    public SummaryAdapter(Activity activity, Fragment fragment, List<SummaryPOJO> items,String user_id,String profile_id) {
         this.items = items;
         this.activity = activity;
         this.fragment = fragment;
+        this.user_id=user_id;
+        this.profile_id=profile_id;
     }
 
     @Override
@@ -55,23 +59,23 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.ViewHold
                     HomeActivity homeActivity = (HomeActivity) activity;
                     switch (items.get(position).getType().toLowerCase()) {
                         case "connect":
-                            FriendsListFragment friendsListFragment = new FriendsListFragment();
+                            FriendsListFragment friendsListFragment = new FriendsListFragment(user_id,profile_id);
                             homeActivity.replaceFragmentinFrameHome(friendsListFragment,"friendsListFragment");
                             break;
                         case "event":
-                            AllEventFragment allEventFragment = new AllEventFragment();
+                            AllEventFragment allEventFragment = new AllEventFragment(user_id,profile_id);
                             homeActivity.replaceFragmentinFrameHome(allEventFragment,"allEventFragment");
                             break;
                         case "poll":
-                            AllPollFragment allPollFragment = new AllPollFragment();
+                            AllPollFragment allPollFragment = new AllPollFragment(user_id,profile_id);
                             homeActivity.replaceFragmentinFrameHome(allPollFragment,"allPollFragment");
                             break;
                         case "post":
-                            ALLPostListFragment allPostListFragment = new ALLPostListFragment();
+                            ALLPostListFragment allPostListFragment = new ALLPostListFragment(user_id,profile_id);
                             homeActivity.replaceFragmentinFrameHome(allPostListFragment,"allPostListFragment");
                             break;
                         case "complaint":
-                            AllComplaintsFragment complaintListFragment = new AllComplaintsFragment();
+                            AllComplaintsFragment complaintListFragment = new AllComplaintsFragment(user_id,profile_id);
                             homeActivity.replaceFragmentinFrameHome(complaintListFragment,"complaintListFragment");
                             break;
                     }

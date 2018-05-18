@@ -16,11 +16,6 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_default_pic" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#757575"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

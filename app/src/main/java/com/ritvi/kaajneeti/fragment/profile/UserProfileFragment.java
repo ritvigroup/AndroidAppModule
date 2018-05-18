@@ -20,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -58,6 +59,7 @@ import com.ritvi.kaajneeti.adapter.FriendGridAdapter;
 import com.ritvi.kaajneeti.adapter.HomeFeedAdapter;
 import com.ritvi.kaajneeti.adapter.SummaryAdapter;
 import com.ritvi.kaajneeti.fragment.contribute.ContributeAmountFragment;
+import com.ritvi.kaajneeti.fragment.profile.friends.FriendsListFragment;
 import com.ritvi.kaajneeti.fragment.search.SearchFragment;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.ResponsePOJO;
@@ -78,6 +80,7 @@ import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 import com.ritvi.kaajneeti.webservice.WebUploadService;
+import com.yalantis.ucrop.UCrop;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -154,11 +157,36 @@ public class UserProfileFragment extends Fragment {
     ImageView iv_leader_icon;
     @BindView(R.id.ll_contribute)
     LinearLayout ll_contribute;
+    @BindView(R.id.ll_friend)
+    LinearLayout ll_friend;
+    @BindView(R.id.ll_message)
+    LinearLayout ll_message;
+    @BindView(R.id.ll_block)
+    LinearLayout ll_block;
+    @BindView(R.id.tv_add_friend)
+    TextView tv_add_friend;
     @BindView(R.id.iv_qr_code)
     ImageView iv_qr_code;
+    @BindView(R.id.ll_edit_profile)
+    LinearLayout ll_edit_profile;
+    @BindView(R.id.ll_connect)
+    LinearLayout ll_connect;
+    @BindView(R.id.ll_view_as_menu)
+    LinearLayout ll_view_as_menu;
+    @BindView(R.id.ll_mine_menu)
+    LinearLayout ll_mine_menu;
+    @BindView(R.id.iv_cover_edit)
+    ImageView iv_cover_edit;
+    @BindView(R.id.ic_cover_pic)
+    ImageView ic_cover_pic;
+    @BindView(R.id.cv_connect)
+    CardView cv_connect;
 
     private static final int PICK_IMAGE_REQUEST = 101;
     private static final int CAMERA_REQUEST = 102;
+
+    boolean is_profle_pic=true;
+
 
     String user_id;
     String profile_id;
@@ -198,6 +226,13 @@ public class UserProfileFragment extends Fragment {
                 }
             }
         });
+        ll_edit_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                iv_edit.callOnClick();
+            }
+        });
+
 
         iv_qr_code.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,12 +251,15 @@ public class UserProfileFragment extends Fragment {
                     public boolean onMenuItemClick(MenuItem menuitem) {
                         switch (menuitem.getItemId()) {
                             case R.id.popup_camera:
+                                is_profle_pic=true;
                                 startCamera();
                                 break;
                             case R.id.popup_gallery:
+                                is_profle_pic=true;
                                 selectProfilePic();
                                 break;
                             case R.id.popup_remove:
+                                is_profle_pic=true;
                                 removeProfilePic();
                                 break;
                         }
@@ -233,6 +271,47 @@ public class UserProfileFragment extends Fragment {
             }
         });
 
+        iv_cover_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PopupMenu menu = new PopupMenu(getActivity(), v);
+
+                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuitem) {
+                        switch (menuitem.getItemId()) {
+                            case R.id.popup_camera:
+                                is_profle_pic=false;
+                                startCamera();
+                                break;
+                            case R.id.popup_gallery:
+                                is_profle_pic=false;
+                                selectProfilePic();
+                                break;
+                            case R.id.popup_remove:
+                                is_profle_pic=false;
+                                removeProfilePic();
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                menu.inflate(R.menu.menu_profile_pic_option);
+                menu.show();
+            }
+        });
+
+
+        ll_connect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getActivity() instanceof HomeActivity) {
+                    HomeActivity homeActivity = (HomeActivity) getActivity();
+                    FriendsListFragment friendsListFragment = new FriendsListFragment(fullProfilePOJO.getProfilePOJO().getUserId(), fullProfilePOJO.getProfilePOJO().getUserProfileId());
+                    homeActivity.replaceFragmentinFrameHome(friendsListFragment, "friendsListFragment");
+                }
+            }
+        });
 
         getAllProfileData();
         getFriendSummary();
@@ -269,6 +348,15 @@ public class UserProfileFragment extends Fragment {
         int minHeight = UtilityFunction.convertedDP(getActivity().getApplicationContext(), UtilityFunction.screenDimensions(getActivity().getApplicationContext())[0]);
         rv_post.setMinimumHeight(minHeight);
 
+        ll_mine_menu.setVisibility(View.GONE);
+        ll_view_as_menu.setVisibility(View.GONE);
+
+        if (Constants.userProfilePOJO.getUserProfileId().equalsIgnoreCase(profile_id)) {
+            ll_mine_menu.setVisibility(View.VISIBLE);
+        } else {
+            ll_view_as_menu.setVisibility(View.VISIBLE);
+        }
+
     }
 
     private void showQrCode() {
@@ -281,8 +369,8 @@ public class UserProfileFragment extends Fragment {
         Window window = dialog1.getWindow();
         window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        Button btn_close=dialog1.findViewById(R.id.btn_close);
-        ImageView iv_qr_code=dialog1.findViewById(R.id.iv_qr_code);
+        Button btn_close = dialog1.findViewById(R.id.btn_close);
+        ImageView iv_qr_code = dialog1.findViewById(R.id.iv_qr_code);
 
         btn_close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -293,15 +381,21 @@ public class UserProfileFragment extends Fragment {
 
         try {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap bitmap = barcodeEncoder.encodeBitmap(user_id+","+profile_id, BarcodeFormat.QR_CODE, 400, 400);
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(user_id + "," + profile_id, BarcodeFormat.QR_CODE, 400, 400);
             iv_qr_code.setImageBitmap(bitmap);
-        } catch(Exception e) {
+        } catch (Exception e) {
 
         }
     }
 
 
     public void removeProfilePic() {
+        String remove_url="";
+        if(is_profle_pic){
+            remove_url=WebServicesUrls.REMOVE_PROFILE_PIC;
+        }else{
+            remove_url=WebServicesUrls.REMOVE_COVER_PROFILE_PIC;
+        }
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", profile_id));
         nameValuePairs.add(new BasicNameValuePair("user_id", user_id));
@@ -314,7 +408,11 @@ public class UserProfileFragment extends Fragment {
                         Gson gson = new Gson();
                         UserProfilePOJO userProfilePOJO = gson.fromJson(jsonObject.optJSONObject("result").toString(), UserProfilePOJO.class);
                         image_path_string = "";
-                        cv_profile_pic.setBackgroundResource(R.drawable.ic_default_profile_pic);
+                        if(is_profle_pic) {
+                            cv_profile_pic.setImageResource(R.drawable.ic_default_profile_pic);
+                        }else{
+                            ic_cover_pic.setImageResource(R.drawable.ic_default_profile_pic);
+                        }
                         fullProfilePOJO.setProfilePOJO(userProfilePOJO);
                         setUpProfileData(fullProfilePOJO);
                     }
@@ -322,7 +420,7 @@ public class UserProfileFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-        }, "REMOVE_PROFILE_API", true).execute(WebServicesUrls.REMOVE_PROFILE_PIC);
+        }, "REMOVE_PROFILE_API", true).execute(remove_url);
     }
 
     String pictureImagePath = "";
@@ -392,7 +490,7 @@ public class UserProfileFragment extends Fragment {
             public void onGetMsg(ResponseListPOJO<SummaryPOJO> responseListPOJO) {
                 try {
                     if (responseListPOJO.isSuccess()) {
-                        SummaryAdapter summaryAdapter = new SummaryAdapter(getActivity(), UserProfileFragment.this, responseListPOJO.getResultList());
+                        SummaryAdapter summaryAdapter = new SummaryAdapter(getActivity(), UserProfileFragment.this, responseListPOJO.getResultList(), fullProfilePOJO.getProfilePOJO().getUserId(), fullProfilePOJO.getProfilePOJO().getUserProfileId());
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
                         rv_activity.setHasFixedSize(true);
                         rv_activity.setAdapter(summaryAdapter);
@@ -435,6 +533,13 @@ public class UserProfileFragment extends Fragment {
                     .error(R.drawable.ic_default_profile_pic)
                     .dontAnimate()
                     .into(cv_profile_pic);
+
+            Glide.with(getActivity().getApplicationContext())
+                    .load(fullProfilePOJO.getProfilePOJO().getCoverPhotoPath())
+                    .placeholder(R.drawable.ic_default_profile_pic)
+                    .error(R.drawable.ic_default_profile_pic)
+                    .dontAnimate()
+                    .into(ic_cover_pic);
 
             if (!Constants.userProfilePOJO.getProfilePhotoPath().equals(fullProfilePOJO.getProfilePOJO().getProfilePhotoPath())) {
                 SetViews.changeProfilePics(getActivity().getApplicationContext(), fullProfilePOJO.getProfilePOJO().getProfilePhotoPath());
@@ -515,9 +620,178 @@ public class UserProfileFragment extends Fragment {
                     updateBIO(fullProfilePOJO.getProfilePOJO().getUserBio());
                 }
             });
+            ll_incoming_request.setVisibility(View.GONE);
+            switch (fullProfilePOJO.getProfilePOJO().getMyFriend()) {
+                case 0:
+                    tv_add_friend.setText("Add Friend");
+                    break;
+                case 1:
+                    tv_add_friend.setText("Cancel Request");
+                    break;
+                case 2:
+                    ll_incoming_request.setVisibility(View.VISIBLE);
+                    tv_add_friend.setText("Respond");
+                    break;
+                case 3:
+                    tv_add_friend.setText("Unfriend");
+                    break;
+                case 4:
+                    tv_add_friend.setText("Follow");
+                    break;
+                case -1:
+                    break;
+            }
 
+            ll_friend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    switch (fullProfilePOJO.getProfilePOJO().getMyFriend()) {
+                        case 0:
+                            sendFriendRequest(fullProfilePOJO.getProfilePOJO());
+                            break;
+                        case 1:
+                            undoFriendRequest(fullProfilePOJO.getProfilePOJO());
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            sendFriendRequest(fullProfilePOJO.getProfilePOJO());
+                            break;
+                        case 4:
+                            break;
+                        case -1:
+                            break;
+                    }
+                }
+            });
+
+            btn_confirm_friend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    acceptRequest(fullProfilePOJO.getProfilePOJO());
+                }
+            });
+
+            btn_cancel_request.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    cancelFriendRequest(fullProfilePOJO.getProfilePOJO());
+                }
+            });
+
+            if(fullProfilePOJO.getFriendsProfilePOJOS()!=null&&fullProfilePOJO.getFriendsProfilePOJOS().size()>0){
+                cv_connect.setVisibility(View.VISIBLE);
+            }else{
+                cv_connect.setVisibility(View.GONE);
+            }
         }
     }
+
+
+    public void acceptRequest(final UserProfilePOJO userProfilePOJO) {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id", userProfilePOJO.getUserProfileId()));
+        new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.optString("status").equalsIgnoreCase("success")) {
+                        userProfilePOJO.setMyFriend(3);
+                        getAllProfileData();
+                    }
+                    ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "CALL_ADD_FRIEND_API", true).execute(WebServicesUrls.SEND_FRIEND_REQUEST);
+    }
+
+
+    public void cancelFriendRequest(final UserProfilePOJO userProfilePOJO) {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id", userProfilePOJO.getUserProfileId()));
+        new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.optString("status").equalsIgnoreCase("success")) {
+                        getAllProfileData();
+                    }
+                    ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, "CALL_ADD_FRIEND_API", true).execute(WebServicesUrls.CANCEL_FRIEND_REQUEST);
+    }
+
+
+    public void undoFriendRequest(final UserProfilePOJO userProfilePOJO) {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id", userProfilePOJO.getUserProfileId()));
+        new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.optString("status").equalsIgnoreCase("success")) {
+                        getAllProfileData();
+                    }
+                    ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, "CALL_ADD_FRIEND_API", true).execute(WebServicesUrls.UNDO_FRIEND_REQUEST);
+    }
+
+    public void sendFriendRequest(final UserProfilePOJO userProfilePOJO) {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_id", Constants.userProfilePOJO.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("friend_user_profile_id", userProfilePOJO.getUserProfileId()));
+        new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
+            @Override
+            public void onGetMsg(String apicall, String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.optString("status").equalsIgnoreCase("success")) {
+                        int friend = jsonObject.optInt("friend");
+                        if (friend == -1) {
+
+                        }
+                        getAllProfileData();
+
+                    }
+                    ToastClass.showShortToast(getActivity().getApplicationContext(), jsonObject.optString("message"));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "CALL_ADD_FRIEND_API", true).execute(WebServicesUrls.SEND_FRIEND_REQUEST);
+    }
+
+    @BindView(R.id.ll_incoming_request)
+    LinearLayout ll_incoming_request;
+    @BindView(R.id.btn_confirm_friend)
+    Button btn_confirm_friend;
+    @BindView(R.id.btn_cancel_request)
+    Button btn_cancel_request;
 
     List<UserProfilePOJO> friendProfilePOJOS = new ArrayList<>();
     FriendGridAdapter friendGridAdapter;
@@ -708,7 +982,8 @@ public class UserProfileFragment extends Fragment {
                 if (selectedImagePath != null && selectedImagePath != "") {
                     image_path_string = selectedImagePath;
                     Log.d(TagUtils.getTag(), "selected path:-" + selectedImagePath);
-                    setProfilePic();
+//                    setProfilePic();
+                    cropProfilePic(image_path_string);
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Selected File is Corrupted", Toast.LENGTH_LONG).show();
                 }
@@ -732,7 +1007,8 @@ public class UserProfileFragment extends Fragment {
                     fos.flush();
                     fos.close();
                     image_path_string = file_name.toString();
-                    setProfilePic();
+//                    setProfilePic();
+                    cropProfilePic(image_path_string);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (Exception e) {
@@ -740,53 +1016,125 @@ public class UserProfileFragment extends Fragment {
                 }
             }
             return;
+        }if (resultCode == Activity.RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            final Uri resultUri = UCrop.getOutput(data);
+            setProfilePic(resultUri.getPath());
         }
     }
 
-    public void setProfilePic() {
+    public void cropProfilePic(String source) {
+        if (new File(source).exists()) {
+            Uri uri = Uri.fromFile(new File(source));
+            String destPath = FileUtils.getPhotoFolder() + File.separator + System.currentTimeMillis() + ".png";
+            Uri destUri = Uri.fromFile(new File(destPath));
+            UCrop.of(uri, destUri)
+                    .start(getActivity());
+        } else {
+            ToastClass.showShortToast(getActivity().getApplicationContext(), "File is corrupted");
+        }
+    }
+
+    public void setProfilePic(String image_path_string) {
+
+        Log.d(TagUtils.getTag(),"image path string:-"+image_path_string);
         if (image_path_string.length() > 0 && new File(image_path_string).exists()) {
-            Glide.with(getActivity().getApplicationContext())
-                    .load(image_path_string)
-                    .error(R.drawable.ic_default_profile_pic)
-                    .placeholder(R.drawable.ic_default_profile_pic)
-                    .dontAnimate()
-                    .into(cv_profile_pic);
-
-
-            try {
-                MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-                if (image_path_string.length() > 0 && new File(image_path_string).exists()) {
-                    FileBody bin1 = new FileBody(new File(image_path_string));
-                    reqEntity.addPart("photo", bin1);
-                } else {
-                    reqEntity.addPart("photo", new StringBody(""));
-                }
-
-                reqEntity.addPart("user_id", new StringBody(user_id));
-                reqEntity.addPart("user_profile_id", new StringBody(profile_id));
-
-                new WebUploadService(reqEntity, getActivity(), new WebServicesCallBack() {
-                    @Override
-                    public void onGetMsg(String apicall, String response) {
-                        Log.d(TagUtils.getTag(), apicall + ":-" + response);
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            if (jsonObject.optString("status").equals("success")) {
-                                Gson gson = new Gson();
-                                Pref.SetStringPref(getActivity().getApplicationContext(), StringUtils.USER_PROFILE, jsonObject.optJSONObject("result").toString());
-                                UserProfilePOJO userProfilePOJO = gson.fromJson(jsonObject.optJSONObject("result").toString(), UserProfilePOJO.class);
-                                SetViews.changeProfilePics(getActivity().getApplicationContext(), userProfilePOJO.getProfilePhotoPath());
-                                Constants.userProfilePOJO = userProfilePOJO;
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }, "CALL_SAVE_PROFILE_API", true).execute(WebServicesUrls.UPDATE_USER_PROFILE_PHOTO);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if(is_profle_pic) {
+                setPicture(image_path_string);
+            }else{
+                setCoverPic(image_path_string);
             }
+        }
+    }
+
+
+    public void setPicture(String image_path_string){
+        Glide.with(getActivity().getApplicationContext())
+                .load(image_path_string)
+                .error(R.drawable.ic_default_profile_pic)
+                .placeholder(R.drawable.ic_default_profile_pic)
+                .dontAnimate()
+                .into(cv_profile_pic);
+
+
+        try {
+            MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+            if (image_path_string.length() > 0 && new File(image_path_string).exists()) {
+                FileBody bin1 = new FileBody(new File(image_path_string));
+                reqEntity.addPart("photo", bin1);
+            } else {
+                reqEntity.addPart("photo", new StringBody(""));
+            }
+
+            reqEntity.addPart("user_id", new StringBody(user_id));
+            reqEntity.addPart("user_profile_id", new StringBody(profile_id));
+
+            new WebUploadService(reqEntity, getActivity(), new WebServicesCallBack() {
+                @Override
+                public void onGetMsg(String apicall, String response) {
+                    Log.d(TagUtils.getTag(), apicall + ":-" + response);
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        if (jsonObject.optString("status").equals("success")) {
+                            Gson gson = new Gson();
+                            Pref.SetStringPref(getActivity().getApplicationContext(), StringUtils.USER_PROFILE, jsonObject.optJSONObject("result").toString());
+                            UserProfilePOJO userProfilePOJO = gson.fromJson(jsonObject.optJSONObject("result").toString(), UserProfilePOJO.class);
+                            SetViews.changeProfilePics(getActivity().getApplicationContext(), userProfilePOJO.getProfilePhotoPath());
+                            Constants.userProfilePOJO = userProfilePOJO;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }, "CALL_SAVE_PROFILE_API", true).execute(WebServicesUrls.UPDATE_USER_PROFILE_PHOTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void setCoverPic(String image_path_string){
+
+        Glide.with(getActivity().getApplicationContext())
+                .load(image_path_string)
+                .error(R.drawable.ic_default_profile_pic)
+                .placeholder(R.drawable.ic_default_profile_pic)
+                .dontAnimate()
+                .into(ic_cover_pic);
+
+        try {
+            MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+            if (image_path_string.length() > 0 && new File(image_path_string).exists()) {
+                FileBody bin1 = new FileBody(new File(image_path_string));
+                reqEntity.addPart("cover", bin1);
+            } else {
+                reqEntity.addPart("cover", new StringBody(""));
+            }
+
+            reqEntity.addPart("user_id", new StringBody(user_id));
+            reqEntity.addPart("user_profile_id", new StringBody(profile_id));
+
+            new WebUploadService(reqEntity, getActivity(), new WebServicesCallBack() {
+                @Override
+                public void onGetMsg(String apicall, String response) {
+                    Log.d(TagUtils.getTag(), apicall + ":-" + response);
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        if (jsonObject.optString("status").equals("success")) {
+                            Gson gson = new Gson();
+                            Pref.SetStringPref(getActivity().getApplicationContext(), StringUtils.USER_PROFILE, jsonObject.optJSONObject("result").toString());
+                            UserProfilePOJO userProfilePOJO = gson.fromJson(jsonObject.optJSONObject("result").toString(), UserProfilePOJO.class);
+                            SetViews.changeProfilePics(getActivity().getApplicationContext(), userProfilePOJO.getProfilePhotoPath());
+                            Constants.userProfilePOJO = userProfilePOJO;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }, "CALL_SAVE_PROFILE_API", true).execute(WebServicesUrls.UPDATE_USER_PROFILE_COVER_PHOTO);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

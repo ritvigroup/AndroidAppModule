@@ -46,7 +46,7 @@ public class SuggestionListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frag_complaint_list, container, false);
+        View view = inflater.inflate(R.layout.frag_suggestion_list, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -86,31 +86,31 @@ public class SuggestionListFragment extends Fragment {
         new WebServiceBaseResponseList<SuggestionPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<SuggestionPOJO>() {
             @Override
             public void onGetMsg(ResponseListPOJO responseListPOJO) {
-                complaintPOJOS.clear();
+                suggestionPOJOS.clear();
                 try {
                     if (responseListPOJO.isSuccess()) {
-                        complaintPOJOS.addAll(responseListPOJO.getResultList());
+                        suggestionPOJOS.addAll(responseListPOJO.getResultList());
                     } else {
                         ToastClass.showShortToast(getActivity().getApplicationContext(), responseListPOJO.getMessage());
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                complaintAnalyzeAdapter.notifyDataSetChanged();
+                suggestionAnalyzeAdapter.notifyDataSetChanged();
             }
         }, SuggestionPOJO.class, "call_complaint_list_api", true).execute(WebServicesUrls.SUGGESTION_LIST);
     }
 
 
-    List<SuggestionPOJO> complaintPOJOS = new ArrayList<>();
-    SuggestionAnalyzeAdapter complaintAnalyzeAdapter;
+    List<SuggestionPOJO> suggestionPOJOS = new ArrayList<>();
+    SuggestionAnalyzeAdapter suggestionAnalyzeAdapter;
 
     public void attachAdapter() {
 
-        complaintAnalyzeAdapter = new SuggestionAnalyzeAdapter(getActivity(), this, complaintPOJOS);
+        suggestionAnalyzeAdapter = new SuggestionAnalyzeAdapter(getActivity(), this, suggestionPOJOS);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rv_complaints.setHasFixedSize(true);
-        rv_complaints.setAdapter(complaintAnalyzeAdapter);
+        rv_complaints.setAdapter(suggestionAnalyzeAdapter);
         rv_complaints.setLayoutManager(linearLayoutManager);
         rv_complaints.setItemAnimator(new DefaultItemAnimator());
     }

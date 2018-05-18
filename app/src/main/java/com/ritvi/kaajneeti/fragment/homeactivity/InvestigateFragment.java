@@ -131,7 +131,7 @@ public class InvestigateFragment extends Fragment {
 
 
     public void showComplaintListFragment() {
-        AllComplaintsFragment complaintListFragment = new AllComplaintsFragment();
+        AllComplaintsFragment complaintListFragment = new AllComplaintsFragment(Constants.userProfilePOJO.getUserId(),Constants.userProfilePOJO.getUserProfileId());
         FragmentManager manager = getChildFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.frame_main, complaintListFragment, "complaintListFragment");
@@ -158,7 +158,7 @@ public class InvestigateFragment extends Fragment {
     }
 
     public void showAllPostFragment() {
-        ALLPostListFragment allPostListFragment = new ALLPostListFragment();
+        ALLPostListFragment allPostListFragment = new ALLPostListFragment(Constants.userProfilePOJO.getUserId(),Constants.userProfilePOJO.getUserProfileId());
         FragmentManager manager = getChildFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.frame_main, allPostListFragment, "allPostListFragment");
@@ -167,7 +167,7 @@ public class InvestigateFragment extends Fragment {
     }
 
     public void showALLEventFragment() {
-        AllEventFragment allEventFragment = new AllEventFragment();
+        AllEventFragment allEventFragment = new AllEventFragment(Constants.userProfilePOJO.getUserId(),Constants.userProfilePOJO.getUserProfileId());
         FragmentManager manager = getChildFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.frame_main, allEventFragment, "allEventFragment");
@@ -176,7 +176,7 @@ public class InvestigateFragment extends Fragment {
     }
 
     public void shoAllPollFragment() {
-        AllPollFragment allPollFragment = new AllPollFragment();
+        AllPollFragment allPollFragment = new AllPollFragment(Constants.userProfilePOJO.getUserId(),Constants.userProfilePOJO.getUserProfileId());
         FragmentManager manager = getChildFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.frame_main, allPollFragment, "allPollFragment");

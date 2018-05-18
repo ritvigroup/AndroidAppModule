@@ -76,6 +76,7 @@ public class WebServicesUrls {
     public static final String SAVE_POLL_ANS = BASE_URL + "poll/participatePollWithAnswer";
     public static final String FULL_PROFILE_URL = BASE_URL + "userprofile/getMoreDetailAboutFriendUserProfile";
     public static final String REMOVE_PROFILE_PIC = BASE_URL + "userprofile/removeUserProfilePicture";
+    public static final String REMOVE_COVER_PROFILE_PIC = BASE_URL + "userprofile/removeUserProfileCoverPhoto";
     public static final String UPDATE_PROFILE_ADDRESS = BASE_URL + "userprofile/updateProfileAddress";
     public static final String DELETE_PROFILE_ADDRESS = BASE_URL + "userprofile/deleteProfileAddress";
     public static final String DELETE_PROFILE_WORK = BASE_URL + "userprofile/deleteProfileWork";
@@ -83,6 +84,7 @@ public class WebServicesUrls {
     public static final String GET_MY_FRIEND_TOTAL_SUMMARY = BASE_URL + "citizen/getFriendAllSummaryTotal";
     public static final String FRIEND_HOME_PAGE_DATA = BASE_URL + "citizen/getAllFriendHomePageData";
     public static final String UPDATE_USER_PROFILE_PHOTO = BASE_URL + "userprofile/updateUserProfilePhoto";
+    public static final String UPDATE_USER_PROFILE_COVER_PHOTO = BASE_URL + "userprofile/updateUserProfileCoverPhoto";
     public static final String UPDATE_BIO = BASE_URL + "userprofile/updateUserProfileBio";
     public static final String POINT_TRANS_LOG = BASE_URL + "payment/getMyAllPointTransactionLog";
     public static final String MY_TOTAL_POINTS = BASE_URL + "payment/getMyTotalPointDetail";
@@ -93,4 +95,5 @@ public class WebServicesUrls {
     public static final String ALL_SEARCH_API = BASE_URL + "search/getAllSearch";
     public static final String UPDATE_GROUP_MEMBERS = BASE_URL + "friendgroup/updateFriendGroup";
     public static final String SEARCH_FILTERS = BASE_URL + "search/getAllSearchFilterForPeople";
+    public static final String EVENT_INTEREST_UPDATE = BASE_URL + "event/saveMyEventInterest";
 }

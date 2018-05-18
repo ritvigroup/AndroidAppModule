@@ -45,6 +45,10 @@ public class EventPOJO implements Serializable {
     private List<Object> eventAttendee;
     @SerializedName("EventAttachment")
     private List<EventAttachmentPOJO> eventAttachment;
+    @SerializedName("TotalEventInterest")
+    private List<EventInterestPOJO> TotalEventInterestList;
+    @SerializedName("MeInterested")
+    private Integer MeInterested;
 
     public String getEventId() {
         return eventId;
@@ -180,5 +184,21 @@ public class EventPOJO implements Serializable {
 
     public void setEventAttachment(List<EventAttachmentPOJO> eventAttachment) {
         this.eventAttachment = eventAttachment;
+    }
+
+    public Integer getMeInterested() {
+        return MeInterested;
+    }
+
+    public void setMeInterested(Integer meInterested) {
+        MeInterested = meInterested;
+    }
+
+    public List<EventInterestPOJO> getTotalEventInterestList() {
+        return TotalEventInterestList;
+    }
+
+    public void setTotalEventInterestList(List<EventInterestPOJO> totalEventInterestList) {
+        TotalEventInterestList = totalEventInterestList;
     }
 }

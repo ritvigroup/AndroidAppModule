@@ -1,7 +1,9 @@
 package com.ritvi.kaajneeti.activity;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -52,6 +54,7 @@ import com.ritvi.kaajneeti.fragment.setting.SettingFragment;
 import com.ritvi.kaajneeti.pojo.analyze.ComplaintPOJO;
 import com.ritvi.kaajneeti.testing.CreateExpressActivity;
 import com.ritvi.kaajneeti.views.CustomViewPager;
+import com.yalantis.ucrop.UCrop;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -246,7 +249,8 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        tv_header_title.setText(Constants.userProfilePOJO.getFirstName());
+        String profile_name=Constants.userProfilePOJO.getFirstName()+" "+Constants.userProfilePOJO.getLastName();
+        SetViews.setProfileName(profile_name,tv_header_title);
 
         ImageView cv_profile_pic = headerLayout.findViewById(R.id.cv_profile_pic);
 
@@ -443,4 +447,32 @@ public class HomeActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        Fragment selectedFragment = getSupportFragmentManager().findFragmentById(R.id.frame_home);
+        Log.d(TagUtils.getTag(),"selected fragment:-"+selectedFragment);
+        if(selectedFragment==null){
+            if(viewPager.getCurrentItem()!=0){
+                viewPager.setCurrentItem(0);
+            }else{
+                super.onBackPressed();
+            }
+        }else{
+            super.onBackPressed();
+        }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.frame_home);
+        if(fragment instanceof UserProfileFragment) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }else if(fragment instanceof UpdateUserProfileFragment) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }

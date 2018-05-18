@@ -114,11 +114,10 @@ public class KaajFragment extends Fragment {
 
         if (getActivity() instanceof HomeActivity) {
 
-            tv_profile_name.setText(Constants.userProfilePOJO.getFirstName() + " " + Constants.userProfilePOJO.getLastName());
-
             Log.d(TagUtils.getTag(), "profile photo path:-" + Constants.userProfilePOJO.getProfilePhotoPath());
 
             SetViews.setProfilePhoto(getActivity().getApplicationContext(), Constants.userProfilePOJO.getProfilePhotoPath(), cv_profile_pic);
+            SetViews.setProfileName(Constants.userProfilePOJO.getFirstName()+" "+Constants.userProfilePOJO.getLastName(),tv_profile_name);
 
             ll_whats_mind.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -80,6 +80,7 @@ public class LoginWithOTPActivity extends AppCompatActivity{
         ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("request_action","LOGIN_MOBILE"));
         nameValuePairs.add(new BasicNameValuePair("mobile","+91"+et_login_otp.getText().toString()));
+        nameValuePairs.add(new BasicNameValuePair("login_type", "1"));
         new WebServiceBase(nameValuePairs, this, new WebServicesCallBack() {
             @Override
             public void onGetMsg(String apicall, String response) {

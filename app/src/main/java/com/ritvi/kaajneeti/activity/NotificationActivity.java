@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.FrameLayout;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.adapter.NotificationAdapter;
 import com.ritvi.kaajneeti.fragment.analyze.ComplaintListFragment;
 
@@ -45,7 +46,7 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     public void attachGroupComplaint() {
-        ComplaintListFragment complaintListFragment = new ComplaintListFragment(true);
+        ComplaintListFragment complaintListFragment = new ComplaintListFragment(true, Constants.userProfilePOJO.getUserProfileId());
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.frame_main, complaintListFragment, "complaintListFragment");
