@@ -23,8 +23,11 @@ import com.ritvi.kaajneeti.Util.UtilityFunction;
 import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.adapter.HomeFeedAdapter;
 import com.ritvi.kaajneeti.fragment.promotion.EngagementFragment;
+import com.ritvi.kaajneeti.pojo.ResponsePOJO;
 import com.ritvi.kaajneeti.pojo.home.EventPOJO;
+import com.ritvi.kaajneeti.webservice.ResponseCallBack;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
+import com.ritvi.kaajneeti.webservice.WebServiceBaseResponse;
 import com.ritvi.kaajneeti.webservice.WebServicesCallBack;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
 
@@ -113,8 +116,30 @@ public class EventViewFragment extends Fragment {
             }
         });
 
-        loadView();
 
+        callEventAPI();
+    }
+
+    public void callEventAPI(){
+        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id",Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("event_id",eventPOJO.getEventId()));
+
+        new WebServiceBaseResponse<EventPOJO>(nameValuePairs, getActivity(), new ResponseCallBack<EventPOJO>() {
+            @Override
+            public void onGetMsg(ResponsePOJO<EventPOJO> responsePOJO) {
+                try {
+                    if (responsePOJO.isSuccess()) {
+                        EventViewFragment.this.eventPOJO=responsePOJO.getResult();
+                    } else {
+
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                loadView();
+            }
+        },EventPOJO.class,"GET_EVENT_DETAILS",true).execute(WebServicesUrls.EVENT_DETAIL);
     }
 
     public void loadView(){
@@ -200,8 +225,8 @@ public class EventViewFragment extends Fragment {
 
         try{
             tv_total_going.setText(eventPOJO.getTotalEventInterestList().get(0).getTotalCount());
-            tv_total_not_going.setText(eventPOJO.getTotalEventInterestList().get(1).getTotalCount());
-            tv_total_may_be.setText(eventPOJO.getTotalEventInterestList().get(2).getTotalCount());
+            tv_total_not_going.setText(eventPOJO.getTotalEventInterestList().get(2).getTotalCount());
+            tv_total_may_be.setText(eventPOJO.getTotalEventInterestList().get(1).getTotalCount());
         }catch (Exception e){
             e.printStackTrace();
         }

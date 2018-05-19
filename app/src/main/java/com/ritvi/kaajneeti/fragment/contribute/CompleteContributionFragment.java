@@ -31,6 +31,7 @@ import com.ritvi.kaajneeti.adapter.PaymentListAdapter;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.payment.PaymentPOJO;
 import com.ritvi.kaajneeti.pojo.payment.PaymentTransPOJO;
+import com.ritvi.kaajneeti.pojo.payment.PaymentTypePOJO;
 import com.ritvi.kaajneeti.pojo.user.UserProfilePOJO;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
 import com.ritvi.kaajneeti.webservice.WebServiceBase;
@@ -138,21 +139,47 @@ public class CompleteContributionFragment extends Fragment {
     public void showpaymentDialog() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
-        new WebServiceBaseResponseList<PaymentPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<PaymentPOJO>() {
+        nameValuePairs.add(new BasicNameValuePair("payment_point", "All"));
+        nameValuePairs.add(new BasicNameValuePair("debit_credit", "All"));
+        new WebServiceBaseResponseList<PaymentTypePOJO>(nameValuePairs, getActivity(), new ResponseListCallback<PaymentTypePOJO>() {
             @Override
-            public void onGetMsg(ResponseListPOJO<PaymentPOJO> responseListPOJO) {
+            public void onGetMsg(ResponseListPOJO<PaymentTypePOJO> responseListPOJO) {
                 if (responseListPOJO.isSuccess()) {
-                    PaymentListAdapter paymentListAdapter = new PaymentListAdapter(getActivity(), CompleteContributionFragment.this, responseListPOJO.getResultList());
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-                    rv_payment_options.setHasFixedSize(true);
-                    rv_payment_options.setAdapter(paymentListAdapter);
-                    rv_payment_options.setLayoutManager(linearLayoutManager);
-                    rv_payment_options.setItemAnimator(new DefaultItemAnimator());
-                } else {
-                    ToastClass.showShortToast(getActivity().getApplicationContext(), responseListPOJO.getMessage());
+//                    paymentTransPOJOS.addAll(responseListPOJO.getResultList());
+                    double money = 0;
+                    double point = 0;
+                    for (PaymentTypePOJO paymentTypePOJO : responseListPOJO.getResultList()) {
+                        PaymentTransPOJO paymentTransPOJO;
+                        if(paymentTypePOJO.getFeedtype().equalsIgnoreCase(Constants.PAYMENT_FEED_MONEY)){
+                            paymentTransPOJO=paymentTypePOJO.getPaymentTransPOJO();
+                            try{
+                                if(paymentTransPOJO.getDebitOrCredit().equalsIgnoreCase("0")){
+                                    money-=Double.parseDouble(paymentTransPOJO.getTransactionAmount());
+                                }else{
+                                    money+=Double.parseDouble(paymentTransPOJO.getTransactionAmount());
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            paymentTransPOJO=paymentTypePOJO.getPointdataTransPOJO();
+                            try{
+                                if(paymentTransPOJO.getDebitOrCredit().equalsIgnoreCase("0")){
+                                    point-=Integer.parseInt(paymentTransPOJO.getTransactionAmount());
+                                }else{
+                                    point+=Integer.parseInt(paymentTransPOJO.getTransactionAmount());
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+                    balance_amount=money;
                 }
             }
-        }, PaymentPOJO.class, "GET_ALL_PAYMENT_METHODS", true).execute(WebServicesUrls.ALL_PAYMENT_GATEWAY);
+
+        }, PaymentTypePOJO.class, "CALL_PAYMENT_LOGS_API", true).execute(WebServicesUrls.PAYMENT_AND_PAINT_TRANS_LOG);
     }
 
     double balance_amount;
@@ -199,7 +226,7 @@ public class CompleteContributionFragment extends Fragment {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
 
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
-        nameValuePairs.add(new BasicNameValuePair("payment_gateway_id", payment_gateway_id));
+        nameValuePairs.add(new BasicNameValuePair("payment_gateway_id", ""));
         nameValuePairs.add(new BasicNameValuePair("transaction_id", StringUtils.getRandomString(15)));
         nameValuePairs.add(new BasicNameValuePair("payment_to_user_profile_id", userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("transaction_date", UtilityFunction.getCurrentDate()));
@@ -208,6 +235,7 @@ public class CompleteContributionFragment extends Fragment {
         nameValuePairs.add(new BasicNameValuePair("transaction_status", "1"));
         nameValuePairs.add(new BasicNameValuePair("debit_or_credit", "0"));
         nameValuePairs.add(new BasicNameValuePair("comments", "Contribution"));
+        nameValuePairs.add(new BasicNameValuePair("contribute", "1"));
         new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
             @Override
             public void onGetMsg(String apicall, String response) {

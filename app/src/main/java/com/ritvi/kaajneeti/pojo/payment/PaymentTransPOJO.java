@@ -30,6 +30,8 @@ public class PaymentTransPOJO {
     private String addedOn;
     @SerializedName("AddedOnTime")
     private String addedOnTime;
+    @SerializedName("IsContribute")
+    private Integer IsContribute;
     @SerializedName("PaymentBy")
     private OutGoingRequestPOJO paymentProfilePOJO;
 
@@ -127,5 +129,13 @@ public class PaymentTransPOJO {
 
     public void setPaymentProfilePOJO(OutGoingRequestPOJO paymentProfilePOJO) {
         this.paymentProfilePOJO = paymentProfilePOJO;
+    }
+
+    public Integer getIsContribute() {
+        return IsContribute;
+    }
+
+    public void setIsContribute(Integer isContribute) {
+        IsContribute = isContribute;
     }
 }

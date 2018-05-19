@@ -51,6 +51,8 @@ public class Constants {
     //OTPVerificationActivity
     public static final String CALL_OTP_VERIFIED = "call_otp_verified";
 
+    public static final String PAYMENT_FEED_POINT="point";
+    public static final String PAYMENT_FEED_MONEY="payment";
 
     //getstate list array
     public static List<String> setStateList() {

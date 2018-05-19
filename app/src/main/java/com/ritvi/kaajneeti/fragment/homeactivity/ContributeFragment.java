@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.ritvi.kaajneeti.R;
+import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.Util.TagUtils;
 import com.ritvi.kaajneeti.activity.HomeActivity;
 import com.ritvi.kaajneeti.adapter.ViewPagerWithTitleAdapter;
@@ -23,6 +24,16 @@ import com.ritvi.kaajneeti.fragment.contribute.SelectUserForContributionFragment
 import com.ritvi.kaajneeti.fragment.contribution.AllContributionFragment;
 import com.ritvi.kaajneeti.fragment.contribution.ContributionReceivedFragment;
 import com.ritvi.kaajneeti.fragment.contribution.ContributionSentFragment;
+import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
+import com.ritvi.kaajneeti.pojo.payment.PaymentTransPOJO;
+import com.ritvi.kaajneeti.webservice.ResponseListCallback;
+import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
+import com.ritvi.kaajneeti.webservice.WebServicesUrls;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -89,6 +100,8 @@ public class ContributeFragment extends Fragment {
         setUpTabswithViewPager();
 
     }
+
+
 
     public void setUpTabswithViewPager() {
         setupViewPager(viewPager);

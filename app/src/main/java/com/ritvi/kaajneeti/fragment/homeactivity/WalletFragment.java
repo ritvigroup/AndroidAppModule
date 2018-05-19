@@ -32,6 +32,7 @@ import com.ritvi.kaajneeti.pojo.ResponsePOJO;
 import com.ritvi.kaajneeti.pojo.payment.PaymentDetailPOJO;
 import com.ritvi.kaajneeti.pojo.payment.PaymentPOJO;
 import com.ritvi.kaajneeti.pojo.payment.PaymentTransPOJO;
+import com.ritvi.kaajneeti.pojo.payment.PaymentTypePOJO;
 import com.ritvi.kaajneeti.testing.PayUMoneyIntegration;
 import com.ritvi.kaajneeti.webservice.ResponseCallBack;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
@@ -68,7 +69,7 @@ public class WalletFragment extends Fragment {
     @BindView(R.id.iv_back)
     ImageView iv_back;
 
-    List<PaymentTransPOJO> paymentTransPOJOS = new ArrayList<>();
+    List<PaymentTypePOJO> paymentTransPOJOS = new ArrayList<>();
 
 
     @Nullable
@@ -169,27 +170,51 @@ public class WalletFragment extends Fragment {
     public void getPaymentLogs() {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
-        new WebServiceBaseResponseList<PaymentTransPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<PaymentTransPOJO>() {
+        nameValuePairs.add(new BasicNameValuePair("payment_point", "All"));
+        nameValuePairs.add(new BasicNameValuePair("debit_credit", "All"));
+        new WebServiceBaseResponseList<PaymentTypePOJO>(nameValuePairs, getActivity(), new ResponseListCallback<PaymentTypePOJO>() {
             @Override
-            public void onGetMsg(ResponseListPOJO<PaymentTransPOJO> responseListPOJO) {
+            public void onGetMsg(ResponseListPOJO<PaymentTypePOJO> responseListPOJO) {
                 paymentTransPOJOS.clear();
                 if (responseListPOJO.isSuccess()) {
-                    paymentTransPOJOS.addAll(responseListPOJO.getResultList());
-                    double amount = 0;
-                    for (PaymentTransPOJO paymentTransPOJO : responseListPOJO.getResultList()) {
-                        if (paymentTransPOJO.getDebitOrCredit().equals("0")) {
-                            amount -= getTransAmount(paymentTransPOJO.getTransactionAmount());
-                        } else {
-                            amount += getTransAmount(paymentTransPOJO.getTransactionAmount());
+//                    paymentTransPOJOS.addAll(responseListPOJO.getResultList());
+                    double money = 0;
+                    double point = 0;
+                    for (PaymentTypePOJO paymentTypePOJO : responseListPOJO.getResultList()) {
+                        PaymentTransPOJO paymentTransPOJO;
+                        if(paymentTypePOJO.getFeedtype().equalsIgnoreCase(Constants.PAYMENT_FEED_MONEY)){
+                            paymentTransPOJO=paymentTypePOJO.getPaymentTransPOJO();
+                            try{
+                                if(paymentTransPOJO.getDebitOrCredit().equalsIgnoreCase("0")){
+                                    money-=Double.parseDouble(paymentTransPOJO.getTransactionAmount());
+                                }else{
+                                    money+=Double.parseDouble(paymentTransPOJO.getTransactionAmount());
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                            paymentTransPOJOS.add(paymentTypePOJO);
+                        }else{
+                            paymentTransPOJO=paymentTypePOJO.getPointdataTransPOJO();
+                            try{
+                                if(paymentTransPOJO.getDebitOrCredit().equalsIgnoreCase("0")){
+                                    point-=Integer.parseInt(paymentTransPOJO.getTransactionAmount());
+                                }else{
+                                    point+=Integer.parseInt(paymentTransPOJO.getTransactionAmount());
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
                         }
+
                     }
-                    balance_amount=String.valueOf(amount);
-                    tv_amount.setText("Rs. " + String.valueOf(amount));
+                    balance_amount=String.valueOf(money);
+                    tv_amount.setText("Rs. " + String.valueOf(money));
                 }
                 paymentTransAdapter.notifyDataSetChanged();
             }
 
-        }, PaymentTransPOJO.class, "CALL_PAYMENT_LOGS_API", true).execute(WebServicesUrls.GET_PAYMENT_TRANS_LOGS);
+        }, PaymentTypePOJO.class, "CALL_PAYMENT_LOGS_API", true).execute(WebServicesUrls.PAYMENT_AND_PAINT_TRANS_LOG);
     }
 
     public double getTransAmount(String amount) {

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.Util.Constants;
@@ -55,6 +56,8 @@ public class WalletAmountFragment extends Fragment{
     Button btn_100;
     @BindView(R.id.btn_500)
     Button btn_500;
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
 
     @Nullable
     @Override
@@ -92,9 +95,20 @@ public class WalletAmountFragment extends Fragment{
         btn_pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                callpaymentSuccessfullAPI(et_amount.getText().toString(),"0");
+                if(et_amount.getText().toString().length()>0&&!et_amount.getText().toString().equalsIgnoreCase("0")) {
+                    callpaymentSuccessfullAPI(et_amount.getText().toString(), "0");
+                }else{
+                    ToastClass.showShortToast(getActivity().getApplicationContext(),"Please Enter proper amount");
+                }
             }
         });
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
+
         showpaymentDialog();
     }
 
@@ -137,7 +151,7 @@ public class WalletAmountFragment extends Fragment{
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
 
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
-        nameValuePairs.add(new BasicNameValuePair("payment_gateway_id", payment_gateway_id));
+        nameValuePairs.add(new BasicNameValuePair("payment_gateway_id", "1"));
         nameValuePairs.add(new BasicNameValuePair("transaction_id", StringUtils.getRandomString(15)));
         nameValuePairs.add(new BasicNameValuePair("payment_to_user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
         nameValuePairs.add(new BasicNameValuePair("transaction_date", UtilityFunction.getCurrentDate()));
@@ -146,6 +160,7 @@ public class WalletAmountFragment extends Fragment{
         nameValuePairs.add(new BasicNameValuePair("transaction_status", "1"));
         nameValuePairs.add(new BasicNameValuePair("debit_or_credit", "1"));
         nameValuePairs.add(new BasicNameValuePair("comments", "Adding money"));
+        nameValuePairs.add(new BasicNameValuePair("contribute", "0"));
         new WebServiceBase(nameValuePairs, getActivity(), new WebServicesCallBack() {
             @Override
             public void onGetMsg(String apicall, String response) {
@@ -154,9 +169,9 @@ public class WalletAmountFragment extends Fragment{
                     JSONObject jsonObject = new JSONObject(response);
                     if (jsonObject.optString("status").equalsIgnoreCase("success")) {
                         ToastClass.showShortToast(getActivity().getApplicationContext(),"Amount Added Successfully");
-//                        getActivity().onBackPressed();
-                        startActivity(new Intent(getActivity(), HomeActivity.class));
-                        getActivity().finishAffinity();
+                        getActivity().onBackPressed();
+//                        startActivity(new Intent(getActivity(), HomeActivity.class));
+//                        getActivity().finishAffinity();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

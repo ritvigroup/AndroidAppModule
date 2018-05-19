@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.ritvi.kaajneeti.R;
 import com.ritvi.kaajneeti.pojo.payment.PaymentTransPOJO;
+import com.ritvi.kaajneeti.pojo.payment.PaymentTypePOJO;
 
 import java.util.List;
 
@@ -18,12 +19,12 @@ import java.util.List;
  */
 
 public class PaymentTransAdapter extends RecyclerView.Adapter<PaymentTransAdapter.ViewHolder>{
-    private List<PaymentTransPOJO> items;
+    private List<PaymentTypePOJO> items;
     Activity activity;
     Fragment fragment;
     int device_height = 0;
 
-    public PaymentTransAdapter(Activity activity, Fragment fragment, List<PaymentTransPOJO> items) {
+    public PaymentTransAdapter(Activity activity, Fragment fragment, List<PaymentTypePOJO> items) {
         this.items = items;
         this.activity = activity;
         this.fragment = fragment;
@@ -37,20 +38,29 @@ public class PaymentTransAdapter extends RecyclerView.Adapter<PaymentTransAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-
-        holder.tv_amount.setText(items.get(position).getTransactionAmount());
-        holder.tv_date.setText(items.get(position).getAddedOnTime().split(" ")[0]);
-        if(items.get(position).getTransactionComment().length()>10) {
-            holder.tv_remarks.setText(items.get(position).getTransactionComment().substring(0, 10));
+        PaymentTransPOJO paymentTransPOJO;
+        if(items.get(position).getFeedtype().equalsIgnoreCase("point")){
+            paymentTransPOJO=items.get(position).getPointdataTransPOJO();
+            holder.tv_trans_type.setText("Points");
         }else{
-            holder.tv_remarks.setText(items.get(position).getTransactionComment());
-        }
-        if(items.get(position).getDebitOrCredit().equals("0")) {
-            holder.tv_type.setText("Debit");
-        }else{
-            holder.tv_type.setText("Credit");
+            paymentTransPOJO=items.get(position).getPaymentTransPOJO();
+            holder.tv_trans_type.setText("Money");
         }
 
+        if(paymentTransPOJO!=null) {
+            holder.tv_amount.setText(paymentTransPOJO.getTransactionAmount());
+            holder.tv_date.setText(paymentTransPOJO.getAddedOnTime().split(" ")[0]);
+            if (paymentTransPOJO.getTransactionComment().length() > 10) {
+                holder.tv_remarks.setText(paymentTransPOJO.getTransactionComment().substring(0, 10));
+            } else {
+                holder.tv_remarks.setText(paymentTransPOJO.getTransactionComment());
+            }
+            if (paymentTransPOJO.getDebitOrCredit().equals("0")) {
+                holder.tv_type.setText("Debit");
+            } else {
+                holder.tv_type.setText("Credit");
+            }
+        }
         holder.itemView.setTag(items.get(position));
     }
 
@@ -65,6 +75,7 @@ public class PaymentTransAdapter extends RecyclerView.Adapter<PaymentTransAdapte
         public TextView tv_type;
         public TextView tv_amount;
         public TextView tv_remarks;
+        public TextView tv_trans_type;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -72,6 +83,7 @@ public class PaymentTransAdapter extends RecyclerView.Adapter<PaymentTransAdapte
             tv_type = (TextView) itemView.findViewById(R.id.tv_type);
             tv_amount = (TextView) itemView.findViewById(R.id.tv_amount);
             tv_remarks = (TextView) itemView.findViewById(R.id.tv_remarks);
+            tv_trans_type = (TextView) itemView.findViewById(R.id.tv_trans_type);
         }
     }
 }

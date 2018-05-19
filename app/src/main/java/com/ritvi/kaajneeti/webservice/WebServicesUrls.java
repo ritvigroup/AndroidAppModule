@@ -96,4 +96,6 @@ public class WebServicesUrls {
     public static final String UPDATE_GROUP_MEMBERS = BASE_URL + "friendgroup/updateFriendGroup";
     public static final String SEARCH_FILTERS = BASE_URL + "search/getAllSearchFilterForPeople";
     public static final String EVENT_INTEREST_UPDATE = BASE_URL + "event/saveMyEventInterest";
+    public static final String EVENT_DETAIL = BASE_URL + "event/getEventDetail";
+    public static final String PAYMENT_AND_PAINT_TRANS_LOG= BASE_URL + "payment/getMyAllPaymentAndPointTransactionLog";
 }

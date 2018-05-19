@@ -17,6 +17,7 @@ import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.adapter.PaymentTransAdapter;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.payment.PaymentTransPOJO;
+import com.ritvi.kaajneeti.pojo.payment.PaymentTypePOJO;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -34,13 +35,17 @@ import butterknife.ButterKnife;
  * Created by sunil on 09-04-2018.
  */
 
-public class AllContributionFragment extends Fragment{
+public class AllContributionFragment extends Fragment {
+    @BindView(R.id.rv_logs)
+    RecyclerView rv_logs;
+    @BindView(R.id.tv_amount)
+    TextView tv_amount;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.frag_all_contribution,container,false);
-        ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.frag_all_contribution, container, false);
+        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -48,7 +53,86 @@ public class AllContributionFragment extends Fragment{
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        attachAdapter();
+        getContributeLogs();
     }
 
+
+    public void getContributeLogs() {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
+        nameValuePairs.add(new BasicNameValuePair("payment_point", "All"));
+        nameValuePairs.add(new BasicNameValuePair("debit_credit", "All"));
+        nameValuePairs.add(new BasicNameValuePair("contribute", "1"));
+        new WebServiceBaseResponseList<PaymentTypePOJO>(nameValuePairs, getActivity(), new ResponseListCallback<PaymentTypePOJO>() {
+            @Override
+            public void onGetMsg(ResponseListPOJO<PaymentTypePOJO> responseListPOJO) {
+                paymentTransPOJOS.clear();
+                if (responseListPOJO.isSuccess()) {
+                    double money = 0;
+                    double point = 0;
+                    for (PaymentTypePOJO paymentTypePOJO : responseListPOJO.getResultList()) {
+                        PaymentTransPOJO paymentTransPOJO;
+                        if(paymentTypePOJO.getFeedtype().equalsIgnoreCase(Constants.PAYMENT_FEED_MONEY)){
+                            paymentTransPOJO=paymentTypePOJO.getPaymentTransPOJO();
+                            if(paymentTransPOJO.getIsContribute()==1){
+                                try{
+                                    if(paymentTransPOJO.getDebitOrCredit().equalsIgnoreCase("0")){
+                                        money-=Integer.parseInt(paymentTransPOJO.getTransactionAmount());
+                                    }else{
+                                        money+=Integer.parseInt(paymentTransPOJO.getTransactionAmount());
+                                    }
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+
+                                paymentTransPOJOS.add(paymentTypePOJO);
+                            }
+
+                        }else{
+//                            paymentTransPOJO=paymentTypePOJO.getPointdataTransPOJO();
+//                            try{
+//                                if(paymentTransPOJO.getDebitOrCredit().equalsIgnoreCase("0")){
+//                                    point-=Integer.parseInt(paymentTransPOJO.getTransactionAmount());
+//                                }else{
+//                                    point+=Integer.parseInt(paymentTransPOJO.getTransactionAmount());
+//                                }
+//                            }catch (Exception e){
+//                                e.printStackTrace();
+//                            }
+                        }
+
+                    }
+
+                    tv_amount.setText(String.valueOf(money));
+                }
+                paymentTransAdapter.notifyDataSetChanged();
+            }
+
+        }, PaymentTypePOJO.class, "GET_ALL_CONTRIBUTION", true).execute(WebServicesUrls.PAYMENT_AND_PAINT_TRANS_LOG);
+    }
+
+    public double getTransAmount(String amount) {
+        try {
+            double trans_amount = Double.parseDouble(amount);
+            return trans_amount;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+
+    PaymentTransAdapter paymentTransAdapter;
+    List<PaymentTypePOJO> paymentTransPOJOS = new ArrayList<>();
+
+    public void attachAdapter() {
+        paymentTransAdapter = new PaymentTransAdapter(getActivity(), this, paymentTransPOJOS);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        rv_logs.setHasFixedSize(true);
+        rv_logs.setAdapter(paymentTransAdapter);
+        rv_logs.setLayoutManager(linearLayoutManager);
+        rv_logs.setItemAnimator(new DefaultItemAnimator());
+    }
 
 }

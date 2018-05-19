@@ -60,42 +60,46 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/et_rect_border">
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/bluecircle"
-            android:layout_gravity="center"
-            android:gravity="center">
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/bluecircle"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tv_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="Rs. 0"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/tv_amount"
+                android:id="@+id/tv_convert_to_point"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="Rs. 1000"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:text="Convert"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_margin="7dp"/>
 
-        <TextView
-            android:id="@+id/tv_convert_to_point"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Convert to points"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#000000" />
-
-    </FrameLayout>
+        </FrameLayout>
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"

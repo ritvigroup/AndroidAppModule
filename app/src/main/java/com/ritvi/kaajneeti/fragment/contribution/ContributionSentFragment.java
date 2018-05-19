@@ -17,6 +17,7 @@ import com.ritvi.kaajneeti.Util.Constants;
 import com.ritvi.kaajneeti.adapter.PaymentTransAdapter;
 import com.ritvi.kaajneeti.pojo.ResponseListPOJO;
 import com.ritvi.kaajneeti.pojo.payment.PaymentTransPOJO;
+import com.ritvi.kaajneeti.pojo.payment.PaymentTypePOJO;
 import com.ritvi.kaajneeti.webservice.ResponseListCallback;
 import com.ritvi.kaajneeti.webservice.WebServiceBaseResponseList;
 import com.ritvi.kaajneeti.webservice.WebServicesUrls;
@@ -54,34 +55,43 @@ public class ContributionSentFragment extends Fragment{
         super.onViewCreated(view, savedInstanceState);
 
         attachAdapter();
-        getPaymentLogs();
+        getContributeLogs();
     }
 
-
-    public void getPaymentLogs(){
-        ArrayList<NameValuePair> nameValuePairs=new ArrayList<>();
+    public void getContributeLogs() {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("user_profile_id", Constants.userProfilePOJO.getUserProfileId()));
-        new WebServiceBaseResponseList<PaymentTransPOJO>(nameValuePairs, getActivity(), new ResponseListCallback<PaymentTransPOJO>() {
+        nameValuePairs.add(new BasicNameValuePair("payment_point", "All"));
+        nameValuePairs.add(new BasicNameValuePair("debit_credit", "All"));
+        nameValuePairs.add(new BasicNameValuePair("contribute", "1"));
+        new WebServiceBaseResponseList<PaymentTypePOJO>(nameValuePairs, getActivity(), new ResponseListCallback<PaymentTypePOJO>() {
             @Override
-            public void onGetMsg(ResponseListPOJO<PaymentTransPOJO> responseListPOJO) {
+            public void onGetMsg(ResponseListPOJO<PaymentTypePOJO> responseListPOJO) {
                 paymentTransPOJOS.clear();
-                if(responseListPOJO.isSuccess()) {
-                    double amount=0;
-                    for(PaymentTransPOJO paymentTransPOJO:responseListPOJO.getResultList()){
-                        if(paymentTransPOJO.getTransactionStatus().equals("1")) {
-                            paymentTransPOJOS.add(paymentTransPOJO);
-                            if (paymentTransPOJO.getDebitOrCredit().equals("0")) {
-                                amount += getTransAmount(paymentTransPOJO.getTransactionAmount());
+                if (responseListPOJO.isSuccess()) {
+                    double money = 0;
+                    double point = 0;
+                    for (PaymentTypePOJO paymentTypePOJO : responseListPOJO.getResultList()) {
+                        PaymentTransPOJO paymentTransPOJO;
+                        if (paymentTypePOJO.getFeedtype().equalsIgnoreCase(Constants.PAYMENT_FEED_MONEY)) {
+                            paymentTransPOJO = paymentTypePOJO.getPaymentTransPOJO();
+                            if (paymentTransPOJO.getIsContribute() == 1 && paymentTransPOJO.getDebitOrCredit() == "0") {
+                                try {
+                                    money += Integer.parseInt(paymentTransPOJO.getTransactionAmount());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                paymentTransPOJOS.add(paymentTypePOJO);
                             }
+
                         }
                     }
-
-                    tv_amount.setText("Rs. "+String.valueOf(amount));
+                    tv_amount.setText(String.valueOf(money));
                 }
                 paymentTransAdapter.notifyDataSetChanged();
             }
 
-        },PaymentTransPOJO.class,"CALL_PAYMENT_LOGS_API",true).execute(WebServicesUrls.DEBIT_TRANS_LOGS);
+        }, PaymentTypePOJO.class, "GET_RECEIVED_CONTRIBUTE_LOGS", true).execute(WebServicesUrls.PAYMENT_AND_PAINT_TRANS_LOG);
     }
 
     public double getTransAmount(String amount){
@@ -96,7 +106,7 @@ public class ContributionSentFragment extends Fragment{
 
 
     PaymentTransAdapter paymentTransAdapter;
-    List<PaymentTransPOJO> paymentTransPOJOS=new ArrayList<>();
+    List<PaymentTypePOJO> paymentTransPOJOS=new ArrayList<>();
 
     public void attachAdapter() {
         paymentTransAdapter = new PaymentTransAdapter(getActivity(), this, paymentTransPOJOS);
